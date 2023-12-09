@@ -4,7 +4,6 @@ import 'package:bhyapp/features/splash/presentation/widgets/ouvriershome.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/profile_screen.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/voyage_page.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
