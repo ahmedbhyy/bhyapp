@@ -1,4 +1,5 @@
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 
@@ -14,27 +15,30 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool isPasswordHidden = true;
-  final List<Map<String, String>> userCredentials = [
-    {'username': 'ahmed', 'password': 'qzdqzd'},
-    {'username': 'ahlem', 'password': 'ahlem123'},
-    // Add more users as needed
-  ];
-  bool checkCredentials(String enteredUsername, String enteredPassword) {
-    for (var user in userCredentials) {
-      if (user['username'] == enteredUsername &&
-          user['password'] == enteredPassword) {
-        return true; // Authentication successful
+  Future<bool> checkCredentials(
+      String enteredUsername, String enteredPassword) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: enteredUsername, password: enteredPassword);
+      print("logged in with user !");
+      return true;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
       }
     }
+
     return false; // Authentication failed
   }
 
   // Function for handling the login button press
-  void handleLogin() {
+  void handleLogin() async {
     String enteredUsername = usernameController.text;
     String enteredPassword = passwordController.text;
 
-    if (checkCredentials(enteredUsername, enteredPassword)) {
+    if (await checkCredentials(enteredUsername, enteredPassword)) {
       // Navigate to the home page if authentication is successful
       Navigator.push(
         context,
@@ -183,4 +187,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-}    
+}

@@ -3,6 +3,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/help_center.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/settings.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   int _selectedIndex = 2;
+  String? username;
   void _navigateBottomBar(int index) {
     if (index == 0) {
       Navigator.push(
@@ -25,6 +27,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _selectedIndex = index;
       });
     }
+  }
+
+  @override
+  void initState() {
+    username = FirebaseAuth.instance.currentUser?.email;
+
+    super.initState();
   }
 
   @override
@@ -50,8 +59,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     backgroundImage: AssetImage('images/logoprofile.png'),
                   ),
                   const SizedBox(height: 30),
-                  const Text(
-                    'Ahlem ',
+                  Text(
+                    username as String,
                     style: TextStyle(
                       fontFamily: 'Michroma',
                       fontSize: 28,

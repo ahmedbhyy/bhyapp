@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "985233044861",
-    "project_id": "barakaapp-2757c",
-    "storage_bucket": "barakaapp-2757c.appspot.com"
+    "project_number": "164313311350",
+    "project_id": "agri-c6980",
+    "storage_bucket": "agri-c6980.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:985233044861:android:c7b0749ccdb940ee068814",
+        "mobilesdk_app_id": "1:164313311350:android:c0dc5433754d8a97869757",
         "android_client_info": {
           "package_name": "com.example.bhyapp"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyApzSgYqe_qXNX9iukk_7DjV-UpOUe9-ec"
+          "current_key": "AIzaSyCN53RLEDCwom6GZ_6EcNNOaym5lYW7u7k"
         }
       ],
       "services": {
