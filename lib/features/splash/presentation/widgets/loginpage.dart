@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (await checkCredentials(enteredUsername, enteredPassword)) {
       // Navigate to the home page if authentication is successful
+      // ignore: use_build_context_synchronously
       Navigator.push(
         context,
         // ignore: prefer_const_constructors
@@ -48,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       // Show an error message or handle unsuccessful login
       // For simplicity, show a snackbar with an error message
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Invalid username or password'),

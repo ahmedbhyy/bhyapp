@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+// ignore: use_key_in_widget_constructors
 class WeatherPage extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _WeatherPageState createState() => _WeatherPageState();
 }
 
@@ -34,8 +36,10 @@ class _WeatherPageState extends State<WeatherPage> {
   final WeatherService weatherService =
       WeatherService('93121a5cf45f14b42696b5f1e84d605d');
 
+  // ignore: non_constant_identifier_names
   late Future<Weather> TunisWeather;
   late Future<Weather> nabeulWeather;
+  // ignore: non_constant_identifier_names
   late Future<Weather> KebiliWeather;
   late Future<Weather> kasserineWeather;
 
