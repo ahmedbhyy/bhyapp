@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
 
-class Voyages extends StatefulWidget {
-  const Voyages({Key? key}) : super(key: key);
+class Requetes extends StatefulWidget {
+  const Requetes({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _VoyagesState createState() => _VoyagesState();
+  State<Requetes> createState() => _RequetesState();
 }
 
-class _VoyagesState extends State<Voyages> {
-  final TextEditingController _nombrevoyage = TextEditingController();
-  final TextEditingController _coutvoyage = TextEditingController();
+class _RequetesState extends State<Requetes> {
+  final TextEditingController _administrative = TextEditingController();
+  final TextEditingController _technique = TextEditingController();
   @override
   void dispose() {
     super.dispose();
-    _nombrevoyage.dispose();
-    _coutvoyage.dispose();
+    _administrative.dispose();
+    _technique.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
-          "Transport",
+          'Requêtes',
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
@@ -38,28 +36,17 @@ class _VoyagesState extends State<Voyages> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              const SizedBox(height: 15),
-              const Text(
-                'Les Transports d\'Aujourdhui',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Michroma',
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.black,
-                  decorationStyle: TextDecorationStyle.solid,
-                ),
-              ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
-                hintText: "Nombre de Voyages",
-                controller: _nombrevoyage,
+                hintText: "Requêtes administratives",
+                controller: _administrative,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
-                hintText: "Cout",
-                controller: _coutvoyage,
+                hintText: "Achat divers (description)",
+                controller: _technique,
               ),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.only(top: 50, left: 8),
                 child: ElevatedButton(

@@ -2,6 +2,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/about_us.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/help_center.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/settings.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/weather.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>  WeatherPage()),
       );
     } else {
       setState(() {
@@ -43,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           // Background Image
           Image.asset(
-            'images/background2.png', // Replace with your image path
+            'images/background2.png', 
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
@@ -61,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 30),
                   Text(
                     username as String,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'Michroma',
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -80,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(
-                          0x0042D351), // Background color of the button
+                          0x0042D351), 
                       shape: RoundedRectangleBorder(
                         side: const BorderSide(
                             width: 1, color: Color(0xFF191919)),
@@ -223,7 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: Colors.black,
             ),
             Icon(
-              Icons.message,
+              Icons.wb_sunny,
               color: Colors.black,
             ),
             Icon(

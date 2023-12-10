@@ -1,8 +1,11 @@
+import 'package:bhyapp/features/splash/presentation/widgets/bon-sortie.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/facture.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/lesengraishome.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/ouvriershome.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/profile_screen.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/voyage_page.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/requetes.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/weather.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +24,11 @@ class _HomePageState extends State<HomePage> {
         context,
         MaterialPageRoute(builder: (context) => const ProfileScreen()),
       );
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>  WeatherPage()),
+      );
     } else {
       setState(() {
         _selectedIndex = index;
@@ -33,7 +41,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Center(
+        title: const Padding(
+          padding: EdgeInsets.all(8.0),
           child: Text(
             'Al Baraka',
             style: TextStyle(
@@ -43,6 +52,9 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.green),
           ),
         ),
+        actions: [
+          _buildDatePickerIconButton(context),
+        ],
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -149,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Voyages()),
+                    MaterialPageRoute(builder: (context) => const BonSortie()),
                   );
                 },
                 child: Card(
@@ -180,7 +192,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Voyages()),
+                    MaterialPageRoute(builder: (context) => const Facture()),
                   );
                 },
                 child: Card(
@@ -211,7 +223,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Voyages()),
+                    MaterialPageRoute(builder: (context) => const Requetes()),
                   );
                 },
                 child: Card(
@@ -254,7 +266,7 @@ class _HomePageState extends State<HomePage> {
             color: Colors.black,
           ),
           Icon(
-            Icons.message,
+            Icons.wb_sunny,
             color: Colors.black,
           ),
           Icon(
@@ -264,5 +276,27 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  Widget _buildDatePickerIconButton(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.calendar_today),
+      onPressed: () => _selectDate(context),
+    );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime selectedDate = DateTime.now();
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      // Handle the selected date
+      print('Selected date: $picked');
+    }
   }
 }
