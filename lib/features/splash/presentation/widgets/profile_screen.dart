@@ -1,11 +1,14 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+
 import 'package:bhyapp/features/splash/presentation/widgets/about_us.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/help_center.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/settings.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/Edit_profile.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/weather.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -15,6 +18,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  PickedFile _imageFile = PickedFile("");
+  final ImagePicker _picker = ImagePicker();
   int _selectedIndex = 2;
   String? username;
   void _navigateBottomBar(int index) {
@@ -26,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } else if (index == 1) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) =>  WeatherPage()),
+        MaterialPageRoute(builder: (context) => WeatherPage()),
       );
     } else {
       setState(() {
@@ -49,21 +54,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           // Background Image
           Image.asset(
-            'images/background2.png', 
+            'images/background2.png',
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
           ),
-
           Padding(
             padding: const EdgeInsets.only(top: 90),
             child: Center(
               child: Column(
                 children: [
-                  const CircleAvatar(
-                    radius: 60,
-                    backgroundImage: AssetImage('images/logoprofile.png'),
-                  ),
+                  imageProfile(),
                   const SizedBox(height: 30),
                   Text(
                     username as String,
@@ -85,8 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(
-                          0x0042D351), 
+                      backgroundColor: const Color(0x0042D351),
                       shape: RoundedRectangleBorder(
                         side: const BorderSide(
                             width: 1, color: Color(0xFF191919)),
@@ -110,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               letterSpacing: 4.08,
                             ),
                           ),
-                          SizedBox(width: 120),
+                          SizedBox(width: 110),
                           Icon(
                             Icons.panorama_photosphere,
                             color: Colors.white,
@@ -146,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Settings',
+                            'Profil Settings',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -155,7 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               letterSpacing: 4.08,
                             ),
                           ),
-                          SizedBox(width: 120),
+                          SizedBox(width: 18),
                           Icon(
                             Icons.settings,
                             color: Colors.white,
@@ -238,5 +238,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ]),
     );
+  }
+
+  Widget bottomSheet() {
+    return Container(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20,
+      ),
+      child: Column(
+        children: <Widget>[
+          const Text(
+            "Choose Profile photo",
+            style: TextStyle(
+              fontSize: 20.0,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            TextButton.icon(
+              icon: const Icon(Icons.camera),
+              onPressed: () {
+                takePhoto(ImageSource.camera);
+              },
+              label: const Text("Camera"),
+            ),
+            TextButton.icon(
+              icon: const Icon(Icons.image),
+              onPressed: () {
+                takePhoto(ImageSource.gallery);
+              },
+              label: const Text("Gallery"),
+            ),
+          ])
+        ],
+      ),
+    );
+  }
+
+  Widget imageProfile() {
+    return Center(
+      child: Stack(children: <Widget>[
+        CircleAvatar(
+          radius: 80.0,
+          backgroundImage: FileImage(File(_imageFile.path)),
+        ),
+        Positioned(
+          bottom: 20.0,
+          right: 20.0,
+          child: InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                builder: ((builder) => bottomSheet()),
+              );
+            },
+            child: const Icon(
+              Icons.camera_alt,
+              color: Colors.teal,
+              size: 28.0,
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  void takePhoto(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(
+      source: source,
+    );
+
+    setState(() {
+      if (pickedFile != null) {
+        _imageFile = PickedFile(pickedFile.path);
+      }
+    });
   }
 }

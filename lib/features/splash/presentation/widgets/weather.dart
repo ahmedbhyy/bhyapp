@@ -42,6 +42,8 @@ class _WeatherPageState extends State<WeatherPage> {
   // ignore: non_constant_identifier_names
   late Future<Weather> KebiliWeather;
   late Future<Weather> kasserineWeather;
+  // ignore: non_constant_identifier_names
+  late Future<Weather> SidiBouzidWeather;
 
   @override
   void initState() {
@@ -50,6 +52,7 @@ class _WeatherPageState extends State<WeatherPage> {
     nabeulWeather = weatherService.getWeather('Nabeul');
     KebiliWeather = weatherService.getWeather('Kebili');
     kasserineWeather = weatherService.getWeather('kasserine');
+    SidiBouzidWeather = weatherService.getWeather('Sidi Bouzid');
   }
 
   @override
@@ -58,19 +61,22 @@ class _WeatherPageState extends State<WeatherPage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/weather.png'),
+            image: AssetImage('images/weather2.png'),
             fit: BoxFit.cover,
           ),
         ),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildWeatherCard('Tunis', TunisWeather),
-              _buildWeatherCard('Nabeul', nabeulWeather),
-              _buildWeatherCard('Kebili', KebiliWeather),
-              _buildWeatherCard('Kasserine', kasserineWeather),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.only(top: 250, left: 10, right: 10),
+            child: Column(
+              children: [
+                _buildWeatherCard('Tunis', TunisWeather),
+                _buildWeatherCard('Nabeul', nabeulWeather),
+                _buildWeatherCard('Kebili', KebiliWeather),
+                _buildWeatherCard('Kasserine', kasserineWeather),
+                _buildWeatherCard('Sidi Bouzid', SidiBouzidWeather),
+              ],
+            ),
           ),
         ),
       ),
