@@ -1,4 +1,4 @@
-import 'package:bhyapp/features/splash/presentation/widgets/bon-sortie.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/bon_sortie.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/facture.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/lesengraishome.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
