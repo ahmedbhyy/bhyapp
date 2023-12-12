@@ -6,6 +6,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/ouvriershome.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/profile_screen.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/requetes.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/weather.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  DateTime date = DateTime.now().add(const Duration(days: 10)); 
   void _navigateBottomBar(int index) {
     if (index == 2) {
       Navigator.push(
@@ -66,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const EngraisHome()),
+                      builder: (context) => EngraisHome(date:date)),
                   );
                 },
                 child: Card(
@@ -286,16 +288,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    DateTime selectedDate = DateTime.now();
+    print(date);
+    final _selectedDate = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: date,
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
 
-    if (picked != null && picked != selectedDate) {
-      // Handle the selected date
+    if (picked != null) {
+      var normalised = _selectedDate.copyWith(hour: 0,minute: 0, millisecond: 0);
+      setState(() {
+        print("changing state");
+        date = normalised;
+      });
       print('Selected date: $picked');
     }
   }

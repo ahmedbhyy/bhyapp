@@ -17,15 +17,24 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,39 +52,11 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyD8miM_QrqQFArHEPwU4BuH2cDOV7wXY1E',
-    appId: '1:164313311350:web:a52484fb2eae000c869757',
-    messagingSenderId: '164313311350',
-    projectId: 'agri-c6980',
-    authDomain: 'agri-c6980.firebaseapp.com',
-    storageBucket: 'agri-c6980.appspot.com',
-    measurementId: 'G-7CM05DH73Q',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCN53RLEDCwom6GZ_6EcNNOaym5lYW7u7k',
     appId: '1:164313311350:android:c0dc5433754d8a97869757',
     messagingSenderId: '164313311350',
     projectId: 'agri-c6980',
     storageBucket: 'agri-c6980.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCq-1ilu3brEF5g1ie9p_Axp8I5PJX-WrY',
-    appId: '1:164313311350:ios:c2f19f6620f57629869757',
-    messagingSenderId: '164313311350',
-    projectId: 'agri-c6980',
-    storageBucket: 'agri-c6980.appspot.com',
-    iosBundleId: 'com.example.bhyapp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCq-1ilu3brEF5g1ie9p_Axp8I5PJX-WrY',
-    appId: '1:164313311350:ios:0cc05145fa881b7c869757',
-    messagingSenderId: '164313311350',
-    projectId: 'agri-c6980',
-    storageBucket: 'agri-c6980.appspot.com',
-    iosBundleId: 'com.example.bhyapp.RunnerTests',
   );
 }

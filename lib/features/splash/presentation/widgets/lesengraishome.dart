@@ -1,17 +1,19 @@
 import 'package:bhyapp/features/splash/presentation/widgets/engrais_details.dart';
 import 'package:bhyapp/les%20engrais/engrais_name.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class EngraisHome extends StatefulWidget {
-  const EngraisHome({super.key});
-
+  EngraisHome({super.key, date});
+  DateTime date = DateTime.now();
   @override
   State<EngraisHome> createState() => _EngraisHomeState();
 }
 
 class _EngraisHomeState extends State<EngraisHome> {
   // ignore: non_constant_identifier_names
-  static List<Engraisname> main_engrais_list = [
+  static List<Engraisname> main_engrais_list = [];
+  /*static List<Engraisname> main_engrais_list = [
     Engraisname(
         engrais_name: "Ultra Classic 45",
         engrais_poster_url:
@@ -48,7 +50,7 @@ class _EngraisHomeState extends State<EngraisHome> {
         engrais_name: "Clustflo",
         engrais_poster_url:
             "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/cropped-clustflo-2.png"),
-  ];
+  ];*/
   // ignore: non_constant_identifier_names
   List<Engraisname> display_list = List.from(main_engrais_list);
   void updateList(String value) {
@@ -58,6 +60,23 @@ class _EngraisHomeState extends State<EngraisHome> {
               element.engrais_name!.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
+  }
+
+  @override
+  void initState() {
+    final db = FirebaseFirestore.instance;
+    final normalised = widget.date.copyWith(hour: 0,minute: 0, millisecond: 0);
+    final nextdate = normalised.add(const Duration(days: 1));
+    final appstate = db.collection("appstate").where("date", isLessThan: nextdate).where("date", isGreaterThan: normalised);
+    appstate.get().then((querySnapshot) {
+    print("Successrully completed");
+    for (var docSnapshot in querySnapshot.docs) {
+      db.collection('appstate/${docSnapshot.id}/engrais').get().then((q2) {
+        main_engrais_list = List.from(q2.docs.map((engrais) => Engraisname(engrais_name:  engrais.data()["name"],engrais_poster_url: engrais.data()["url"])));
+      });
+    }
+    });
+    super.initState();
   }
 
   @override
