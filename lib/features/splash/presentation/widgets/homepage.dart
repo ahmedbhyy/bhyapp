@@ -288,7 +288,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    print(date);
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: date,
@@ -299,10 +298,8 @@ class _HomePageState extends State<HomePage> {
     if (picked != null) {
       var normalised = picked.copyWith(hour: 0,minute: 0, millisecond: 0);
       setState(() {
-        print("changing state");
         date = normalised;
         });
-      print('Selected date: $picked');
     }
   }
 }
