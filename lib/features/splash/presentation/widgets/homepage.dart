@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  DateTime date = DateTime.now().add(const Duration(days: 10)); 
+  DateTime date = DateTime.now(); 
   void _navigateBottomBar(int index) {
     if (index == 2) {
       Navigator.push(
@@ -282,14 +282,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildDatePickerIconButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.calendar_today),
+      icon: Icon(Icons.calendar_today),
       onPressed: () => _selectDate(context),
     );
   }
 
   Future<void> _selectDate(BuildContext context) async {
     print(date);
-    final _selectedDate = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: date,
@@ -298,11 +297,11 @@ class _HomePageState extends State<HomePage> {
     );
 
     if (picked != null) {
-      var normalised = _selectedDate.copyWith(hour: 0,minute: 0, millisecond: 0);
+      var normalised = picked.copyWith(hour: 0,minute: 0, millisecond: 0);
       setState(() {
         print("changing state");
         date = normalised;
-      });
+        });
       print('Selected date: $picked');
     }
   }

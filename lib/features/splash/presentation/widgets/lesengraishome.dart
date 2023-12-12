@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class EngraisHome extends StatefulWidget {
-  EngraisHome({super.key, date});
-  DateTime date = DateTime.now();
+  final DateTime date;
+  EngraisHome({super.key,required this.date});
   @override
   State<EngraisHome> createState() => _EngraisHomeState();
 }
