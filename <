@@ -186,7 +186,7 @@ class TableExample extends StatelessWidget {
         0: FixedColumnWidth(240),
         1: FlexColumnWidth(),
       },
-      defaultVerticalAlignment: TableCellVerticalAlignment.top,
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: <TableRow>[
         const TableRow(
           children: <Widget>[
@@ -227,20 +227,24 @@ class TableExample extends StatelessWidget {
               maxLines: null,
             ),
             TextFormField(
-              decoration: const InputDecoration.collapsed(
+              decoration: const InputDecoration(
+                //contentPadding:
+                //    EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                 hintText: 'Ecrire ici',
               ),
               maxLines: null,
             ),
             TextFormField(
               decoration: const InputDecoration.collapsed(
+               // contentPadding:
+              //      EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                 hintText: 'Ecrire ici ',
+                               
               ),
               maxLines: null,
             ),
           ],
         ),
-        ...factures
       ],
     );
   }

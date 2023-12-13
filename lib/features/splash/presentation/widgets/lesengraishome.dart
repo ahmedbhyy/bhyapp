@@ -77,7 +77,7 @@ class _EngraisHomeState extends State<EngraisHome> {
         return;
       }
       setState(() {
-        display_list = List.from(querySnapshot.docs.map((engrais) => Engraisname(engrais_name:  engrais.data()["name"],engrais_poster_url: engrais.data()["url"])));
+        display_list = List.from(querySnapshot.docs.map((engrais) => Engraisname(engrais_name:  engrais.data()["name"],engrais_poster_url: engrais.data()["image"])));
       });
     });
     super.initState();
