@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 class Facture extends StatefulWidget {
@@ -90,10 +88,6 @@ class _FactureState extends State<Facture> {
               const SizedBox(height: 50),
               const TableExample(),
               const SizedBox(height: 50),
-              buildTextFieldWithEditIcon(
-                hintText: "Total de la facture",
-                controller: _totalfacture,
-              ),
               Padding(
                 padding: const EdgeInsets.only(top: 50, left: 8),
                 child: ElevatedButton(
@@ -195,13 +189,63 @@ class facturetable {
 }
 
 class _TableExampleState extends State<TableExample> {
-  List<facturetable> factures = [];
+  List<facturetable> factures = [facturetable(designation: "test 1", montant: 120.5,quantite: 10)];
+  TableRow _generateRow(facturetable fact, int index) {
+    return TableRow(
+            children: <Widget>[
+              TextFormField(
+                onChanged: (val) {
+                  setState(() {
+                  factures[index].designation = val;
+                                    });
+                },
+                initialValue: fact.designation,
+                decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                  hintText: 'Ecrire ici ',
+                ),
+                maxLines: null,
+              ),
+              TextFormField(
+                onChanged: (val) {
+                  setState(() {
+                  factures[index].quantite = int.parse(val);
+                                    });
+                },
+                initialValue: fact.quantite.toString(),
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Ecrire ici',
+                ),
+                maxLines: null,
+              ),
+              TextFormField(
+              onFieldSubmitted: (String _) {
+                  setState(() {
+                    factures.add(facturetable(designation: "", montant: 0, quantite: 0));
+                  });
+                },
+                onChanged: (val) {
+                  setState(() {
+                  factures[index].montant = double.parse(val);
+                                    });
+                },
+                textInputAction: TextInputAction.done,
+                initialValue: fact.montant.toString(),
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Ecrire ici ',
+                ),
+                maxLines: null,
+              ),
+            ],
+          );
+  }
   @override
   Widget build(BuildContext context) {
-    return Table(
+    return Column(children: [Table(
       border: TableBorder.all(),
       columnWidths: const <int, TableColumnWidth>{
-        0: FixedColumnWidth(240),
+        0: FixedColumnWidth(170),
         1: FlexColumnWidth(),
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.top,
@@ -234,60 +278,10 @@ class _TableExampleState extends State<TableExample> {
             ),
           ],
         ),
-        TableRow(
-          children: <Widget>[
-            TextFormField(
-              decoration: const InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                hintText: 'Ecrire ici ',
-              ),
-              maxLines: null,
-            ),
-            TextFormField(
-              decoration: const InputDecoration.collapsed(
-                hintText: 'Ecrire ici',
-              ),
-              maxLines: null,
-            ),
-            TextFormField(
-              decoration: const InputDecoration.collapsed(
-                hintText: 'Ecrire ici ',
-              ),
-              maxLines: null,
-            ),
-          ],
-        ),
-        ...factures.map(
-          (facturetable fact) => TableRow(
-            children: <Widget>[
-              TextFormField(
-                initialValue: fact.designation,
-                decoration: const InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                  hintText: 'Ecrire ici ',
-                ),
-                maxLines: null,
-              ),
-              TextFormField(
-                initialValue: fact.quantite.toString(),
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'Ecrire ici',
-                ),
-                maxLines: null,
-              ),
-              TextFormField(
-                initialValue: fact.montant.toString(),
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'Ecrire ici ',
-                ),
-                maxLines: null,
-              ),
-            ],
-          ),
+        ...factures.asMap().entries.map(
+          (entry) => _generateRow(entry.value, entry.key)
         )
       ],
-    );
+    ), Text(factures.fold("0", (pv, element) => (double.parse(pv) + (element.montant ?? 0)*(element.quantite ?? 0)).toString()))]);
   }
 }
