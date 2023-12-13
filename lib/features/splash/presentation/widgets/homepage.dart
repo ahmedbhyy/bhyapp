@@ -1,3 +1,9 @@
+import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/admin_devis.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/bon_de_commande.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/bon_de_livraison.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/demande_prix.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/facture_administrative.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/note_reglement.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/bon_sortie.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/facture.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/lesengraishome.dart';
@@ -19,7 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  DateTime date = DateTime.now(); 
+  DateTime date = DateTime.now();
   void _navigateBottomBar(int index) {
     if (index == 2) {
       Navigator.push(
@@ -29,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     } else if (index == 1) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) =>  WeatherPage()),
+        MaterialPageRoute(builder: (context) => WeatherPage()),
       );
     } else {
       setState(() {
@@ -68,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EngraisHome(date:date)),
+                        builder: (context) => EngraisHome(date: date)),
                   );
                 },
                 child: Card(
@@ -251,6 +257,197 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const BonCommande()),
+                  );
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0),
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'images/boncommande3.png',
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Bon de Commande',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const BonLivraison()),
+                  );
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0),
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'images/bondelivraison3.png',
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Bon de Livraison',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AdminFacture()),
+                  );
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0),
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'images/facture.png',
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Facture Administrative',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AdminDevis()),
+                  );
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0),
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'images/devis.png',
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Devis',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const DemandePrix()),
+                  );
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0),
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'images/demandeprix.png',
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Demande d\'offre de Prix',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const NoteReglement()),
+                  );
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0),
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'images/notereglement.png',
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Note de Règlement',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -282,7 +479,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildDatePickerIconButton(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.calendar_today),
+      icon: const Icon(Icons.calendar_today),
       onPressed: () => _selectDate(context),
     );
   }
@@ -296,10 +493,10 @@ class _HomePageState extends State<HomePage> {
     );
 
     if (picked != null) {
-      var normalised = picked.copyWith(hour: 0,minute: 0, millisecond: 0);
+      var normalised = picked.copyWith(hour: 0, minute: 0, millisecond: 0);
       setState(() {
         date = normalised;
-        });
+      });
     }
   }
 }

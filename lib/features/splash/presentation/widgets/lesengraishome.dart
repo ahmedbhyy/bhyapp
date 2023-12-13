@@ -5,12 +5,20 @@ import 'package:flutter/material.dart';
 
 class EngraisHome extends StatefulWidget {
   final DateTime date;
-  EngraisHome({super.key,required this.date});
+  const EngraisHome({super.key, required this.date});
   @override
   State<EngraisHome> createState() => _EngraisHomeState();
 }
 
 class _EngraisHomeState extends State<EngraisHome> {
+  final TextEditingController _nomdengrais = TextEditingController();
+  TextEditingController get controller => _nomdengrais;
+  @override
+  void dispose() {
+    _nomdengrais.dispose();
+    super.dispose();
+  }
+
   // ignore: non_constant_identifier_names
   static List<Engraisname> main_engrais_list = [];
   /*static List<Engraisname> main_engrais_list = [
@@ -70,14 +78,17 @@ class _EngraisHomeState extends State<EngraisHome> {
     engrais.get().then((querySnapshot) async {
       print("Successrully completed");
       print("${querySnapshot.size}");
-      if(querySnapshot.size == 0) {
+      if (querySnapshot.size == 0) {
         setState(() {
           display_list = [];
         });
         return;
       }
       setState(() {
-        display_list = List.from(querySnapshot.docs.map((engrais) => Engraisname(engrais_name:  engrais.data()["name"],engrais_poster_url: engrais.data()["image"])));
+        display_list = List.from(querySnapshot.docs.map((engrais) =>
+            Engraisname(
+                engrais_name: engrais.data()["name"],
+                engrais_poster_url: engrais.data()["image"])));
       });
     });
     super.initState();
@@ -98,6 +109,15 @@ class _EngraisHomeState extends State<EngraisHome> {
               color: Colors.green,
               fontFamily: 'Michroma'),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              String hintText = "Ajouter un Engrais";
+              showEditDialog(context, hintText, controller);
+            },
+          ),
+        ],
       ),
       body: Padding(
           padding: const EdgeInsets.all(14),
@@ -153,6 +173,33 @@ class _EngraisHomeState extends State<EngraisHome> {
               ),
             ],
           )),
+    );
+  }
+
+  Future<void> showEditDialog(
+    BuildContext context,
+    String hintText,
+    TextEditingController controller,
+  ) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(hintText),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              hintText: 'Nom d\'engrais',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {},
+              child: const Text('Enregistrer'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

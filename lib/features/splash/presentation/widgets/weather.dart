@@ -80,9 +80,10 @@ class _WeatherPageState extends State<WeatherPage> {
           ),
         ),
       ),
+      extendBody: true,
       bottomNavigationBar: CurvedNavigationBar(
           height: 55,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           color: Colors.green,
           animationDuration: const Duration(milliseconds: 300),
           onTap: _navigateBottomBar,

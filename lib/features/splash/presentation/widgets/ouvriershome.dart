@@ -10,8 +10,17 @@ class OuvrierHome extends StatefulWidget {
 }
 
 class _OuvrierHomeState extends State<OuvrierHome> {
+  final TextEditingController _nomdeouvrier = TextEditingController();
+
+  TextEditingController get controller => _nomdeouvrier;
+  @override
+  void dispose() {
+    _nomdeouvrier.dispose();
+    super.dispose();
+  }
+
   // ignore: non_constant_identifier_names
-  static List<Ouvriername> main_ouvrier_list = [
+  List<Ouvriername> mainOuvrierList = [
     Ouvriername(
       ouvrier_name: "Hmida bel haj yahia",
     ),
@@ -41,10 +50,16 @@ class _OuvrierHomeState extends State<OuvrierHome> {
     ),
   ];
   // ignore: non_constant_identifier_names
-  List<Ouvriername> display_list = List.from(main_ouvrier_list);
+  List<Ouvriername> displayList = [];
+  @override
+  void initState() {
+    super.initState();
+    displayList = List.from(mainOuvrierList);
+  }
+
   void updateList(String value) {
     setState(() {
-      display_list = main_ouvrier_list
+      displayList = mainOuvrierList
           .where((element) =>
               element.ouvrier_name!.toLowerCase().contains(value.toLowerCase()))
           .toList();
@@ -66,6 +81,15 @@ class _OuvrierHomeState extends State<OuvrierHome> {
               color: Colors.green,
               fontFamily: 'Michroma'),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              String hintText = "Ajouter un Ouvrier";
+              showEditDialog(context, hintText, controller);
+            },
+          ),
+        ],
       ),
       body: Padding(
           padding: const EdgeInsets.all(14),
@@ -93,12 +117,12 @@ class _OuvrierHomeState extends State<OuvrierHome> {
               const SizedBox(height: 20.0),
               Expanded(
                 child: ListView.separated(
-                  itemCount: display_list.length,
+                  itemCount: displayList.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) => ListTile(
                     contentPadding: const EdgeInsets.all(8.0),
                     title: Text(
-                      display_list[index].ouvrier_name ?? "No Name",
+                      displayList[index].ouvrier_name ?? "No Name",
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -109,7 +133,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => OuvrierDetails(
-                            Ouvriername: display_list[index].ouvrier_name!,
+                            Ouvriername: displayList[index].ouvrier_name!,
                           ),
                         ),
                       );
@@ -119,6 +143,43 @@ class _OuvrierHomeState extends State<OuvrierHome> {
               ),
             ],
           )),
+    );
+  }
+
+  Future<void> showEditDialog(BuildContext context, String hintText,
+      TextEditingController controller) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(hintText),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              hintText: 'Nom et Prénom',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                String newName = controller.text;
+                if (newName.isNotEmpty) {
+                  setState(() {
+                    Ouvriername newOuvrier = Ouvriername(ouvrier_name: newName);
+                    mainOuvrierList.add(newOuvrier);
+                    print('Added Ouvrier: $newName');
+                    controller.clear();
+                    Navigator.of(context).pop();
+                  });
+                } else {
+                  print('Name cannot be empty');
+                }
+              },
+              child: const Text('Enregistrer'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

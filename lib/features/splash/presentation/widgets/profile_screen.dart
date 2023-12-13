@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/about_us.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/help_center.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/Edit_profile.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/edit_profile.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/weather.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -216,27 +216,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+      extendBody: true,
       bottomNavigationBar: CurvedNavigationBar(
-          height: 55,
-          backgroundColor: Colors.white,
-          color: Colors.green,
-          animationDuration: const Duration(milliseconds: 300),
-          onTap: _navigateBottomBar,
-          index: _selectedIndex,
-          items: const [
-            Icon(
-              Icons.home,
-              color: Colors.black,
-            ),
-            Icon(
-              Icons.wb_sunny,
-              color: Colors.black,
-            ),
-            Icon(
-              Icons.person,
-              color: Colors.black,
-            ),
-          ]),
+        height: 55,
+        backgroundColor: Colors.transparent,
+        color: Colors.green,
+        animationDuration: const Duration(milliseconds: 300),
+        onTap: _navigateBottomBar,
+        index: _selectedIndex,
+        items: const [
+          Icon(
+            Icons.home,
+            color: Colors.black,
+          ),
+          Icon(
+            Icons.wb_sunny,
+            color: Colors.black,
+          ),
+          Icon(
+            Icons.person,
+            color: Colors.black,
+          ),
+        ],
+      ),
     );
   }
 

@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 
-class BonSortie extends StatefulWidget {
-  const BonSortie({super.key});
+class NoteReglement extends StatefulWidget {
+  const NoteReglement({super.key});
 
   @override
-  State<BonSortie> createState() => _BonSortieState();
+  State<NoteReglement> createState() => _NoteReglementState();
 }
 
-class _BonSortieState extends State<BonSortie> {
-  final TextEditingController _numerodubon = TextEditingController();
-  final TextEditingController _beneficiaire = TextEditingController();
-  final TextEditingController _destination = TextEditingController();
-  final TextEditingController _designation = TextEditingController();
-  final TextEditingController _quantite = TextEditingController();
+class _NoteReglementState extends State<NoteReglement> {
+  final TextEditingController _nomfournisseur = TextEditingController();
+  final TextEditingController _numfacture = TextEditingController();
+  final TextEditingController _montantfac = TextEditingController();
+  final TextEditingController _modepaiment = TextEditingController();
+  final TextEditingController _datedecheance = TextEditingController();
+
   @override
   void dispose() {
     super.dispose();
-    _numerodubon.dispose();
-    _beneficiaire.dispose();
-    _destination.dispose();
-    _designation.dispose();
-    _quantite.dispose();
+    _nomfournisseur.dispose();
+    _numfacture.dispose();
+    _montantfac.dispose();
+    _modepaiment.dispose();
+    _datedecheance.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text(
-          'Bon de sortie interne',
+          "Note de Règlement",
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
@@ -39,7 +41,7 @@ class _BonSortieState extends State<BonSortie> {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              showSearch(context: context, delegate: BonsortieSearch());
+              showSearch(context: context, delegate: ReglementSearch());
             },
             icon: const Icon(
               Icons.search,
@@ -54,24 +56,33 @@ class _BonSortieState extends State<BonSortie> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
+              const SizedBox(height: 30),
               buildTextFieldWithEditIcon(
-                hintText: "N° du bon",
-                controller: _numerodubon,
+                hintText: "Nom du Fournisseur",
+                controller: _nomfournisseur,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               buildTextFieldWithEditIcon(
-                hintText: "Bénéficiaire",
-                controller: _beneficiaire,
+                hintText: "Numéro de Facture",
+                controller: _numfacture,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               buildTextFieldWithEditIcon(
-                hintText: "Destination",
-                controller: _destination,
+                hintText: "Montant",
+                controller: _montantfac,
               ),
-              const SizedBox(height: 40),
-              const TableExample(),
+              const SizedBox(height: 30),
+              buildTextFieldWithEditIcon(
+                hintText: "Mode de Paiement",
+                controller: _modepaiment,
+              ),
+              const SizedBox(height: 30),
+              buildTextFieldWithEditIcon(
+                hintText: "Date d'échéance",
+                controller: _datedecheance,
+              ),
               Padding(
-                padding: const EdgeInsets.only(top: 40, left: 8),
+                padding: const EdgeInsets.only(top: 15, left: 8),
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Enregistrer'),
@@ -96,7 +107,7 @@ class _BonSortieState extends State<BonSortie> {
             textAlign: TextAlign.start,
             decoration: InputDecoration(
               contentPadding:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               hintText: hintText,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
@@ -122,11 +133,11 @@ class _BonSortieState extends State<BonSortie> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit $hintText'),
+          title: Text(' $hintText'),
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(
-              hintText: 'Entrer une valeur',
+              hintText: 'Entrer la Date',
             ),
           ),
           actions: <Widget>[
@@ -153,72 +164,11 @@ class _BonSortieState extends State<BonSortie> {
   }
 }
 
-class TableExample extends StatelessWidget {
-  const TableExample({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Table(
-      border: TableBorder.all(),
-      columnWidths: const <int, TableColumnWidth>{
-        0: FixedColumnWidth(280),
-        1: FlexColumnWidth(),
-      },
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: <TableRow>[
-        const TableRow(
-          children: <Widget>[
-            TableCell(
-              child: Center(
-                child: Text(
-                  'Désignation',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-              ),
-            ),
-            TableCell(
-              child: Center(
-                child: Text(
-                  'Quantité',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
-        TableRow(
-          decoration: const BoxDecoration(),
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: TextFormField(
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'Ecrire ici ',
-                ),
-                maxLines: null,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'Ecrire ici',
-                ),
-                maxLines: null,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class BonsortieSearch extends SearchDelegate {
+class ReglementSearch extends SearchDelegate {
   List<String> allData = [
-    '875120',
-    '587554',
-    '265987',
+    'num facture 1',
+    'num facture 2',
+    'num facture 3',
   ];
   @override
   List<Widget> buildActions(BuildContext context) {

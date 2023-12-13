@@ -1,5 +1,5 @@
-import 'package:bhyapp/features/splash/presentation/widgets/Main_douvre.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/Taches.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/main_douvre.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/taches.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/autres.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/voyage_page.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +13,7 @@ class RapportJournalier extends StatefulWidget {
 }
 
 class _RapportJournalier extends State<RapportJournalier> {
+  DateTime date = DateTime.now();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +28,9 @@ class _RapportJournalier extends State<RapportJournalier> {
             color: Colors.green,
           ),
         ),
+        actions: [
+          _buildDatePickerIconButton(context),
+        ],
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -162,5 +166,28 @@ class _RapportJournalier extends State<RapportJournalier> {
         ),
       ),
     );
+  }
+
+  Widget _buildDatePickerIconButton(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.calendar_today),
+      onPressed: () => _selectDate(context),
+    );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: date,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      var normalised = picked.copyWith(hour: 0, minute: 0, millisecond: 0);
+      setState(() {
+        date = normalised;
+      });
+    }
   }
 }

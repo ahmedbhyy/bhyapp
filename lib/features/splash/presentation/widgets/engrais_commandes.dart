@@ -47,23 +47,32 @@ class _Commandes extends State<Commandes> {
   void _addDescriptionTextField2() {
     setState(() {
       descriptionFields3.add(
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            style: const TextStyle(fontSize: 17.0),
-            maxLines: null,
-            textAlign: TextAlign.start,
-            decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 30.0, horizontal: 8.0),
-              hintText: "décrire la Commande",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20.0),
-                borderSide:
-                    const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                style: const TextStyle(fontSize: 17.0),
+                maxLines: null,
+                textAlign: TextAlign.start,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 30.0, horizontal: 8.0),
+                  hintText: "décrire la Commande",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide:
+                        const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+                  ),
+                ),
               ),
             ),
-          ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Enregister'),
+            ),
+          ],
         ),
       );
     });

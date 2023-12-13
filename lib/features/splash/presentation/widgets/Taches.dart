@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class Taches extends StatefulWidget {
@@ -42,28 +41,8 @@ class _TachesState extends State<Taches> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              const SizedBox(height: 15),
-              const Text(
-                'Plantation - Récolte',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Michroma',
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.black,
-                  decorationStyle: TextDecorationStyle.solid,
-                ),
-              ),
               const SizedBox(height: 30),
-              buildTextFieldWithEditIcon(
-                hintText: "Type",
-                controller: _type,
-              ),
-              const SizedBox(height: 30),
-              buildTextFieldWithEditIcon(
-                hintText: "Quantité",
-                controller: _qte1,
-              ),
+              const TableExample(),
               Padding(
                 padding: const EdgeInsets.only(top: 30, left: 8),
                 child: ElevatedButton(
@@ -72,27 +51,7 @@ class _TachesState extends State<Taches> {
                 ),
               ),
               const SizedBox(height: 30),
-              const Text(
-                'Application des Produits',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Michroma',
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.black,
-                  decorationStyle: TextDecorationStyle.solid,
-                ),
-              ),
-              const SizedBox(height: 30),
-              buildTextFieldWithEditIcon(
-                hintText: "Nom d'application",
-                controller: _nom,
-              ),
-              const SizedBox(height: 30),
-              buildTextFieldWithEditIcon(
-                hintText: "Quantité",
-                controller: _qte2,
-              ),
+              const TableExample2(),
               Padding(
                 padding: const EdgeInsets.only(top: 30, left: 8),
                 child: ElevatedButton(
@@ -106,72 +65,126 @@ class _TachesState extends State<Taches> {
       ),
     );
   }
+}
 
-  Widget buildTextFieldWithEditIcon(
-      {required String hintText, required TextEditingController controller}) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: controller,
-            style: const TextStyle(fontSize: 20.0),
-            maxLines: null,
-            textAlign: TextAlign.start,
-            decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
-              hintText: hintText,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20.0),
-                borderSide:
-                    const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+class TableExample extends StatelessWidget {
+  const TableExample({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Table(
+      border: TableBorder.all(),
+      columnWidths: const <int, TableColumnWidth>{
+        0: FixedColumnWidth(200),
+        1: FlexColumnWidth(),
+      },
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      children: <TableRow>[
+        const TableRow(
+          children: <Widget>[
+            TableCell(
+              child: Center(
+                child: Text(
+                  'Plantation',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
               ),
             ),
-          ),
+            TableCell(
+              child: Center(
+                child: Text(
+                  'Récolte',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+              ),
+            ),
+          ],
         ),
-        IconButton(
-          icon: const Icon(Icons.edit),
-          onPressed: () {
-            showEditDialog(context, hintText, controller);
-          },
+        TableRow(
+          decoration: const BoxDecoration(),
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: TextFormField(
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Description',
+                ),
+                maxLines: null,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Description',
+                ),
+                maxLines: null,
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
+}
 
-  Future<void> showEditDialog(BuildContext context, String hintText,
-      TextEditingController controller) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit $hintText'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              hintText: 'Entrer une valeur',
+class TableExample2 extends StatelessWidget {
+  const TableExample2({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Table(
+      border: TableBorder.all(),
+      columnWidths: const <int, TableColumnWidth>{
+        0: FixedColumnWidth(200),
+        1: FlexColumnWidth(),
+      },
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      children: <TableRow>[
+        const TableRow(
+          children: <Widget>[
+            TableCell(
+              child: Center(
+                child: Text(
+                  'Application des produits',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+              ),
             ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Save the edited value
-                // For example, you can update the corresponding variable or send it to a server
-                // ignore: avoid_print
-                print('Edited value: ${controller.text}');
-                Navigator.of(context).pop();
-              },
-              child: const Text('Enregistrer'),
+            TableCell(
+              child: Center(
+                child: Text(
+                  'Quantité et Nom',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+              ),
             ),
           ],
-        );
-      },
+        ),
+        TableRow(
+          decoration: const BoxDecoration(),
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: TextFormField(
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Description',
+                ),
+                maxLines: null,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Description',
+                ),
+                maxLines: null,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

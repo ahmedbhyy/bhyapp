@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class Requetes extends StatefulWidget {
-  const Requetes({super.key});
+class OuvrierPrime extends StatefulWidget {
+  const OuvrierPrime({super.key});
 
   @override
-  State<Requetes> createState() => _RequetesState();
+  State<OuvrierPrime> createState() => _OuvrierPrimeState();
 }
 
-class _RequetesState extends State<Requetes> {
-  final TextEditingController _administrative = TextEditingController();
-  final TextEditingController _achatdivers = TextEditingController();
+class _OuvrierPrimeState extends State<OuvrierPrime> {
+  final TextEditingController _primeouvrier = TextEditingController();
+  final TextEditingController _dateprimeouvrier = TextEditingController();
   @override
   void dispose() {
     super.dispose();
-    _administrative.dispose();
-    _achatdivers.dispose();
+    _primeouvrier.dispose();
+    _dateprimeouvrier.dispose();
   }
 
   @override
@@ -22,32 +22,30 @@ class _RequetesState extends State<Requetes> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Requêtes',
+          "Prime",
           style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
+            fontSize: 20,
             fontFamily: 'Michroma',
+            fontWeight: FontWeight.bold,
             color: Colors.green,
           ),
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              const TableExample(),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, left: 8),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Enregistrer'),
-                ),
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(top: 35.0, left: 10, right: 10),
+              child: TableExample(),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8, top: 20),
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Enregistrer'),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -72,7 +70,7 @@ class TableExample extends StatelessWidget {
             TableCell(
               child: Center(
                 child: Text(
-                  'Requêtes Administratives',
+                  'Montant',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
               ),
@@ -80,7 +78,7 @@ class TableExample extends StatelessWidget {
             TableCell(
               child: Center(
                 child: Text(
-                  'Achat Divers',
+                  'Date',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
               ),
@@ -103,7 +101,7 @@ class TableExample extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
                 decoration: const InputDecoration.collapsed(
-                  hintText: 'Description',
+                  hintText: 'Ecrire ici',
                 ),
                 maxLines: null,
               ),
