@@ -66,10 +66,8 @@ class _EngraisHomeState extends State<EngraisHome> {
   void initState() {
     print("aaaaaa${widget.date}");
     final db = FirebaseFirestore.instance;
-    final normalised = widget.date.copyWith(hour: 0,minute: 0, millisecond: 0);
-    final nextdate = normalised.add(const Duration(days: 1));
-    final appstate = db.collection("appstate").where("date", isLessThan: nextdate).where("date", isGreaterThan: normalised);
-    appstate.get().then((querySnapshot) async {
+    final engrais = db.collection("engrais");
+    engrais.get().then((querySnapshot) async {
       print("Successrully completed");
       print("${querySnapshot.size}");
       if(querySnapshot.size == 0) {
@@ -78,9 +76,8 @@ class _EngraisHomeState extends State<EngraisHome> {
         });
         return;
       }
-      final q2 = await db.collection('appstate/${querySnapshot.docs.first.id}/engrais').get();
       setState(() {
-        display_list = List.from(q2.docs.map((engrais) => Engraisname(engrais_name:  engrais.data()["name"],engrais_poster_url: engrais.data()["url"])));
+        display_list = List.from(querySnapshot.docs.map((engrais) => Engraisname(engrais_name:  engrais.data()["name"],engrais_poster_url: engrais.data()["url"])));
       });
     });
     super.initState();
