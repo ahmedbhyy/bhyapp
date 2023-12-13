@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class Facture extends StatefulWidget {
@@ -175,9 +177,25 @@ class _FactureState extends State<Facture> {
   }
 }
 
-class TableExample extends StatelessWidget {
+class TableExample extends StatefulWidget {
   const TableExample({Key? key}) : super(key: key);
 
+  @override
+  State<TableExample> createState() => _TableExampleState();
+}
+
+class facturetable {
+  // ignore: non_constant_identifier_names
+  String? designation;
+  int? quantite;
+  double? montant;
+
+  // ignore: non_constant_identifier_names
+  facturetable({this.designation, this.quantite, this.montant});
+}
+
+class _TableExampleState extends State<TableExample> {
+  List<facturetable> factures = [];
   @override
   Widget build(BuildContext context) {
     return Table(
@@ -240,7 +258,35 @@ class TableExample extends StatelessWidget {
             ),
           ],
         ),
-        ...factures
+        ...factures.map(
+          (facturetable fact) => TableRow(
+            children: <Widget>[
+              TextFormField(
+                initialValue: fact.designation,
+                decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                  hintText: 'Ecrire ici ',
+                ),
+                maxLines: null,
+              ),
+              TextFormField(
+                initialValue: fact.quantite.toString(),
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Ecrire ici',
+                ),
+                maxLines: null,
+              ),
+              TextFormField(
+                initialValue: fact.montant.toString(),
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Ecrire ici ',
+                ),
+                maxLines: null,
+              ),
+            ],
+          ),
+        )
       ],
     );
   }
