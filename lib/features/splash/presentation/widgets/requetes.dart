@@ -1,3 +1,4 @@
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/requete_info.dart';
 import 'package:flutter/material.dart';
 
 class Requetes extends StatefulWidget {
@@ -44,6 +45,24 @@ class _RequetesState extends State<Requetes> {
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Enregistrer'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 420, left: 300),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RequeteInfo(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.storage,
+                    color: Colors.green,
+                    size: 40,
+                  ),
                 ),
               ),
             ],

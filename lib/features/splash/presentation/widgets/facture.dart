@@ -1,3 +1,4 @@
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info.dart';
 import 'package:flutter/material.dart';
 
 class Facture extends StatefulWidget {
@@ -81,6 +82,24 @@ class _FactureState extends State<Facture> {
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Enregistrer'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 150, left: 300),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FactureInfo(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.storage,
+                    color: Colors.green,
+                    size: 40,
+                  ),
                 ),
               ),
             ],

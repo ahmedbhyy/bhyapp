@@ -1,3 +1,4 @@
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/boncommande_info.dart';
 import 'package:flutter/material.dart';
 
 class BonCommande extends StatefulWidget {
@@ -60,6 +61,24 @@ class _BonCommandeState extends State<BonCommande> {
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Enregistrer'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 350, left: 300),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BonCommandeInfo(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.storage,
+                    color: Colors.green,
+                    size: 40,
+                  ),
                 ),
               ),
             ],

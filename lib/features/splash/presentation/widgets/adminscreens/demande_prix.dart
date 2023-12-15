@@ -1,3 +1,4 @@
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/demandeprix_inof.dart';
 import 'package:flutter/material.dart';
 
 class DemandePrix extends StatefulWidget {
@@ -59,6 +60,24 @@ class _DemandePrixState extends State<DemandePrix> {
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Enregistrer'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 350, left: 300),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DemandePrixInfo(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.storage,
+                    color: Colors.green,
+                    size: 40,
+                  ),
                 ),
               ),
             ],

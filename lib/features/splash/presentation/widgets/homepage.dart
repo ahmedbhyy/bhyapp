@@ -49,20 +49,33 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(
-            'Al Baraka',
-            style: TextStyle(
-                fontFamily: 'Michroma',
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                color: Colors.green),
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              const Text(
+                'Al Baraka',
+                style: TextStyle(
+                  fontFamily: 'Michroma',
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 165),
+                child: ClipOval(
+                  child: Image.asset(
+                    'images/logo baraka.PNG',
+                    fit: BoxFit.cover,
+                    width: 45, // Adjust the width as needed
+                    height: 45, // Adjust the height as needed
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        actions: [
-          _buildDatePickerIconButton(context),
-        ],
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -475,28 +488,5 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-  }
-
-  Widget _buildDatePickerIconButton(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.calendar_today),
-      onPressed: () => _selectDate(context),
-    );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: date,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (picked != null) {
-      var normalised = picked.copyWith(hour: 0, minute: 0, millisecond: 0);
-      setState(() {
-        date = normalised;
-      });
-    }
   }
 }

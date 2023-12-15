@@ -1,3 +1,4 @@
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info.dart';
 import 'package:flutter/material.dart';
 
 class BonSortie extends StatefulWidget {
@@ -75,6 +76,24 @@ class _BonSortieState extends State<BonSortie> {
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Enregistrer'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 220, left: 300),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BonSortieInfo(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.storage,
+                    color: Colors.green,
+                    size: 40,
+                  ),
                 ),
               ),
             ],
