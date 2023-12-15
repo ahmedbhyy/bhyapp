@@ -1,10 +1,11 @@
 import 'package:bhyapp/features/splash/presentation/widgets/engrais_commandes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class EngraisDetails extends StatefulWidget {
   final String engraisName;
-
-  const EngraisDetails({Key? key, required this.engraisName}) : super(key: key);
+  final String id;
+  EngraisDetails({Key? key, required this.engraisName, required this.id}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -15,6 +16,7 @@ class _EngraisDetailsState extends State<EngraisDetails> {
   final TextEditingController _achatController = TextEditingController();
   final TextEditingController _venteController = TextEditingController();
   final TextEditingController _quantiteController = TextEditingController();
+  List<String> commandes = [];
 
   @override
   void dispose() {
@@ -22,6 +24,21 @@ class _EngraisDetailsState extends State<EngraisDetails> {
     _venteController.dispose();
     _quantiteController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    final db = FirebaseFirestore.instance;
+    final engrais = db.collection("engrais").doc(widget.id);
+    engrais.get().then((value) {
+      setState(() {
+        _venteController.text = (value.data()?["priv"] ?? 0).toString();
+        _achatController.text = (value.data()?["pria"] ?? 0).toString();
+        _quantiteController.text = (value.data()?["quantity"] ?? 0).toString();
+        commandes =  List<String>.from(value.data()?["commandes"]);
+      });
+    });
+    super.initState();
   }
 
   @override
@@ -59,10 +76,19 @@ class _EngraisDetailsState extends State<EngraisDetails> {
             const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Commandes()),
-                );
+                final prixa = double.parse(_achatController.value.text);
+                final prixv = double.parse(_venteController.value.text);
+                final quantite = int.parse(_quantiteController.value.text);
+
+                final db = FirebaseFirestore.instance;
+                final details = db.collection("engrais").doc(widget.id);
+
+                details.update({
+                  'priv': prixv,
+                  'pria': prixa,
+                  'quantity': quantite
+                });
+
               },
               child: const Text('Enregistrer'),
             ),
@@ -71,7 +97,7 @@ class _EngraisDetailsState extends State<EngraisDetails> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Commandes()),
+                  MaterialPageRoute(builder: (context) => Commandes(commandes: commandes)),
                 );
               },
               child: const Text('Les Commandes'),
@@ -89,6 +115,7 @@ class _EngraisDetailsState extends State<EngraisDetails> {
         Expanded(
           child: TextField(
             controller: controller,
+            keyboardType: TextInputType.number,
             style: const TextStyle(fontSize: 20.0),
             maxLines: null,
             textAlign: TextAlign.start,
