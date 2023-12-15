@@ -58,7 +58,9 @@ class _OuvrierHomeState extends State<OuvrierHome> {
     final db = FirebaseFirestore.instance;
     db.collection("ouvrier").get().then((qsnap) {
       setState(() {
-        displayList = qsnap.docs.map((ouvier) => Ouvriername(ouvrier_name: ouvier.data()["nom"])).toList();
+        displayList = qsnap.docs
+            .map((ouvier) => Ouvriername(ouvrier_name: ouvier.data()["nom"]))
+            .toList();
       });
     });
     super.initState();
@@ -176,9 +178,8 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                     if (newName.isNotEmpty) {
                       final db = FirebaseFirestore.instance;
                       final ouvrier = db.collection("ouvrier");
-                      ouvrier.add({
-                        'nom': newName
-                      }).then((value) => print('added user $value'));
+                      ouvrier.add({'nom': newName}).then(
+                          (value) => print('added user $value'));
                       setState(() {
                         displayList.add(newOuvrier);
                       });
