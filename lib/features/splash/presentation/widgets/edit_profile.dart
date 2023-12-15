@@ -79,49 +79,7 @@ class _SettingsState extends State<Settings> {
             ),
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.edit),
-          onPressed: () {
-            showEditDialog(context, hintText, controller);
-          },
-        ),
       ],
-    );
-  }
-
-  Future<void> showEditDialog(BuildContext context, String hintText,
-      TextEditingController controller) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit $hintText'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              hintText: 'Entrer une valeur',
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Save the edited value
-                // For example, you can update the corresponding variable or send it to a server
-                // ignore: avoid_print
-                print('Edited value: ${controller.text}');
-                Navigator.of(context).pop();
-              },
-              child: const Text('Enregistrer'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
