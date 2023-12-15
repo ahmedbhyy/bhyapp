@@ -189,12 +189,32 @@ class _EngraisHomeState extends State<EngraisHome> {
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(
-              hintText: 'Nom d\'engrais',
+              hintText: "Nom d'engrais",
             ),
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                String newEngraisname = controller.text;
+                if (newEngraisname.isNotEmpty) {
+                  setState(() {
+                    Engraisname newEngrais = Engraisname(engrais_name: newEngraisname, engrais_poster_url: "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg");
+                    if (newEngraisname.isNotEmpty) {
+                      final db = FirebaseFirestore.instance;
+                      final engrais = db.collection("engrais");
+                      engrais.add({
+                        'name': newEngrais.engrais_name,
+                        'image': newEngrais.engrais_poster_url,
+                      }).then((value) => print('added engrais $value'));
+                      setState(() {
+                        display_list.add(newEngrais);
+                      });
+                      controller.clear();
+                      Navigator.of(context).pop();
+                    }
+                  });
+                }
+              },
               child: const Text('Enregistrer'),
             ),
           ],
