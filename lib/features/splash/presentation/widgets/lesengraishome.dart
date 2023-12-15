@@ -65,7 +65,7 @@ class _EngraisHomeState extends State<EngraisHome> {
     setState(() {
       display_list = main_engrais_list
           .where((element) =>
-              element.engrais_name!.toLowerCase().contains(value.toLowerCase()))
+              element.engrais_name.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
   }
@@ -87,6 +87,7 @@ class _EngraisHomeState extends State<EngraisHome> {
       setState(() {
         display_list = List.from(querySnapshot.docs.map((engrais) =>
             Engraisname(
+                id: engrais.id,
                 engrais_name: engrais.data()["name"],
                 engrais_poster_url: engrais.data()["image"])));
       });
@@ -157,13 +158,14 @@ class _EngraisHomeState extends State<EngraisHome> {
                       ),
                     ),
                     leading:
-                        Image.network(display_list[index].engrais_poster_url!),
+                        Image.network(display_list[index].engrais_poster_url),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => EngraisDetails(
-                            engraisName: display_list[index].engrais_name!,
+                            engraisName: display_list[index].engrais_name,
+                            id: display_list[index].id,
                           ),
                         ),
                       );
@@ -198,17 +200,20 @@ class _EngraisHomeState extends State<EngraisHome> {
                 String newEngraisname = controller.text;
                 if (newEngraisname.isNotEmpty) {
                   setState(() {
-                    Engraisname newEngrais = Engraisname(engrais_name: newEngraisname, engrais_poster_url: "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg");
                     if (newEngraisname.isNotEmpty) {
                       final db = FirebaseFirestore.instance;
                       final engrais = db.collection("engrais");
                       engrais.add({
-                        'name': newEngrais.engrais_name,
-                        'image': newEngrais.engrais_poster_url,
-                      }).then((value) => print('added engrais $value'));
-                      setState(() {
-                        display_list.add(newEngrais);
+                        'name': newEngraisname,
+                        'image': "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg",
+                      }).then((value) async {
+                        print('added engrais $value');
+                        final doc = await value.get();
+                        setState(() {
+                          display_list.add(Engraisname(engrais_name: doc.data()?["name"], engrais_poster_url: doc.data()?["image"], id: doc.id));
+                        });
                       });
+
                       controller.clear();
                       Navigator.of(context).pop();
                     }
