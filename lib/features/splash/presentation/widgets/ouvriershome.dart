@@ -1,5 +1,6 @@
 import 'package:bhyapp/features/splash/presentation/widgets/ouvrier_details.dart';
 import 'package:bhyapp/ouvrier/ouvrier_name.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class OuvrierHome extends StatefulWidget {
@@ -53,8 +54,14 @@ class _OuvrierHomeState extends State<OuvrierHome> {
   List<Ouvriername> displayList = [];
   @override
   void initState() {
+    //displayList = List.from(mainOuvrierList);
+    final db = FirebaseFirestore.instance;
+    db.collection("ouvrier").get().then((qsnap) {
+      setState(() {
+        displayList = qsnap.docs.map((ouvier) => Ouvriername(ouvrier_name: ouvier.data()["nom"])).toList();
+      });
+    });
     super.initState();
-    displayList = List.from(mainOuvrierList);
   }
 
   void updateList(String value) {
@@ -166,10 +173,19 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                 if (newName.isNotEmpty) {
                   setState(() {
                     Ouvriername newOuvrier = Ouvriername(ouvrier_name: newName);
-                    mainOuvrierList.add(newOuvrier);
-                    print('Added Ouvrier: $newName');
-                    controller.clear();
-                    Navigator.of(context).pop();
+                    if (newName.isNotEmpty) {
+                      final db = FirebaseFirestore.instance;
+                      final ouvrier = db.collection("ouvrier");
+                      ouvrier.add({
+                        'nom': newName
+                      }).then((value) => print('added user $value'));
+                      setState(() {
+                        displayList.add(newOuvrier);
+                      });
+                      print('Added Ouvrier: $newName');
+                      controller.clear();
+                      Navigator.of(context).pop();
+                    }
                   });
                 } else {
                   print('Name cannot be empty');

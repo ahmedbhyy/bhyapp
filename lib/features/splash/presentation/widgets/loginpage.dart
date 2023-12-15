@@ -1,21 +1,25 @@
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
-  LoginPageState createState() => LoginPageState();
+  // ignore: library_private_types_in_public_api
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool isPasswordHidden = true;
-  Future<bool> checkCredentials(String enteredUsername, String enteredPassword) async {
+  Future<bool> checkCredentials(
+      String enteredUsername, String enteredPassword) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: enteredUsername, password: enteredPassword);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: enteredUsername, password: enteredPassword);
       print("logged in with user !");
       return true;
     } on FirebaseAuthException catch (e) {
@@ -25,7 +29,8 @@ class LoginPageState extends State<LoginPage> {
         print('Wrong password provided for that user.');
       }
     }
-    return false;
+
+    return false; // Authentication failed
   }
 
   // Function for handling the login button press
@@ -38,9 +43,11 @@ class LoginPageState extends State<LoginPage> {
       // ignore: use_build_context_synchronously
       Navigator.push(
         context,
+        // ignore: prefer_const_constructors
         MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } else {
+      // Show an error message or handle unsuccessful login
       // For simplicity, show a snackbar with an error message
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(

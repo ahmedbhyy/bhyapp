@@ -75,7 +75,7 @@ class _EngraisHomeState extends State<EngraisHome> {
     print("aaaaaa${widget.date}");
     final db = FirebaseFirestore.instance;
     final engrais = db.collection("engrais");
-    engrais.get().then((querySnapshot) async {
+    engrais.get().then((querySnapshot) {
       print("Successrully completed");
       print("${querySnapshot.size}");
       if (querySnapshot.size == 0) {
