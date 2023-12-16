@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:bhyapp/features/splash/presentation/widgets/engrais_details.dart';
 import 'package:bhyapp/les%20engrais/engrais_name.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EngraisHome extends StatefulWidget {
   final DateTime date;
@@ -21,51 +25,13 @@ class _EngraisHomeState extends State<EngraisHome> {
 
   // ignore: non_constant_identifier_names
   static List<Engraisname> main_engrais_list = [];
-  /*static List<Engraisname> main_engrais_list = [
-    Engraisname(
-        engrais_name: "Ultra Classic 45",
-        engrais_poster_url:
-            "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/ultra-classic-45.png"),
-    Engraisname(
-        engrais_name: "Ultra Plus 45",
-        engrais_poster_url:
-            "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/ultra-plus-45.png"),
-    Engraisname(
-        engrais_name: "Ultra-Solution D.R.C Irrigation",
-        engrais_poster_url:
-            "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/Ultra-Solution-D.R.C-Irrigation.png"),
-    Engraisname(
-        engrais_name: "Ultra DRC Foliar TDS",
-        engrais_poster_url:
-            "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/Ultra-DRC-Foliar-TDS.png"),
-    Engraisname(
-        engrais_name: "ANIMAX",
-        engrais_poster_url:
-            "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/ANIMAX.png"),
-    Engraisname(
-        engrais_name: "Actiphol",
-        engrais_poster_url:
-            "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/cropped-actiphol2.png"),
-    Engraisname(
-        engrais_name: "Rhizocote",
-        engrais_poster_url:
-            "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/rhizocote-2.png"),
-    Engraisname(
-        engrais_name: "Power Set",
-        engrais_poster_url:
-            "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/cropped-power-set-2.png"),
-    Engraisname(
-        engrais_name: "Clustflo",
-        engrais_poster_url:
-            "https://riadhagricolemaster.tn/wp-content/uploads/2023/03/cropped-clustflo-2.png"),
-  ];*/
   // ignore: non_constant_identifier_names
   List<Engraisname> display_list = List.from(main_engrais_list);
   void updateList(String value) {
     setState(() {
-      display_list = main_engrais_list
+      display_list = display_list
           .where((element) =>
-              element.engrais_name.toLowerCase().contains(value.toLowerCase()))
+          element.engrais_name.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
   }
@@ -140,7 +106,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20.0),
                       borderSide:
-                          const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+                      const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
                     )),
               ),
               const SizedBox(height: 20.0),
@@ -151,14 +117,14 @@ class _EngraisHomeState extends State<EngraisHome> {
                   itemBuilder: (context, index) => ListTile(
                     contentPadding: const EdgeInsets.all(8.0),
                     title: Text(
-                      display_list[index].engrais_name,
+                      display_list[index].engrais_name ?? "No Name",
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     leading:
-                        Image.network(display_list[index].engrais_poster_url),
+                    Image.network(display_list[index].engrais_poster_url),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -178,11 +144,71 @@ class _EngraisHomeState extends State<EngraisHome> {
     );
   }
 
+  Widget bottomSheet(String filename) {
+    return Container(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20,
+      ),
+      child: Column(
+        children: <Widget>[
+          const Text(
+            "Choose Profile photo",
+            style: TextStyle(
+              fontSize: 20.0,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            TextButton.icon(
+              icon: const Icon(Icons.camera),
+              onPressed: () {
+                takePhoto(ImageSource.camera, filename);
+              },
+              label: const Text("Camera"),
+            ),
+            TextButton.icon(
+              icon: const Icon(Icons.image),
+              onPressed: () {
+                takePhoto(ImageSource.gallery, filename);
+              },
+              label: const Text("Gallery"),
+            ),
+            TextButton.icon(
+              icon: const Icon(Icons.remove),
+              onPressed: () {
+
+              },
+              label: const Text("No image"),
+            ),
+          ])
+        ],
+      ),
+    );
+  }
+
+  void takePhoto(ImageSource source, String filename) async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: source,
+    );
+    if(((pickedFile?.path) ?? '').isEmpty) return;
+
+    final path = pickedFile!.path;
+    File file = File(path);
+    final store = FirebaseStorage.instance.ref();
+    store.child("engrais/${filename}.${file.path.split('.').last}").putFile(file);
+
+  }
+
   Future<void> showEditDialog(
-    BuildContext context,
-    String hintText,
-    TextEditingController controller,
-  ) async {
+      BuildContext context,
+      String hintText,
+      TextEditingController controller,
+      ) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -196,25 +222,25 @@ class _EngraisHomeState extends State<EngraisHome> {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 String newEngraisname = controller.text;
                 if (newEngraisname.isNotEmpty) {
+                  await showModalBottomSheet(
+                    context: context,
+                    builder: ((builder) => bottomSheet(newEngraisname.replaceAll(' ', ''))),
+                  );
                   setState(() {
                     if (newEngraisname.isNotEmpty) {
                       final db = FirebaseFirestore.instance;
                       final engrais = db.collection("engrais");
                       engrais.add({
                         'name': newEngraisname,
-                        'image':
-                            "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg",
+                        'image': "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg",
                       }).then((value) async {
                         print('added engrais $value');
                         final doc = await value.get();
                         setState(() {
-                          display_list.add(Engraisname(
-                              engrais_name: doc.data()?["name"],
-                              engrais_poster_url: doc.data()?["image"],
-                              id: doc.id));
+                          display_list.add(Engraisname(engrais_name: doc.data()?["name"], engrais_poster_url: doc.data()?["image"], id: doc.id));
                         });
                       });
 
@@ -232,3 +258,4 @@ class _EngraisHomeState extends State<EngraisHome> {
     );
   }
 }
+
