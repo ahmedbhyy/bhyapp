@@ -1,4 +1,6 @@
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/start.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -18,8 +20,9 @@ class _LoginPageState extends State<LoginPage> {
   Future<bool> checkCredentials(
       String enteredUsername, String enteredPassword) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final user = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: enteredUsername, password: enteredPassword);
+
       print("logged in with user !");
       return true;
     } on FirebaseAuthException catch (e) {
@@ -41,11 +44,12 @@ class _LoginPageState extends State<LoginPage> {
     if (await checkCredentials(enteredUsername, enteredPassword)) {
       // Navigate to the home page if authentication is successful
       // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        // ignore: prefer_const_constructors
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
+        Navigator.push(
+          context,
+          // ignore: prefer_const_constructors
+          MaterialPageRoute(builder: (context) => StartPage(email: enteredUsername,)),
+        );
+
     } else {
       // Show an error message or handle unsuccessful login
       // For simplicity, show a snackbar with an error message

@@ -20,37 +20,16 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   PickedFile _imageFile = PickedFile("");
   final ImagePicker _picker = ImagePicker();
-  int _selectedIndex = 2;
   String? username;
-  void _navigateBottomBar(int index) {
-    if (index == 0) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    } else if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => WeatherPage()),
-      );
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
-  }
-
   @override
   void initState() {
     username = FirebaseAuth.instance.currentUser?.email;
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
+    return Stack(
         children: [
           // Background Image
           Image.asset(
@@ -215,31 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
-      ),
-      extendBody: true,
-      bottomNavigationBar: CurvedNavigationBar(
-        height: 55,
-        backgroundColor: Colors.transparent,
-        color: Colors.green,
-        animationDuration: const Duration(milliseconds: 300),
-        onTap: _navigateBottomBar,
-        index: _selectedIndex,
-        items: const [
-          Icon(
-            Icons.home,
-            color: Colors.black,
-          ),
-          Icon(
-            Icons.wb_sunny,
-            color: Colors.black,
-          ),
-          Icon(
-            Icons.person,
-            color: Colors.black,
-          ),
-        ],
-      ),
-    );
+      );
   }
 
   Widget bottomSheet() {

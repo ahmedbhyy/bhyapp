@@ -151,7 +151,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                   itemBuilder: (context, index) => ListTile(
                     contentPadding: const EdgeInsets.all(8.0),
                     title: Text(
-                      display_list[index].engrais_name ?? "No Name",
+                      display_list[index].engrais_name,
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

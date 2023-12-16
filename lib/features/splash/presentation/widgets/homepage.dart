@@ -17,67 +17,28 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final String email;
+  const HomePage({Key? key, required this.email}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  final Map<String, String> roles = {
+    'm@g.me': 'admin',
+    'ahmed@bhy.me': 'user'
+  };
   DateTime date = DateTime.now();
-  void _navigateBottomBar(int index) {
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ProfileScreen()),
-      );
-    } else if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => WeatherPage()),
-      );
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              const Text(
-                'Al Baraka',
-                style: TextStyle(
-                  fontFamily: 'Michroma',
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 165),
-                child: ClipOval(
-                  child: Image.asset(
-                    'images/logo baraka.PNG',
-                    fit: BoxFit.cover,
-                    width: 45, // Adjust the width as needed
-                    height: 45, // Adjust the height as needed
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -271,223 +232,217 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const BonCommande()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/boncommande3.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Bon de Commande',
-                          style: TextStyle(fontSize: 20),
+              Visibility(
+                visible: roles[widget.email] == "admin",
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const BonCommande()),
+                    );
+                  },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'images/boncommande3.png',
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                    ],
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Bon de Commande',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const BonLivraison()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/bondelivraison3.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Bon de Livraison',
-                          style: TextStyle(fontSize: 20),
+              Visibility(
+                visible: roles[widget.email] == "admin",
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const BonLivraison()),
+                    );
+                  },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'images/bondelivraison3.png',
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                    ],
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Bon de Livraison',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AdminFacture()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/facture.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Facture Administrative',
-                          style: TextStyle(fontSize: 20),
+              Visibility(
+                visible: roles[widget.email] == "admin",
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AdminFacture()),
+                    );
+                  },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'images/facture.png',
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                    ],
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Facture Administrative',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AdminDevis()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/devis.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Devis',
-                          style: TextStyle(fontSize: 20),
+              Visibility(
+                visible: roles[widget.email] == "admin",
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AdminDevis()),
+                    );
+                  },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'images/devis.png',
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                    ],
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Devis',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const DemandePrix()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/demandeprix.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Demande d\'offre de Prix',
-                          style: TextStyle(fontSize: 20),
+              Visibility(
+                visible: roles[widget.email] == "admin",
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const DemandePrix()),
+                    );
+                  },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'images/demandeprix.png',
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                    ],
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Demande d\'offre de Prix',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const NoteReglement()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/notereglement.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Note de Règlement',
-                          style: TextStyle(fontSize: 20),
+              Visibility(
+                visible: roles[widget.email] == "admin",
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const NoteReglement()),
+                    );
+                  },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'images/notereglement.png',
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                    ],
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Note de Règlement',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ),
-      ),
-      extendBody: true,
-      bottomNavigationBar: CurvedNavigationBar(
-        height: 55,
-        backgroundColor: Colors.transparent,
-        color: Colors.green,
-        animationDuration: const Duration(milliseconds: 300),
-        onTap: _navigateBottomBar,
-        index: _selectedIndex,
-        items: const [
-          Icon(
-            Icons.home,
-            color: Colors.black,
-          ),
-          Icon(
-            Icons.wb_sunny,
-            color: Colors.black,
-          ),
-          Icon(
-            Icons.person,
-            color: Colors.black,
-          ),
-        ],
-      ),
-    );
+      );
   }
 }

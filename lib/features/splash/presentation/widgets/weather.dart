@@ -13,25 +13,7 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  int _selectedIndex = 1;
   String? username;
-  void _navigateBottomBar(int index) {
-    if (index == 0) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    } else if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ProfileScreen()),
-      );
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
-  }
 
   final WeatherService weatherService =
       WeatherService('93121a5cf45f14b42696b5f1e84d605d');
@@ -57,8 +39,7 @@ class _WeatherPageState extends State<WeatherPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
+    return Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('images/weather2.png'),
@@ -79,30 +60,7 @@ class _WeatherPageState extends State<WeatherPage> {
             ),
           ),
         ),
-      ),
-      extendBody: true,
-      bottomNavigationBar: CurvedNavigationBar(
-          height: 55,
-          backgroundColor: Colors.transparent,
-          color: Colors.green,
-          animationDuration: const Duration(milliseconds: 300),
-          onTap: _navigateBottomBar,
-          index: _selectedIndex,
-          items: const [
-            Icon(
-              Icons.home,
-              color: Colors.black,
-            ),
-            Icon(
-              Icons.wb_sunny,
-              color: Colors.black,
-            ),
-            Icon(
-              Icons.person,
-              color: Colors.black,
-            ),
-          ]),
-    );
+      );
   }
 
   Widget _buildWeatherCard(String location, Future<Weather> weather) {
