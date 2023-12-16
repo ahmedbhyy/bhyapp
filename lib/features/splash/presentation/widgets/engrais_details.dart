@@ -17,7 +17,6 @@ class _EngraisDetailsState extends State<EngraisDetails> {
   final TextEditingController _achatController = TextEditingController();
   final TextEditingController _venteController = TextEditingController();
   final TextEditingController _quantiteController = TextEditingController();
-  List<String> commandes = [];
 
   @override
   void dispose() {
@@ -36,7 +35,6 @@ class _EngraisDetailsState extends State<EngraisDetails> {
         _venteController.text = (value.data()?["priv"] ?? 0).toString();
         _achatController.text = (value.data()?["pria"] ?? 0).toString();
         _quantiteController.text = (value.data()?["quantity"] ?? 0).toString();
-        commandes = List<String>.from(value.data()?["commandes"]);
       });
     });
     super.initState();
@@ -94,11 +92,10 @@ class _EngraisDetailsState extends State<EngraisDetails> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => Commandes(commandes: commandes)),
+                  MaterialPageRoute(builder: (context) => Commandes(id: widget.id,)),
                 );
               },
-              child: const Text('Les Commandes'),
+              child: const Text('Ajouter une commande'),
             ),
           ],
         ),

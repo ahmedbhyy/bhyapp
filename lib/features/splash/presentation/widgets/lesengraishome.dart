@@ -15,6 +15,7 @@ class EngraisHome extends StatefulWidget {
 }
 
 class _EngraisHomeState extends State<EngraisHome> {
+  String path = "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg";
   final TextEditingController _nomdengrais = TextEditingController();
   TextEditingController get controller => _nomdengrais;
   @override
@@ -201,7 +202,7 @@ class _EngraisHomeState extends State<EngraisHome> {
     File file = File(path);
     final store = FirebaseStorage.instance.ref();
     store.child("engrais/${filename}.${file.path.split('.').last}").putFile(file);
-
+    store.putFile(file);
   }
 
   Future<void> showEditDialog(
@@ -235,7 +236,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                       final engrais = db.collection("engrais");
                       engrais.add({
                         'name': newEngraisname,
-                        'image': "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg",
+                        'image': path,
                       }).then((value) async {
                         print('added engrais $value');
                         final doc = await value.get();
