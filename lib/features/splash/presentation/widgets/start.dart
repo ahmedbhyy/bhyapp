@@ -29,7 +29,7 @@ class _StartPageState extends State<StartPage> {
   int _selectedIndex = 0;
   final Map<String, String> roles = {
     'm@g.me': 'admin',
-    'test@test.com': 'user'
+    'test@test.com': 'admin'
   };
   void _navigateBottomBar(int index) {
     setState(() {
