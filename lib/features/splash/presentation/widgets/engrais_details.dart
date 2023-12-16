@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 class EngraisDetails extends StatefulWidget {
   final String engraisName;
   final String id;
-  EngraisDetails({Key? key, required this.engraisName, required this.id}) : super(key: key);
+  EngraisDetails({Key? key, required this.engraisName, required this.id})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -35,7 +36,7 @@ class _EngraisDetailsState extends State<EngraisDetails> {
         _venteController.text = (value.data()?["priv"] ?? 0).toString();
         _achatController.text = (value.data()?["pria"] ?? 0).toString();
         _quantiteController.text = (value.data()?["quantity"] ?? 0).toString();
-        commandes =  List<String>.from(value.data()?["commandes"]);
+        commandes = List<String>.from(value.data()?["commandes"]);
       });
     });
     super.initState();
@@ -83,12 +84,8 @@ class _EngraisDetailsState extends State<EngraisDetails> {
                 final db = FirebaseFirestore.instance;
                 final details = db.collection("engrais").doc(widget.id);
 
-                details.update({
-                  'priv': prixv,
-                  'pria': prixa,
-                  'quantity': quantite
-                });
-
+                details.update(
+                    {'priv': prixv, 'pria': prixa, 'quantity': quantite});
               },
               child: const Text('Enregistrer'),
             ),
@@ -97,7 +94,8 @@ class _EngraisDetailsState extends State<EngraisDetails> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Commandes(commandes: commandes)),
+                  MaterialPageRoute(
+                      builder: (context) => Commandes(commandes: commandes)),
                 );
               },
               child: const Text('Les Commandes'),

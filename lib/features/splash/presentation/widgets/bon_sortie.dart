@@ -37,18 +37,6 @@ class _BonSortieState extends State<BonSortie> {
             color: Colors.green,
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              showSearch(context: context, delegate: BonsortieSearch());
-            },
-            icon: const Icon(
-              Icons.search,
-              color: Colors.green,
-              size: 30,
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -187,72 +175,6 @@ class TableExample extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-class BonsortieSearch extends SearchDelegate {
-  List<String> allData = [
-    '875120',
-    '587554',
-    '265987',
-  ];
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        onPressed: () {
-          query = '';
-        },
-        icon: const Icon(Icons.clear),
-      ),
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          close(context, null);
-        },
-        icon: const Icon(Icons.arrow_back));
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var item in allData) {
-      if (item.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(item);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var item in allData) {
-      if (item.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(item);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
     );
   }
 }

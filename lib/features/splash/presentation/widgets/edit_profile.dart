@@ -10,11 +10,13 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   final TextEditingController _nomuser = TextEditingController();
   final TextEditingController _profession = TextEditingController();
+  final TextEditingController _firme = TextEditingController();
   @override
   void dispose() {
     super.dispose();
     _nomuser.dispose();
     _profession.dispose();
+    _firme.dispose();
   }
 
   @override
@@ -44,8 +46,13 @@ class _SettingsState extends State<Settings> {
               hintText: "Profession",
               controller: _profession,
             ),
+            const SizedBox(height: 30),
+            buildTextFieldWithEditIcon(
+              hintText: "Firme",
+              controller: _firme,
+            ),
             Padding(
-              padding: const EdgeInsets.only(top: 50, left: 8),
+              padding: const EdgeInsets.only(top: 35, left: 8),
               child: ElevatedButton(
                 onPressed: () {},
                 child: const Text('Enregistrer'),

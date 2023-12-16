@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class Maindoeuvre extends StatefulWidget {
   const Maindoeuvre({super.key});
@@ -32,10 +31,6 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime currentDateTime = DateTime.now();
-    String formattedDateTime =
-        DateFormat('yyyy-MM-dd HH:mm').format(currentDateTime);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -122,22 +117,6 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Enregistrer'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 4, left: 0),
-                child: Positioned(
-                  bottom: 10,
-                  left: 10,
-                  child: Text(
-                    'Date: $formattedDateTime',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Michroma',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.orangeAccent,
-                    ),
-                  ),
                 ),
               ),
             ],

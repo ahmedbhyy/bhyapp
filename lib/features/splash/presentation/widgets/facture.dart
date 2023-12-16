@@ -42,18 +42,7 @@ class _FactureState extends State<Facture> {
             color: Colors.green,
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              showSearch(context: context, delegate: FactureSearch());
-            },
-            icon: const Icon(
-              Icons.search,
-              color: Colors.green,
-              size: 30,
-            ),
-          ),
-        ],
+        
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -296,68 +285,4 @@ class _TableExampleState extends State<TableExample> {
   }
 }
 
-class FactureSearch extends SearchDelegate {
-  List<String> allData = [
-    '2521',
-    '12154',
-    '6566',
-  ];
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        onPressed: () {
-          query = '';
-        },
-        icon: const Icon(Icons.clear),
-      ),
-    ];
-  }
 
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          close(context, null);
-        },
-        icon: const Icon(Icons.arrow_back));
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var item in allData) {
-      if (item.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(item);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var item in allData) {
-      if (item.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(item);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
-    );
-  }
-}

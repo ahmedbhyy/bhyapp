@@ -205,12 +205,16 @@ class _EngraisHomeState extends State<EngraisHome> {
                       final engrais = db.collection("engrais");
                       engrais.add({
                         'name': newEngraisname,
-                        'image': "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg",
+                        'image':
+                            "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg",
                       }).then((value) async {
                         print('added engrais $value');
                         final doc = await value.get();
                         setState(() {
-                          display_list.add(Engraisname(engrais_name: doc.data()?["name"], engrais_poster_url: doc.data()?["image"], id: doc.id));
+                          display_list.add(Engraisname(
+                              engrais_name: doc.data()?["name"],
+                              engrais_poster_url: doc.data()?["image"],
+                              id: doc.id));
                         });
                       });
 
