@@ -26,16 +26,15 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-
   int _selectedIndex = 0;
   final Map<String, String> roles = {
     'm@g.me': 'admin',
     'test@test.com': 'user'
   };
   void _navigateBottomBar(int index) {
-      setState(() {
-        _selectedIndex = index;
-      });
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -46,36 +45,38 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              const Text(
-                'Al Baraka',
-                style: TextStyle(
-                  fontFamily: 'Michroma',
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
+      appBar: _selectedIndex == 0
+          ? AppBar(
+              automaticallyImplyLeading: false,
+              title: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Al Baraka',
+                      style: TextStyle(
+                        fontFamily: 'Michroma',
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 165),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'images/logo baraka.PNG',
+                          fit: BoxFit.cover,
+                          width: 45, // Adjust the width as needed
+                          height: 45, // Adjust the height as needed
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 165),
-                child: ClipOval(
-                  child: Image.asset(
-                    'images/logo baraka.PNG',
-                    fit: BoxFit.cover,
-                    width: 45, // Adjust the width as needed
-                    height: 45, // Adjust the height as needed
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            )
+          : null,
       body: _generateWindow(_selectedIndex),
       extendBody: true,
       bottomNavigationBar: CurvedNavigationBar(
@@ -104,8 +105,8 @@ class _StartPageState extends State<StartPage> {
   }
 
   _generateWindow(int selectedIndex) {
-    if(_selectedIndex == 0) return HomePage(email:widget.email);
-    if(_selectedIndex == 1) return WeatherPage();
-    if(_selectedIndex == 2) return ProfileScreen();
+    if (_selectedIndex == 0) return HomePage(email: widget.email);
+    if (_selectedIndex == 1) return WeatherPage();
+    if (_selectedIndex == 2) return const ProfileScreen();
   }
 }
