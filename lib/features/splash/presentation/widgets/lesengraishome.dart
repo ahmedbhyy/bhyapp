@@ -24,7 +24,7 @@ class _EngraisHomeState extends State<EngraisHome> {
     setState(() {
       displayList = displayList
           .where((element) =>
-          element.engrais_name.toLowerCase().contains(value.toLowerCase()))
+              element.engrais_name.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
   }
@@ -91,6 +91,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20.0),
                       borderSide:
+
                       const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
                     ),
                 ),
@@ -235,7 +236,6 @@ class _EngraisHomeState extends State<EngraisHome> {
                       return bottomSheet(newEngraisname);
                     },
                   );
-
                   if(source != null) {
                     await takePhoto(source, newEngraisname);
                   } else {
@@ -251,4 +251,3 @@ class _EngraisHomeState extends State<EngraisHome> {
     );
   }
 }
-

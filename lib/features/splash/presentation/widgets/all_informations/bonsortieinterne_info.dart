@@ -1,3 +1,4 @@
+import 'package:bhyapp/features/splash/presentation/widgets/bon_sortie.dart';
 import 'package:flutter/material.dart';
 
 class BonSortieInfo extends StatefulWidget {
@@ -10,10 +11,20 @@ class BonSortieInfo extends StatefulWidget {
 class _BonSortieInfoState extends State<BonSortieInfo> {
   final TextEditingController _numboninterne = TextEditingController();
   TextEditingController get controller => _numboninterne;
+  final TextEditingController _numerodubon = TextEditingController();
+  final TextEditingController _beneficiaire = TextEditingController();
+  final TextEditingController _destination = TextEditingController();
+  final TextEditingController _designation = TextEditingController();
+  final TextEditingController _quantite = TextEditingController();
   @override
   void dispose() {
-    _numboninterne.dispose();
     super.dispose();
+    _numerodubon.dispose();
+    _beneficiaire.dispose();
+    _destination.dispose();
+    _designation.dispose();
+    _quantite.dispose();
+    _numboninterne.dispose();
   }
 
   List<BonSortieint> mainbonList = [
@@ -77,6 +88,15 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
             color: Colors.green,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              String hintText = "Ajouter un Bon de Sortie";
+              showEditDialog(context, hintText, controller);
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -119,6 +139,83 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> showEditDialog(BuildContext context, String hintText,
+      TextEditingController controller) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: AlertDialog(
+            title: Text(hintText),
+            content: Column(
+              children: [
+                TextField(
+                  controller: _numerodubon,
+                  decoration: const InputDecoration(
+                    labelText: 'N° du bon',
+                    labelStyle: TextStyle(fontSize: 20),
+                    icon: Icon(Icons.numbers),
+                  ),
+                  maxLines: null,
+                ),
+                const SizedBox(height: 40),
+                TextField(
+                  controller: _beneficiaire,
+                  decoration: const InputDecoration(
+                    labelText: 'Bénéficiaire',
+                    labelStyle: TextStyle(fontSize: 20),
+                  ),
+                  maxLines: null,
+                ),
+                const SizedBox(height: 40),
+                TextField(
+                  controller: _destination,
+                  decoration: const InputDecoration(
+                    labelText: 'Destination',
+                    labelStyle: TextStyle(fontSize: 20),
+                    icon: Icon(Icons.place),
+                  ),
+                  maxLines: null,
+                ),
+                const SizedBox(height: 40),
+                TextField(
+                  controller: _designation,
+                  decoration: const InputDecoration(
+                    labelText: 'Désignation',
+                    labelStyle: TextStyle(fontSize: 20),
+                  ),
+                  maxLines: null,
+                ),
+                const SizedBox(height: 40),
+                TextField(
+                  controller: _quantite,
+                  decoration: const InputDecoration(
+                    labelText: 'Quantité',
+                    labelStyle: TextStyle(fontSize: 20),
+                  ),
+                  maxLines: null,
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: const Text('Enregistrer'),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -66,24 +66,6 @@ class _BonSortieState extends State<BonSortie> {
                   child: const Text('Enregistrer'),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 220, left: 300),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const BonSortieInfo(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.storage,
-                    color: Colors.green,
-                    size: 40,
-                  ),
-                ),
-              ),
             ],
           ),
         ),
