@@ -12,6 +12,7 @@ class OuvrierPrime extends StatefulWidget {
 
 
 class _OuvrierPrimeState extends State<OuvrierPrime> {
+  final controller = TextEditingController();
   List<Prime> primes = [];
   @override
   void dispose() {
@@ -106,7 +107,6 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
   }
 
   Widget _generateBottomSheet(BuildContext context) {
-    final controller = TextEditingController(text: "120");
     DateTime date = DateTime.now();
     return Padding(
       padding: const EdgeInsets.all(40),

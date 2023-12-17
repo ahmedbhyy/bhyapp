@@ -67,7 +67,7 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const CongesOuvrier()),
+                            builder: (context) => CongesOuvrier(id:widget.id)),
                       );
                     },
                     child: const Text(
@@ -88,7 +88,7 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const OuvrierHeures()),
+                            builder: (context) => OuvrierHeure(id: widget.id)),
                       );
                     },
                     child: const Text(
@@ -109,7 +109,7 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const OuvrierVoyageDiesel()),
+                            builder: (context) => OuvrierVoyageDiesel(id: widget.id,)),
                       );
                     },
                     child: const Text(
@@ -130,7 +130,7 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const OuvrierDeplacement()),
+                            builder: (context) => OuvrierDeplacement(id: widget.id,)),
                       );
                     },
                     child: const Text(
