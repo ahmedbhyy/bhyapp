@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class OuvrierPrime extends StatefulWidget {
   const OuvrierPrime({super.key});
@@ -7,19 +8,25 @@ class OuvrierPrime extends StatefulWidget {
   State<OuvrierPrime> createState() => _OuvrierPrimeState();
 }
 
+
 class _OuvrierPrimeState extends State<OuvrierPrime> {
-  final TextEditingController _primeouvrier = TextEditingController();
-  final TextEditingController _dateprimeouvrier = TextEditingController();
+  List<Prime> primes = [Prime(date: DateTime.now(), montant: 250.5)];
   @override
   void dispose() {
     super.dispose();
-    _primeouvrier.dispose();
-    _dateprimeouvrier.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+
+          },
+          child: const Icon(Icons.add),
+
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
         title: const Text(
           "Prime",
@@ -31,84 +38,42 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 35.0, left: 10, right: 10),
-              child: TableExample(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 5.0),
+          Expanded(
+            child: ListView.separated(
+              itemCount: primes.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index)  {
+                final prime = primes[index];
+                return ListTile(
+                  contentPadding: const EdgeInsets.all(8.0),
+                  isThreeLine: true,
+                  subtitle: Text(prime.montant.toString()),
+                  title: Text("Prime de ${DateFormat('yyyy-MM-dd').format(prime.date)}",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onTap: () {
+
+                  },
+                );
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8, top: 20),
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Enregistrer'),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class TableExample extends StatelessWidget {
-  const TableExample({Key? key}) : super(key: key);
+class Prime {
+  final double montant;
+  final DateTime date;
 
-  @override
-  Widget build(BuildContext context) {
-    return Table(
-      border: TableBorder.all(),
-      columnWidths: const <int, TableColumnWidth>{
-        0: FixedColumnWidth(200),
-        1: FlexColumnWidth(),
-      },
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: <TableRow>[
-        const TableRow(
-          children: <Widget>[
-            TableCell(
-              child: Center(
-                child: Text(
-                  'Montant',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-              ),
-            ),
-            TableCell(
-              child: Center(
-                child: Text(
-                  'Date',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
-        TableRow(
-          decoration: const BoxDecoration(),
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: TextFormField(
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'Ecrire ici ',
-                ),
-                maxLines: null,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'Ecrire ici',
-                ),
-                maxLines: null,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+  Prime({required this.montant, required this.date});
 }

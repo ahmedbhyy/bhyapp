@@ -21,40 +21,9 @@ class _OuvrierHomeState extends State<OuvrierHome> {
   }
 
   // ignore: non_constant_identifier_names
-  List<Ouvriername> mainOuvrierList = [
-    Ouvriername(
-      ouvrier_name: "Hmida bel haj yahia",
-    ),
-    Ouvriername(
-      ouvrier_name: "salah",
-    ),
-    Ouvriername(
-      ouvrier_name: "ahmed",
-    ),
-    Ouvriername(
-      ouvrier_name: "mohamed",
-    ),
-    Ouvriername(
-      ouvrier_name: "yassine",
-    ),
-    Ouvriername(
-      ouvrier_name: "youssef",
-    ),
-    Ouvriername(
-      ouvrier_name: "wassime",
-    ),
-    Ouvriername(
-      ouvrier_name: "mounir",
-    ),
-    Ouvriername(
-      ouvrier_name: "samir",
-    ),
-  ];
-  // ignore: non_constant_identifier_names
   List<Ouvriername> displayList = [];
   @override
   void initState() {
-    //displayList = List.from(mainOuvrierList);
     final db = FirebaseFirestore.instance;
     db.collection("ouvrier").get().then((qsnap) {
       setState(() {
@@ -68,7 +37,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
 
   void updateList(String value) {
     setState(() {
-      displayList = mainOuvrierList
+      displayList = displayList
           .where((element) =>
               element.ouvrier_name!.toLowerCase().contains(value.toLowerCase()))
           .toList();
@@ -151,7 +120,8 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                 ),
               ),
             ],
-          )),
+          )
+      ),
     );
   }
 
