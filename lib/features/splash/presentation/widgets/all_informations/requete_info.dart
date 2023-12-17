@@ -8,6 +8,17 @@ class RequeteInfo extends StatefulWidget {
 }
 
 class _RequeteInfoState extends State<RequeteInfo> {
+  final TextEditingController _administrative = TextEditingController();
+  final TextEditingController _achatdivers = TextEditingController();
+  final TextEditingController _cccc = TextEditingController();
+  TextEditingController get controller => _cccc;
+  @override
+  void dispose() {
+    super.dispose();
+    _administrative.dispose();
+    _achatdivers.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +33,73 @@ class _RequeteInfoState extends State<RequeteInfo> {
             color: Colors.green,
           ),
         ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              String hintText = "Ajouter une Requête ";
+              showEditDialog(context, hintText, controller);
+            },
+            icon: const Icon(
+              Icons.add,
+              color: Colors.green,
+              size: 35,
+            ),
+          ),
+        ],
       ),
+      body: Column(
+        children: [],
+      ),
+    );
+  }
+
+  Future<void> showEditDialog(BuildContext context, String hintText,
+      TextEditingController controller) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: AlertDialog(
+            title: Text(hintText),
+            content: SizedBox(
+              width: 300,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _administrative,
+                    decoration: const InputDecoration(
+                      labelText: 'Requête administratives',
+                      labelStyle: TextStyle(fontSize: 20),
+                    ),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 40),
+                  TextField(
+                    controller: _achatdivers,
+                    decoration: const InputDecoration(
+                      labelText: 'Achat Divers',
+                      labelStyle: TextStyle(fontSize: 20),
+                    ),
+                    maxLines: null,
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: const Text('Enregistrer'),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

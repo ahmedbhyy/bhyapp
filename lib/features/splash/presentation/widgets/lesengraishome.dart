@@ -15,7 +15,8 @@ class EngraisHome extends StatefulWidget {
 }
 
 class _EngraisHomeState extends State<EngraisHome> {
-  String path = "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg";
+  String path =
+      "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg";
   final TextEditingController _nomdengrais = TextEditingController();
   TextEditingController get controller => _nomdengrais;
   @override
@@ -32,7 +33,7 @@ class _EngraisHomeState extends State<EngraisHome> {
     setState(() {
       display_list = display_list
           .where((element) =>
-          element.engrais_name.toLowerCase().contains(value.toLowerCase()))
+              element.engrais_name.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
   }
@@ -107,7 +108,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20.0),
                       borderSide:
-                      const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+                          const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
                     )),
               ),
               const SizedBox(height: 20.0),
@@ -125,7 +126,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                       ),
                     ),
                     leading:
-                    Image.network(display_list[index].engrais_poster_url),
+                        Image.network(display_list[index].engrais_poster_url),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -181,9 +182,7 @@ class _EngraisHomeState extends State<EngraisHome> {
             ),
             TextButton.icon(
               icon: const Icon(Icons.remove),
-              onPressed: () {
-
-              },
+              onPressed: () {},
               label: const Text("No image"),
             ),
           ])
@@ -196,20 +195,22 @@ class _EngraisHomeState extends State<EngraisHome> {
     final pickedFile = await ImagePicker().pickImage(
       source: source,
     );
-    if(((pickedFile?.path) ?? '').isEmpty) return;
+    if (((pickedFile?.path) ?? '').isEmpty) return;
 
     final path = pickedFile!.path;
     File file = File(path);
     final store = FirebaseStorage.instance.ref();
-    store.child("engrais/${filename}.${file.path.split('.').last}").putFile(file);
+    store
+        .child("engrais/${filename}.${file.path.split('.').last}")
+        .putFile(file);
     store.putFile(file);
   }
 
   Future<void> showEditDialog(
-      BuildContext context,
-      String hintText,
-      TextEditingController controller,
-      ) async {
+    BuildContext context,
+    String hintText,
+    TextEditingController controller,
+  ) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -228,7 +229,8 @@ class _EngraisHomeState extends State<EngraisHome> {
                 if (newEngraisname.isNotEmpty) {
                   await showModalBottomSheet(
                     context: context,
-                    builder: ((builder) => bottomSheet(newEngraisname.replaceAll(' ', ''))),
+                    builder: ((builder) =>
+                        bottomSheet(newEngraisname.replaceAll(' ', ''))),
                   );
                   setState(() {
                     if (newEngraisname.isNotEmpty) {
@@ -241,7 +243,10 @@ class _EngraisHomeState extends State<EngraisHome> {
                         print('added engrais $value');
                         final doc = await value.get();
                         setState(() {
-                          display_list.add(Engraisname(engrais_name: doc.data()?["name"], engrais_poster_url: doc.data()?["image"], id: doc.id));
+                          display_list.add(Engraisname(
+                              engrais_name: doc.data()?["name"],
+                              engrais_poster_url: doc.data()?["image"],
+                              id: doc.id));
                         });
                       });
 
@@ -259,4 +264,3 @@ class _EngraisHomeState extends State<EngraisHome> {
     );
   }
 }
-
