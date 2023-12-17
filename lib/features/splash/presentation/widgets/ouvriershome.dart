@@ -28,7 +28,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
     db.collection("ouvrier").get().then((qsnap) {
       setState(() {
         displayList = qsnap.docs
-            .map((ouvier) => Ouvriername(ouvrier_name: ouvier.data()["nom"]))
+            .map((ouvier) => Ouvriername(name: ouvier.data()["nom"],id: ouvier.id))
             .toList();
       });
     });
@@ -39,7 +39,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
     setState(() {
       displayList = displayList
           .where((element) =>
-              element.ouvrier_name!.toLowerCase().contains(value.toLowerCase()))
+              element.name!.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
   }
@@ -100,7 +100,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                   itemBuilder: (context, index) => ListTile(
                     contentPadding: const EdgeInsets.all(8.0),
                     title: Text(
-                      displayList[index].ouvrier_name ?? "No Name",
+                      displayList[index].name ?? "No Name",
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -111,7 +111,8 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => OuvrierDetails(
-                            Ouvriername: displayList[index].ouvrier_name!,
+                            Ouvriername: displayList[index].name,
+                            id: displayList[index].id,
                           ),
                         ),
                       );
@@ -144,16 +145,17 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                 String newName = controller.text;
                 if (newName.isNotEmpty) {
                   setState(() {
-                    Ouvriername newOuvrier = Ouvriername(ouvrier_name: newName);
+
                     if (newName.isNotEmpty) {
                       final db = FirebaseFirestore.instance;
                       final ouvrier = db.collection("ouvrier");
                       ouvrier.add({'nom': newName}).then(
-                          (value) => print('added user $value'));
-                      setState(() {
-                        displayList.add(newOuvrier);
-                      });
-                      print('Added Ouvrier: $newName');
+                          (value) {
+                            Ouvriername newOuvrier = Ouvriername(name: newName, id: value.id);
+                            setState(() {
+                              displayList.add(newOuvrier);
+                            });
+                          });
                       controller.clear();
                       Navigator.of(context).pop();
                     }
