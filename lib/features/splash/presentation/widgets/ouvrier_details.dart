@@ -8,9 +8,10 @@ import 'package:flutter/material.dart';
 class OuvrierDetails extends StatefulWidget {
   // ignore: non_constant_identifier_names
   final String Ouvriername;
+  final String id;
 
   // ignore: non_constant_identifier_names
-  const OuvrierDetails({Key? key, required this.Ouvriername}) : super(key: key);
+  const OuvrierDetails({Key? key, required this.Ouvriername, required this.id}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -45,7 +46,7 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const OuvrierPrime()),
+                            builder: (context) => OuvrierPrime(id: widget.id)),
                       );
                     },
                     child: const Text(
