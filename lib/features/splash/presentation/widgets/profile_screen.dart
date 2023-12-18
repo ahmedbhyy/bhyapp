@@ -30,171 +30,170 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-        children: [
-          // Background Image
-          Image.asset(
-            'images/background2.png',
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 90),
-            child: Center(
-              child: Column(
-                children: [
-                  imageProfile(),
-                  const SizedBox(height: 30),
-                  Text(
-                    username as String,
-                    style: const TextStyle(
-                      fontFamily: 'Michroma',
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff5f0f40),
+      children: [
+        Image.asset(
+          'images/background2.png',
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 90),
+          child: Center(
+            child: Column(
+              children: [
+                imageProfile(),
+                const SizedBox(height: 30),
+                Text(
+                  username as String,
+                  style: const TextStyle(
+                    fontFamily: 'Michroma',
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff5f0f40),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AboutUs(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0x0042D351),
+                    shape: RoundedRectangleBorder(
+                      side:
+                          const BorderSide(width: 1, color: Color(0xFF191919)),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  const SizedBox(height: 40),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AboutUs(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0x0042D351),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                            width: 1, color: Color(0xFF191919)),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Container(
-                      width: 300,
-                      height: 40,
-                      alignment: Alignment.center,
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'About Us',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontFamily: 'Michroma',
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 4.08,
-                            ),
-                          ),
-                          SizedBox(width: 110),
-                          Icon(
-                            Icons.panorama_photosphere,
+                  child: Container(
+                    width: 300,
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'About Us',
+                          style: TextStyle(
                             color: Colors.white,
-                            size: 24,
+                            fontSize: 20,
+                            fontFamily: 'Michroma',
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 4.08,
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Settings(),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0x0042D351),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                            width: 1, color: Color(0xFF191919)),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Container(
-                      width: 300,
-                      height: 40,
-                      alignment: Alignment.center,
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Profil Settings',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontFamily: 'Michroma',
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 4.08,
-                            ),
-                          ),
-                          SizedBox(width: 18),
-                          Icon(
-                            Icons.settings,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HelpCenter(),
+                        SizedBox(width: 110),
+                        Icon(
+                          Icons.panorama_photosphere,
+                          color: Colors.white,
+                          size: 24,
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0x0042D351),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                            width: 1, color: Color(0xFF191919)),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Container(
-                      width: 300,
-                      height: 40,
-                      alignment: Alignment.center,
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Help Center',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontFamily: 'Michroma',
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 4.08,
-                            ),
-                          ),
-                          SizedBox(width: 70),
-                          Icon(
-                            Icons.help,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Settings(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0x0042D351),
+                    shape: RoundedRectangleBorder(
+                      side:
+                          const BorderSide(width: 1, color: Color(0xFF191919)),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Container(
+                    width: 300,
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Profil Settings',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontFamily: 'Michroma',
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 4.08,
+                          ),
+                        ),
+                        SizedBox(width: 18),
+                        Icon(
+                          Icons.settings,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HelpCenter(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0x0042D351),
+                    shape: RoundedRectangleBorder(
+                      side:
+                          const BorderSide(width: 1, color: Color(0xFF191919)),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Container(
+                    width: 300,
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Help Center',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontFamily: 'Michroma',
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 4.08,
+                          ),
+                        ),
+                        SizedBox(width: 70),
+                        Icon(
+                          Icons.help,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 
   Widget bottomSheet() {

@@ -7,7 +7,11 @@ import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/note_re
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/boncommande_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonlivraison_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/demandeprix_inof.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/devis_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/factureadmin_info.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/notereglement_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/requete_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/bon_sortie.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/facture.dart';
@@ -311,7 +315,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const AdminFacture()),
+                        builder: (context) => const FactureAdminInfo()),
                   );
                 },
                 child: Card(
@@ -345,7 +349,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AdminDevis()),
+                    MaterialPageRoute(builder: (context) => const DevisInfo()),
                   );
                 },
                 child: Card(
@@ -380,7 +384,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const DemandePrix()),
+                        builder: (context) => const DemandePrixInfo()),
                   );
                 },
                 child: Card(
@@ -415,7 +419,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const NoteReglement()),
+                        builder: (context) => const NoteReglementInfo()),
                   );
                 },
                 child: Card(

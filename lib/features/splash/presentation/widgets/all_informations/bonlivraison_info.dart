@@ -112,6 +112,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                       labelText: 'Montant Total',
                       labelStyle: TextStyle(fontSize: 20),
                       icon: Icon(Icons.euro),
+                      suffixText: 'DT',
                     ),
                     maxLines: null,
                   ),

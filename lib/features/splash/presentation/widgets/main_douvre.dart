@@ -46,7 +46,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               const Text(
@@ -80,7 +80,13 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                 hintText: "Charge",
                 controller: _chargefemme,
               ),
-              const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.only(top: 10, left: 250),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Enregistrer'),
+                ),
+              ),
               const Text(
                 'Aprés Midi',
                 style: TextStyle(
@@ -113,7 +119,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                 controller: _chargefemme,
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 20, left: 0),
+                padding: const EdgeInsets.only(top: 10, left: 250),
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Enregistrer'),
@@ -139,7 +145,8 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
-              hintText: hintText,
+              labelText: hintText,
+              hintStyle: const TextStyle(fontSize: 25),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
                 borderSide:

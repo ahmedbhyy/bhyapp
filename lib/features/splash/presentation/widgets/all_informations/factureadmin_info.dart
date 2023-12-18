@@ -8,6 +8,24 @@ class FactureAdminInfo extends StatefulWidget {
 }
 
 class _FactureAdminInfoState extends State<FactureAdminInfo> {
+  final TextEditingController _nnn2 = TextEditingController();
+  TextEditingController get controller => _nnn2;
+  final TextEditingController _datefacadmin = TextEditingController();
+  final TextEditingController _nomdesociete2 = TextEditingController();
+  final TextEditingController _numfacadmin = TextEditingController();
+  final TextEditingController _descrifacadmin = TextEditingController();
+  final TextEditingController _totalfacadmin = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _datefacadmin.dispose();
+    _nomdesociete2.dispose();
+    _numfacadmin.dispose();
+    _descrifacadmin.dispose();
+    _totalfacadmin.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +40,104 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
             color: Colors.green,
           ),
         ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              String hintText = "Ajouter une Facture Administrative";
+              showEditDialog(context, hintText, controller);
+            },
+            icon: const Icon(
+              Icons.add,
+              color: Colors.green,
+              size: 35,
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Future<void> showEditDialog(BuildContext context, String hintText,
+      TextEditingController controller) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: AlertDialog(
+            title: Text(hintText),
+            content: SizedBox(
+              width: 350,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _datefacadmin,
+                    decoration: const InputDecoration(
+                      labelText: 'Date de la Facture',
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.date_range),
+                    ),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _nomdesociete2,
+                    decoration: const InputDecoration(
+                      labelText: 'Nom de la société',
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.work),
+                    ),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _numfacadmin,
+                    decoration: const InputDecoration(
+                      labelText: 'N° Facture',
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.numbers),
+                    ),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _descrifacadmin,
+                    decoration: const InputDecoration(
+                      labelText: 'Description de la Facture',
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.description),
+                    ),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _totalfacadmin,
+                    decoration: const InputDecoration(
+                      labelText: 'Total de la Facture',
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.attach_money),
+                      suffixText: 'DT',
+                    ),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: const Text('Enregistrer'),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

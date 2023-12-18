@@ -10,12 +10,14 @@ class Voyages extends StatefulWidget {
 
 class _VoyagesState extends State<Voyages> {
   final TextEditingController _nombrevoyage = TextEditingController();
+  final TextEditingController _descvoyage = TextEditingController();
   final TextEditingController _coutvoyage = TextEditingController();
   @override
   void dispose() {
     super.dispose();
     _nombrevoyage.dispose();
     _coutvoyage.dispose();
+    _descvoyage.dispose();
   }
 
   @override
@@ -57,6 +59,11 @@ class _VoyagesState extends State<Voyages> {
               ),
               const SizedBox(height: 30),
               buildTextFieldWithEditIcon(
+                hintText: "Description des Voyages",
+                controller: _descvoyage,
+              ),
+              const SizedBox(height: 30),
+              buildTextFieldWithEditIcon(
                 hintText: "Cout",
                 controller: _coutvoyage,
               ),
@@ -87,7 +94,7 @@ class _VoyagesState extends State<Voyages> {
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
-              hintText: hintText,
+              labelText: hintText,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
                 borderSide:

@@ -70,6 +70,7 @@ class _RequeteInfoState extends State<RequeteInfo> {
                     decoration: const InputDecoration(
                       labelText: 'Requête administratives',
                       labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.admin_panel_settings),
                     ),
                     maxLines: null,
                   ),
@@ -79,6 +80,7 @@ class _RequeteInfoState extends State<RequeteInfo> {
                     decoration: const InputDecoration(
                       labelText: 'Achat Divers',
                       labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.shopping_bag),
                     ),
                     maxLines: null,
                   ),

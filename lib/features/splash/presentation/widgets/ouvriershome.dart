@@ -28,7 +28,8 @@ class _OuvrierHomeState extends State<OuvrierHome> {
     db.collection("ouvrier").get().then((qsnap) {
       setState(() {
         displayList = qsnap.docs
-            .map((ouvier) => Ouvriername(name: ouvier.data()["nom"],id: ouvier.id))
+            .map((ouvier) =>
+                Ouvriername(name: ouvier.data()["nom"], id: ouvier.id))
             .toList();
       });
     });
@@ -61,7 +62,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.person_add),
             onPressed: () {
               String hintText = "Ajouter un Ouvrier";
               showEditDialog(context, hintText, controller);
@@ -121,8 +122,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                 ),
               ),
             ],
-          )
-      ),
+          )),
     );
   }
 
@@ -145,17 +145,16 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                 String newName = controller.text;
                 if (newName.isNotEmpty) {
                   setState(() {
-
                     if (newName.isNotEmpty) {
                       final db = FirebaseFirestore.instance;
                       final ouvrier = db.collection("ouvrier");
-                      ouvrier.add({'nom': newName}).then(
-                          (value) {
-                            Ouvriername newOuvrier = Ouvriername(name: newName, id: value.id);
-                            setState(() {
-                              displayList.add(newOuvrier);
-                            });
-                          });
+                      ouvrier.add({'nom': newName}).then((value) {
+                        Ouvriername newOuvrier =
+                            Ouvriername(name: newName, id: value.id);
+                        setState(() {
+                          displayList.add(newOuvrier);
+                        });
+                      });
                       controller.clear();
                       Navigator.of(context).pop();
                     }

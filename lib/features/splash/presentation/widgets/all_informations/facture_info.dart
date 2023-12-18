@@ -186,15 +186,6 @@ class _FactureInfoState extends State<FactureInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _designation1,
-                    decoration: const InputDecoration(
-                      labelText: 'Désignation',
-                      labelStyle: TextStyle(fontSize: 20),
-                    ),
-                    maxLines: null,
-                  ),
                   Column(
                     children: [
                       const SizedBox(height: 20),
@@ -202,21 +193,32 @@ class _FactureInfoState extends State<FactureInfo> {
                         children: [
                           Expanded(
                             child: TextField(
-                              controller: _quantite1,
+                              controller: _designation1,
                               decoration: const InputDecoration(
-                                labelText: 'Quantité',
-                                labelStyle: TextStyle(fontSize: 20),
+                                labelText: 'Désignation',
+                                labelStyle: TextStyle(fontSize: 14),
                               ),
                               maxLines: null,
                             ),
                           ),
-                          const SizedBox(width: 30),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: TextField(
+                              controller: _quantite1,
+                              decoration: const InputDecoration(
+                                labelText: 'Quantité',
+                                labelStyle: TextStyle(fontSize: 15),
+                              ),
+                              maxLines: null,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
                           Expanded(
                             child: TextField(
                               controller: _montant,
                               decoration: const InputDecoration(
                                 labelText: 'Montant',
-                                labelStyle: TextStyle(fontSize: 20),
+                                labelStyle: TextStyle(fontSize: 15),
                               ),
                               maxLines: null,
                             ),
@@ -232,6 +234,7 @@ class _FactureInfoState extends State<FactureInfo> {
                       labelText: 'Total',
                       labelStyle: TextStyle(fontSize: 20),
                       icon: Icon(Icons.euro),
+                      suffixText: 'DT',
                     ),
                     maxLines: null,
                   ),

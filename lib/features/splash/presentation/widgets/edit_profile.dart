@@ -77,7 +77,7 @@ class _SettingsState extends State<Settings> {
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
-              hintText: hintText,
+              labelText: hintText,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
                 borderSide:

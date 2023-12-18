@@ -36,13 +36,10 @@ class _EngraisHomeState extends State<EngraisHome> {
     engrais.get().then((querySnapshot) {
       print("${querySnapshot.size} items");
       setState(() {
-        displayList = List.from(querySnapshot.docs.map((engrais) =>
-            Engraisname(
-                id: engrais.id,
-                engrais_name: engrais.data()["name"],
-                engrais_poster_url: engrais.data()["image"])
-            )
-        );
+        displayList = List.from(querySnapshot.docs.map((engrais) => Engraisname(
+            id: engrais.id,
+            engrais_name: engrais.data()["name"],
+            engrais_poster_url: engrais.data()["image"])));
       });
     });
     super.initState();
@@ -82,18 +79,17 @@ class _EngraisHomeState extends State<EngraisHome> {
                 onChanged: (value) => updateList(value),
                 style: const TextStyle(fontSize: 17.0),
                 decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 20.0),
-                    hintText: "chercher un engrais",
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide:
-
-                      const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
-                    ),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 20.0),
+                  hintText: "chercher un engrais",
+                  prefixIcon: const Icon(Icons.search),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide:
+                        const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+                  ),
                 ),
               ),
               const SizedBox(height: 20.0),
@@ -110,7 +106,8 @@ class _EngraisHomeState extends State<EngraisHome> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    leading: Image.network(displayList[index].engrais_poster_url),
+                    leading:
+                        Image.network(displayList[index].engrais_poster_url),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -179,22 +176,24 @@ class _EngraisHomeState extends State<EngraisHome> {
       source: source,
       imageQuality: 20,
     );
-    if(((pickedFile?.path) ?? '').isNotEmpty)  {
+    if (((pickedFile?.path) ?? '').isNotEmpty) {
       String filename = newEngraisname.replaceAll(' ', '');
       String path = pickedFile!.path;
       File file = File(path);
       final store = FirebaseStorage.instance.ref();
-      final pdpref = store.child("engrais/$filename.${file.path.split('.').last}");
+      final pdpref =
+          store.child("engrais/$filename.${file.path.split('.').last}");
       await pdpref.putFile(file);
       path = await pdpref.getDownloadURL();
       createEngrais(path: path, newEngraisname: newEngraisname);
       return;
     }
-
-
   }
 
-  void createEngrais({String path="https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg", required String newEngraisname}) {
+  void createEngrais(
+      {String path =
+          "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg",
+      required String newEngraisname}) {
     if (newEngraisname.isNotEmpty) {
       final db = FirebaseFirestore.instance;
       final engrais = db.collection("engrais");
@@ -205,7 +204,10 @@ class _EngraisHomeState extends State<EngraisHome> {
         print('added engrais $value');
         final doc = await value.get();
         setState(() {
-          displayList.add(Engraisname(engrais_name: doc.data()?["name"], engrais_poster_url: doc.data()?["image"], id: doc.id));
+          displayList.add(Engraisname(
+              engrais_name: doc.data()?["name"],
+              engrais_poster_url: doc.data()?["image"],
+              id: doc.id));
         });
       });
     }
@@ -230,13 +232,14 @@ class _EngraisHomeState extends State<EngraisHome> {
                 String newEngraisname = nomdengrais.text;
                 if (newEngraisname.isNotEmpty) {
                   Navigator.pop(context);
-                  final ImageSource? source = await showModalBottomSheet<ImageSource>(
+                  final ImageSource? source =
+                      await showModalBottomSheet<ImageSource>(
                     context: context,
                     builder: (builder) {
                       return bottomSheet(newEngraisname);
                     },
                   );
-                  if(source != null) {
+                  if (source != null) {
                     await takePhoto(source, newEngraisname);
                   } else {
                     createEngrais(newEngraisname: newEngraisname);
