@@ -1,7 +1,10 @@
+import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
 import 'package:flutter/material.dart';
 
 class Voyages extends StatefulWidget {
-  const Voyages({Key? key}) : super(key: key);
+  final Voyage transport;
+  final Future<void> Function(Voyage) update;
+  const Voyages({Key? key, required this.transport, required this.update}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -10,14 +13,19 @@ class Voyages extends StatefulWidget {
 
 class _VoyagesState extends State<Voyages> {
   final TextEditingController _nombrevoyage = TextEditingController();
-  final TextEditingController _descvoyage = TextEditingController();
   final TextEditingController _coutvoyage = TextEditingController();
   @override
   void dispose() {
     super.dispose();
     _nombrevoyage.dispose();
     _coutvoyage.dispose();
-    _descvoyage.dispose();
+  }
+
+  @override
+  void initState() {
+    _nombrevoyage.text = widget.transport.nombres.toString();
+    _coutvoyage.text = widget.transport.cout.toString();
+    super.initState();
   }
 
   @override
@@ -59,18 +67,16 @@ class _VoyagesState extends State<Voyages> {
               ),
               const SizedBox(height: 30),
               buildTextFieldWithEditIcon(
-                hintText: "Description des Voyages",
-                controller: _descvoyage,
-              ),
-              const SizedBox(height: 30),
-              buildTextFieldWithEditIcon(
                 hintText: "Cout",
                 controller: _coutvoyage,
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 50, left: 8),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    final tmp = Voyage(nombres: int.parse(_nombrevoyage.text), cout: double.parse(_coutvoyage.text));
+                    widget.update(tmp);
+                    },
                   child: const Text('Enregistrer'),
                 ),
               ),

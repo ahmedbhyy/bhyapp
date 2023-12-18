@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Autres extends StatefulWidget {
-  const Autres({super.key});
+  final String autres;
+  final Future<void> Function(String) updatestate;
+  const Autres({super.key, required this.autres, required this.updatestate});
 
   @override
   State<Autres> createState() => _AutresState();
@@ -13,6 +15,12 @@ class _AutresState extends State<Autres> {
   void dispose() {
     super.dispose();
     _autredetaile.dispose();
+  }
+
+  @override
+  void initState() {
+    _autredetaile.text = widget.autres;
+    super.initState();
   }
 
   @override
@@ -43,7 +51,9 @@ class _AutresState extends State<Autres> {
               Padding(
                 padding: const EdgeInsets.only(top: 50, left: 8),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    widget.updatestate(_autredetaile.text);
+                  },
                   child: const Text('Enregistrer'),
                 ),
               ),
