@@ -1,7 +1,11 @@
+import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Maindoeuvre extends StatefulWidget {
-  const Maindoeuvre({super.key});
+  final Oeuvre oeuvre;
+  final Future<void> Function(Oeuvre) updateremotestate;
+  const Maindoeuvre({super.key, required this.oeuvre, required this.updateremotestate});
 
   @override
   State<Maindoeuvre> createState() => _MaindoeuvreState();
@@ -101,27 +105,39 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
               const SizedBox(height: 10),
               buildTextFieldWithEditIcon(
                 hintText: "Nombre d'Hommes",
-                controller: _nombrehomme,
+                controller: _nombrehomme2,
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
                 hintText: "Charge",
-                controller: _chargehomme,
+                controller: _chargehomme2,
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
                 hintText: "Nombre de Femmes",
-                controller: _nombrefemme,
+                controller: _nombrefemme2,
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
                 hintText: "Charge",
-                controller: _chargefemme,
+                controller: _chargefemme2,
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10, left: 250),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Oeuvre tmp = Oeuvre(
+                        matin_homme: int.parse(_nombrehomme.text),
+                        matin_femme: int.parse(_nombrehomme.text),
+                        matin_charge_homme: double.parse(_chargehomme.text),
+                        matin_charge_femme: double.parse(_chargefemme.text),
+                        midi_homme: int.parse(_nombrehomme2.text),
+                        midi_femme: int.parse(_nombrehomme2.text),
+                        midi_charge_homme: double.parse(_chargehomme2.text),
+                        midi_charge_femme: double.parse(_chargefemme2.text),
+                    );
+                    widget.updateremotestate(tmp);
+                  },
                   child: const Text('Enregistrer'),
                 ),
               ),
