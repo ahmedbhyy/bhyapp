@@ -34,6 +34,20 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
   }
 
   @override
+  void initState() {
+    print(widget.oeuvre.midi_homme);
+    _nombrehomme.text = widget.oeuvre.matin_homme.toString();
+    _nombrehomme2.text = widget.oeuvre.midi_homme.toString();
+    _nombrefemme.text = widget.oeuvre.matin_femme.toString();
+    _nombrefemme2.text = widget.oeuvre.midi_femme.toString();
+    _chargehomme.text = widget.oeuvre.matin_charge_homme.toString();
+    _chargefemme.text = widget.oeuvre.matin_charge_femme.toString();
+    _chargefemme2.text = widget.oeuvre.midi_charge_femme.toString();
+    _chargehomme2.text = widget.oeuvre.midi_charge_homme.toString();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -71,7 +85,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
-                hintText: "Charge",
+                hintText: "Charge homme",
                 controller: _chargehomme,
               ),
               const SizedBox(height: 20),
@@ -81,16 +95,10 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
-                hintText: "Charge",
+                hintText: "Charge femme",
                 controller: _chargefemme,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, left: 250),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Enregistrer'),
-                ),
-              ),
+              SizedBox(height: 20,),
               const Text(
                 'Aprés Midi',
                 style: TextStyle(
@@ -109,7 +117,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
-                hintText: "Charge",
+                hintText: "Charge homme",
                 controller: _chargehomme2,
               ),
               const SizedBox(height: 20),
@@ -119,7 +127,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
-                hintText: "Charge",
+                hintText: "Charge femme",
                 controller: _chargefemme2,
               ),
               Padding(
@@ -128,11 +136,11 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                   onPressed: () {
                     Oeuvre tmp = Oeuvre(
                         matin_homme: int.parse(_nombrehomme.text),
-                        matin_femme: int.parse(_nombrehomme.text),
+                        matin_femme: int.parse(_nombrefemme.text),
                         matin_charge_homme: double.parse(_chargehomme.text),
                         matin_charge_femme: double.parse(_chargefemme.text),
                         midi_homme: int.parse(_nombrehomme2.text),
-                        midi_femme: int.parse(_nombrehomme2.text),
+                        midi_femme: int.parse(_nombrefemme2.text),
                         midi_charge_homme: double.parse(_chargehomme2.text),
                         midi_charge_femme: double.parse(_chargefemme2.text),
                     );
