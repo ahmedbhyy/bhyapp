@@ -191,8 +191,7 @@ class _EngraisHomeState extends State<EngraisHome> {
   }
 
   void createEngrais(
-      {String path =
-          "https://www.alpack.ie/wp-content/uploads/1970/01/MULTIBOX2-scaled.jpg",
+      {String path = "https://cdn-icons-png.flaticon.com/512/1670/1670075.png",
       required String newEngraisname}) {
     if (newEngraisname.isNotEmpty) {
       final db = FirebaseFirestore.instance;
