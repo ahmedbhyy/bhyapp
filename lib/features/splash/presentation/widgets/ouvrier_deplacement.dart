@@ -108,44 +108,42 @@ class _OuvrierDeplacementState extends State<OuvrierDeplacement> {
 
   Widget _generateBottomSheet(BuildContext context) {
     DateTime date = DateTime.now();
-    return Padding(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.work_outline),
-                  label: Text("description du déplacement"),
-                ),
-              ),
-              const SizedBox(height: 20,),
-              SizedBox(
-                height: 400,
-                child: SingleChildScrollView(
-                  child: CalendarDatePicker(
-                    initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
-                    lastDate: DateTime.now().add(const Duration(days: 366)),
-                    onDateChanged: (DateTime value) {
-                      date = value;
-                    },
-                    currentDate: DateTime.now(),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.work_outline),
+                    label: Text("description du déplacement"),
                   ),
                 ),
-              )
-            ],
-          ),
-          FilledButton(
-              onPressed: () {
-                final tmp = Deplacement(description: controller.text, date: date);
-                Navigator.pop(context, tmp);
-              },
-              child: const Center(child: Text("Ajouter un déplacement")))
-        ],
+                const SizedBox(height: 20,),
+                CalendarDatePicker(
+                  initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                  lastDate: DateTime.now().add(const Duration(days: 366)),
+                  onDateChanged: (DateTime value) {
+                    date = value;
+                  },
+                  currentDate: DateTime.now(),
+                ),
+                const SizedBox(height: 70,)
+              ],
+            ),
+            FilledButton(
+                onPressed: () {
+                  final tmp = Deplacement(description: controller.text, date: date);
+                  Navigator.pop(context, tmp);
+                },
+                child: const Center(child: Text("Ajouter un déplacement")))
+          ],
+        ),
       ),
     );
   }

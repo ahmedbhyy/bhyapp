@@ -110,60 +110,58 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
 
   Widget _generateBottomSheet(BuildContext context) {
     DateTime date = DateTime.now();
-    return Padding(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              TextField(
-                onSubmitted: (val) {
-
-                },
-                controller: descController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.card_travel_outlined),
-                  label: Text("description du voyage"),
-                ),
-              ),
-              const SizedBox(height: 20,),
-              TextField(
-                onSubmitted: (val) {
-
-                },
-                controller: dieselController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.local_gas_station_outlined),
-                  label: Text("quantité du diesel"),
-                ),
-              ),
-              const SizedBox(height: 20,),
-              SizedBox(
-                height: 350,
-                child: SingleChildScrollView(
-                  child: CalendarDatePicker(
-                    initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
-                    lastDate: DateTime.now().add(const Duration(days: 366)),
-                    onDateChanged: (DateTime value) {
-                      date = value;
-                    },
-                    currentDate: DateTime.now(),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                TextField(
+                  onSubmitted: (val) {
+      
+                  },
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.card_travel_outlined),
+                    label: Text("description du voyage"),
                   ),
                 ),
-              )
-            ],
-          ),
-          FilledButton(
-              onPressed: () {
-                final tmp = Voyage(description: descController.text, date: date, diesel: double.parse(dieselController.text));
-                Navigator.pop(context, tmp);
-              },
-              child: const Center(child: Text("Ajouter un voyage")))
-        ],
+                const SizedBox(height: 20,),
+                TextField(
+                  onSubmitted: (val) {
+      
+                  },
+                  controller: dieselController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.local_gas_station_outlined),
+                    label: Text("quantité du diesel"),
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                CalendarDatePicker(
+                  initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                  lastDate: DateTime.now().add(const Duration(days: 366)),
+                  onDateChanged: (DateTime value) {
+                    date = value;
+                  },
+                  currentDate: DateTime.now(),
+                ),
+                const SizedBox(height: 50,)
+              ],
+            ),
+            FilledButton(
+                onPressed: () {
+                  final tmp = Voyage(description: descController.text, date: date, diesel: double.parse(dieselController.text));
+                  Navigator.pop(context, tmp);
+                },
+                child: const Center(child: Text("Ajouter un voyage")))
+          ],
+        ),
       ),
     );
   }

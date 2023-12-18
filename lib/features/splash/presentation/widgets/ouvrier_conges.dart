@@ -109,47 +109,45 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
   Widget _generateBottomSheet(BuildContext context) {
 
     DateTime date = DateTime.now();
-    return Padding(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              TextField(
-                onSubmitted: (val) {
-
-                },
-                controller: controller,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.sick),
-                  label: Text("cause du congés"),
-                ),
-              ),
-              const SizedBox(height: 20,),
-              SizedBox(
-                height: 400,
-                child: SingleChildScrollView(
-                  child: CalendarDatePicker(
-                    initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
-                    lastDate: DateTime.now().add(const Duration(days: 366)),
-                    onDateChanged: (DateTime value) {
-                      date = value;
-                    },
-                    currentDate: DateTime.now(),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                TextField(
+                  onSubmitted: (val) {
+      
+                  },
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.sick),
+                    label: Text("cause du congés"),
                   ),
                 ),
-              )
-            ],
-          ),
-          FilledButton(
-              onPressed: () {
-                final tmp = Conges(cause: controller.text, date: date);
-                Navigator.pop(context, tmp);
-              },
-              child: const Center(child: Text("Ajouter un congés")))
-        ],
+                const SizedBox(height: 20,),
+                CalendarDatePicker(
+                  initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                  lastDate: DateTime.now().add(const Duration(days: 366)),
+                  onDateChanged: (DateTime value) {
+                    date = value;
+                  },
+                  currentDate: DateTime.now(),
+                ),
+                const SizedBox(height: 70,)
+              ],
+            ),
+            FilledButton(
+                onPressed: () {
+                  final tmp = Conges(cause: controller.text, date: date);
+                  Navigator.pop(context, tmp);
+                },
+                child: const Center(child: Text("Ajouter un congés")))
+          ],
+        ),
       ),
     );
   }
