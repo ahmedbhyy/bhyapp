@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:bhyapp/features/splash/presentation/widgets/about_us.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/help_center.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/edit_profile.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/weather.dart';
@@ -98,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -124,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Profil Settings',
+                          'Edit Profil',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -133,54 +132,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             letterSpacing: 4.08,
                           ),
                         ),
-                        SizedBox(width: 18),
+                        SizedBox(width: 90),
                         Icon(
                           Icons.settings,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HelpCenter(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0x0042D351),
-                    shape: RoundedRectangleBorder(
-                      side:
-                          const BorderSide(width: 1, color: Color(0xFF191919)),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: Container(
-                    width: 300,
-                    height: 40,
-                    alignment: Alignment.center,
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Help Center',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontFamily: 'Michroma',
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 4.08,
-                          ),
-                        ),
-                        SizedBox(width: 70),
-                        Icon(
-                          Icons.help,
                           color: Colors.white,
                           size: 24,
                         ),
@@ -241,7 +195,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Stack(children: <Widget>[
         CircleAvatar(
           radius: 80.0,
-          backgroundImage: FileImage(File(_imageFile.path)),
+          backgroundImage: _imageFile.path.isNotEmpty
+              ? FileImage(File(_imageFile.path))
+              : null,
+          backgroundColor: Colors.grey,
+          child: _imageFile.path.isNotEmpty
+              ? null
+              : const Icon(
+                  Icons.person,
+                  color: Colors.teal,
+                  size: 105.0,
+                ),
         ),
         Positioned(
           bottom: 20.0,

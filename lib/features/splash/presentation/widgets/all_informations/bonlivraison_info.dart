@@ -1,3 +1,4 @@
+import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
 
 class BonLivraisonInfo extends StatefulWidget {
@@ -10,7 +11,7 @@ class BonLivraisonInfo extends StatefulWidget {
 class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
   final TextEditingController _nnn1 = TextEditingController();
   TextEditingController get controller => _nnn1;
-  final TextEditingController _datebonliv = TextEditingController();
+  TextEditingController _datebonliv = TextEditingController();
   final TextEditingController _nomdesociete = TextEditingController();
   final TextEditingController _numbonliv = TextEditingController();
   final TextEditingController _descrip = TextEditingController();
@@ -69,16 +70,23 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
               width: 300,
               child: Column(
                 children: [
-                  TextField(
-                    controller: _datebonliv,
+                  DateFormatField(
+                    type: DateFormatType.type2,
                     decoration: const InputDecoration(
-                      labelText: 'Date',
-                      labelStyle: TextStyle(fontSize: 20),
-                      icon: Icon(Icons.date_range),
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                      border: InputBorder.none,
+                      label: Text("Date du Bon"),
                     ),
-                    maxLines: null,
+                    onComplete: (date) {
+                      setState(() {
+                        _datebonliv = date as TextEditingController;
+                      });
+                    },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _nomdesociete,
                     decoration: const InputDecoration(

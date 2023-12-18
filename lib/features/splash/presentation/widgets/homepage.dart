@@ -4,6 +4,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/bon_de_
 import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/demande_prix.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/facture_administrative.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/note_reglement.dart';
+
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/boncommande_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonlivraison_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info.dart';
@@ -12,6 +13,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/all_informations/dev
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/factureadmin_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/notereglement_info.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/rapport_adminn.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/requete_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/bon_sortie.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/facture.dart';
@@ -234,6 +236,41 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Visibility(
+              visible: roles[widget.email] == "admin",
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const RapportAdmin()),
+                  );
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0),
+                  ),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'images/rapport2.png',
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Les Rapports Journaliers (Admin)',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

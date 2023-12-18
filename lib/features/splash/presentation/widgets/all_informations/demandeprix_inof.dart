@@ -1,3 +1,4 @@
+import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
 
 class DemandePrixInfo extends StatefulWidget {
@@ -10,7 +11,7 @@ class DemandePrixInfo extends StatefulWidget {
 class _DemandePrixInfoState extends State<DemandePrixInfo> {
   final TextEditingController _nnn4 = TextEditingController();
   TextEditingController get controller => _nnn4;
-  final TextEditingController _dateprix = TextEditingController();
+  TextEditingController _dateprix = TextEditingController();
   final TextEditingController _nomdesociete4 = TextEditingController();
   final TextEditingController _quantiteprix = TextEditingController();
   final TextEditingController _descriprixadmin = TextEditingController();
@@ -67,16 +68,22 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
               width: 350,
               child: Column(
                 children: [
-                  TextField(
-                    controller: _dateprix,
+                  DateFormatField(
+                    type: DateFormatType.type2,
                     decoration: const InputDecoration(
-                      labelText: 'Date de Demande',
-                      labelStyle: TextStyle(fontSize: 20),
-                      icon: Icon(Icons.date_range),
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                      border: InputBorder.none,
+                      label: Text("Date de Demande"),
                     ),
-                    maxLines: null,
+                    onComplete: (date) {
+                      setState(() {
+                        _dateprix = date as TextEditingController;
+                      });
+                    },
                   ),
-                  const SizedBox(height: 20),
                   TextField(
                     controller: _nomdesociete4,
                     decoration: const InputDecoration(

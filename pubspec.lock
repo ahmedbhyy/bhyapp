@@ -105,6 +105,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.3"
+  date_format_field:
+    dependency: "direct main"
+    description:
+      name: date_format_field
+      sha256: "87f83992a76c258ee42f157c6f3c899f1cccacbd517c68297e21dbbcf8dd4448"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   dropdown_button2:
     dependency: "direct main"
     description:

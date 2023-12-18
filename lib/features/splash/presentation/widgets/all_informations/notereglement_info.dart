@@ -1,3 +1,4 @@
+import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
 
 class NoteReglementInfo extends StatefulWidget {
@@ -14,7 +15,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
   final TextEditingController _numfacture = TextEditingController();
   final TextEditingController _montantfac = TextEditingController();
   final TextEditingController _modepaiment = TextEditingController();
-  final TextEditingController _datedecheance = TextEditingController();
+  TextEditingController _datedecheance = TextEditingController();
 
   @override
   void dispose() {
@@ -110,17 +111,22 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     maxLines: null,
                   ),
                   const SizedBox(height: 20),
-                  TextField(
-                    controller: _datedecheance,
+                  DateFormatField(
+                    type: DateFormatType.type2,
                     decoration: const InputDecoration(
-                      labelText: 'Date d\'échéance',
-                      labelStyle: TextStyle(fontSize: 20),
-                      icon: Icon(Icons.date_range),
-                      
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                      border: InputBorder.none,
+                      label: Text("Date d'échéance"),
                     ),
-                    maxLines: null,
+                    onComplete: (date) {
+                      setState(() {
+                        _datedecheance = date as TextEditingController;
+                      });
+                    },
                   ),
-                  const SizedBox(height: 20),
                 ],
               ),
             ),

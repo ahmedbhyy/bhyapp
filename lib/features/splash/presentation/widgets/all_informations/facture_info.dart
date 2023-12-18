@@ -1,3 +1,4 @@
+import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 
@@ -13,7 +14,7 @@ class _FactureInfoState extends State<FactureInfo> {
   TextEditingController get controller => _numfacc;
   final TextEditingController _numerodufacture = TextEditingController();
   final TextEditingController _nomdesociete = TextEditingController();
-  final TextEditingController _datefacture = TextEditingController();
+  TextEditingController _datefacture = TextEditingController();
   final TextEditingController _designation1 = TextEditingController();
   final TextEditingController _montant = TextEditingController();
   final TextEditingController _totalfacture = TextEditingController();
@@ -157,6 +158,22 @@ class _FactureInfoState extends State<FactureInfo> {
               width: 300,
               child: Column(
                 children: [
+                  DateFormatField(
+                    type: DateFormatType.type2,
+                    decoration: const InputDecoration(
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                      border: InputBorder.none,
+                      label: Text("Date du Facture"),
+                    ),
+                    onComplete: (date) {
+                      setState(() {
+                        _datefacture = date as TextEditingController;
+                      });
+                    },
+                  ),
                   TextField(
                     controller: _numerodufacture,
                     decoration: const InputDecoration(
@@ -173,16 +190,6 @@ class _FactureInfoState extends State<FactureInfo> {
                       labelText: 'Nom de la société',
                       labelStyle: TextStyle(fontSize: 20),
                       icon: Icon(Icons.work),
-                    ),
-                    maxLines: null,
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _datefacture,
-                    decoration: const InputDecoration(
-                      labelText: 'Date de la facture',
-                      labelStyle: TextStyle(fontSize: 20),
-                      icon: Icon(Icons.date_range),
                     ),
                     maxLines: null,
                   ),

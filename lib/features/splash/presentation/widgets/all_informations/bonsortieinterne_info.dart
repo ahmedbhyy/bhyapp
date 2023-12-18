@@ -1,4 +1,5 @@
 import 'package:bhyapp/features/splash/presentation/widgets/bon_sortie.dart';
+import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
 
 class BonSortieInfo extends StatefulWidget {
@@ -16,7 +17,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
   final TextEditingController _destination = TextEditingController();
   final TextEditingController _designation = TextEditingController();
   final TextEditingController _quantite = TextEditingController();
-  final TextEditingController _datebon = TextEditingController();
+  TextEditingController _datebon = TextEditingController();
   @override
   void dispose() {
     super.dispose();
@@ -154,22 +155,28 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
             title: Text(hintText),
             content: Column(
               children: [
+                DateFormatField(
+                  type: DateFormatType.type2,
+                  decoration: const InputDecoration(
+                    labelStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                    border: InputBorder.none,
+                    label: Text("Date du Bon interne"),
+                  ),
+                  onComplete: (date) {
+                    setState(() {
+                      _datebon = date as TextEditingController;
+                    });
+                  },
+                ),
                 TextField(
                   controller: _numerodubon,
                   decoration: const InputDecoration(
                     labelText: 'N° du bon',
                     labelStyle: TextStyle(fontSize: 20),
                     icon: Icon(Icons.numbers),
-                  ),
-                  maxLines: null,
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _datebon,
-                  decoration: const InputDecoration(
-                    labelText: 'Date du bon',
-                    labelStyle: TextStyle(fontSize: 20),
-                    icon: Icon(Icons.date_range),
                   ),
                   maxLines: null,
                 ),

@@ -1,3 +1,4 @@
+import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
 
 class FactureAdminInfo extends StatefulWidget {
@@ -10,7 +11,7 @@ class FactureAdminInfo extends StatefulWidget {
 class _FactureAdminInfoState extends State<FactureAdminInfo> {
   final TextEditingController _nnn2 = TextEditingController();
   TextEditingController get controller => _nnn2;
-  final TextEditingController _datefacadmin = TextEditingController();
+  TextEditingController _datefacadmin = TextEditingController();
   final TextEditingController _nomdesociete2 = TextEditingController();
   final TextEditingController _numfacadmin = TextEditingController();
   final TextEditingController _descrifacadmin = TextEditingController();
@@ -69,14 +70,21 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
               width: 350,
               child: Column(
                 children: [
-                  TextField(
-                    controller: _datefacadmin,
+                  DateFormatField(
+                    type: DateFormatType.type2,
                     decoration: const InputDecoration(
-                      labelText: 'Date de la Facture',
-                      labelStyle: TextStyle(fontSize: 20),
-                      icon: Icon(Icons.date_range),
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                      border: InputBorder.none,
+                      label: Text("Date de Facture"),
                     ),
-                    maxLines: null,
+                    onComplete: (date) {
+                      setState(() {
+                        _datefacadmin = date as TextEditingController;
+                      });
+                    },
                   ),
                   const SizedBox(height: 20),
                   TextField(
