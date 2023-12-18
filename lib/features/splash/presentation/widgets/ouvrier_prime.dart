@@ -108,48 +108,46 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
 
   Widget _generateBottomSheet(BuildContext context) {
     DateTime date = DateTime.now();
-    return Padding(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              TextField(
-                onSubmitted: (val) {
-                    
-                },
-                controller: controller,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.euro),
-                  label: Text("montant de la prime"),
-                ),
-              ),
-              const SizedBox(height: 20,),
-              SizedBox(
-                height: 400,
-                child: SingleChildScrollView(
-                  child: CalendarDatePicker(
-                    initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
-                    lastDate: DateTime.now().add(const Duration(days: 366)),
-                    onDateChanged: (DateTime value) {
-                      date = value;
-                    },
-                    currentDate: DateTime.now(),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                TextField(
+                  onSubmitted: (val) {
+                      
+                  },
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.euro),
+                    label: Text("montant de la prime"),
                   ),
                 ),
-              )
-            ],
-          ),
-          FilledButton(
-              onPressed: () {
-                final tmp = Prime(montant: double.parse(controller.text), date: date);
-                Navigator.pop(context, tmp);
-              }, 
-              child: const Center(child: Text("Ajouter une prime")))
-        ],
+                const SizedBox(height: 20,),
+                CalendarDatePicker(
+                  initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                  lastDate: DateTime.now().add(const Duration(days: 366)),
+                  onDateChanged: (DateTime value) {
+                    date = value;
+                  },
+                  currentDate: DateTime.now(),
+                ),
+                const SizedBox(height: 70,)
+              ],
+            ),
+            FilledButton(
+                onPressed: () {
+                  final tmp = Prime(montant: double.parse(controller.text), date: date);
+                  Navigator.pop(context, tmp);
+                }, 
+                child: const Center(child: Text("Ajouter une prime")))
+          ],
+        ),
       ),
     );
   }

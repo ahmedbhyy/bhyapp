@@ -2,6 +2,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/main_douvre.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/taches.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/autres.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/voyage_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class RapportJournalier extends StatefulWidget {
@@ -14,6 +15,14 @@ class RapportJournalier extends StatefulWidget {
 
 class _RapportJournalier extends State<RapportJournalier> {
   DateTime date = DateTime.now();
+  Oeuvre main_oeuvre = Oeuvre.nil;
+
+  @override
+  void initState() {
+    _refreshmenusdata(to:date);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +51,7 @@ class _RapportJournalier extends State<RapportJournalier> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const Maindoeuvre()),
+                        builder: (context) => Maindoeuvre(oeuvre: main_oeuvre, updateremotestate: updateremoteoeuvre,)),
                   );
                 },
                 child: Card(
@@ -60,7 +69,7 @@ class _RapportJournalier extends State<RapportJournalier> {
                       const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
-                          'Main D\'oeuvre',
+                          "Main D'oeuvre",
                           style: TextStyle(fontSize: 20),
                         ),
                       ),
@@ -185,9 +194,65 @@ class _RapportJournalier extends State<RapportJournalier> {
 
     if (picked != null) {
       var normalised = picked.copyWith(hour: 0, minute: 0, millisecond: 0);
+      await _refreshmenusdata(to:normalised);
       setState(() {
         date = normalised;
       });
     }
   }
+
+  Future<void> updateremoteoeuvre(Oeuvre tmp) async {
+    final db = FirebaseFirestore.instance;
+    final rapjournalier = db.collection('rapport_journalier');
+    final today = rapjournalier.doc(date.toString());
+    final doc = await today.get();
+
+  }
+
+  Future<void> _refreshmenusdata({required DateTime to}) async {
+    final db = FirebaseFirestore.instance;
+    final rapjournalier = db.collection('rapport_journalier');
+    final today = rapjournalier.doc(to.toString());
+    final doc = await today.get();
+    setState(() {
+      main_oeuvre  = (doc.data()?['main'] ?? Oeuvre.nil_map).map((e) => Oeuvre(
+        matin_charge_homme: e['matin_charge_homme'],
+        matin_femme: e['matin_femme'],
+        matin_homme: e['matin_homme'],
+        matin_charge_femme: e['matin_charge_femme'],
+        midi_charge_homme: e['midi_charge_homme'],
+        midi_femme: e['matin_femme'],
+        midi_homme: e['matin_homme'],
+        midi_charge_femme: e['midi_charge_femme'],
+      ));
+    });
+
+
+  }
+}
+
+class Oeuvre {
+  final int matin_femme;
+  final int matin_homme;
+  final double matin_charge_homme;
+  final double matin_charge_femme;
+  final int midi_femme;
+  final int midi_homme;
+  final double midi_charge_homme;
+  final double midi_charge_femme;
+
+  static final nil = Oeuvre(matin_homme: 0, matin_charge_homme: 0, matin_charge_femme: 0, midi_femme: 0, midi_homme: 0, midi_charge_homme: 0, midi_charge_femme: 0, matin_femme: 0 );
+  static final nil_map = {
+    'matin_charge_homme': 0,
+    'matin_femme': 0,
+    'matin_homme': 0,
+    'matin_charge_femme': 0,
+    'midi_charge_homme': 0,
+    'midi_femme': 0,
+    'midi_homme': 0,
+    'midi_charge_femme': 0,
+  };
+
+
+  Oeuvre({ required this.matin_homme, required this.matin_charge_femme, required this.matin_charge_homme, required this.midi_femme, required this.midi_homme, required this.midi_charge_femme, required this.midi_charge_homme, required this.matin_femme});
 }
