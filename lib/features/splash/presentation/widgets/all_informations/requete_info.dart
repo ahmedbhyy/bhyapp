@@ -210,34 +210,14 @@ class _RequeteInfoState extends State<RequeteInfo> {
             itemCount: wait.length,
             separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, index)  {
-              final request = wait[index];
-              return ListTile(
-                leading: Icon(request.type.icon, color: Colors.green.shade600,),
-                contentPadding: const EdgeInsets.all(8.0),
-                isThreeLine: true,
-                subtitle: Text('${DateFormat('yyyy-MM-dd').format(request.date)} | ${request.type.label}', style: TextStyle(color: Colors.green.shade500),),
-                title: Text(request.title,style: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
-                onTap: () {
-          
-                },
-              );
+              return CustomTile(request: wait[index]);
             },
           ),
             ListView.separated(
               itemCount: finished.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index)  {
-                final request = finished[index];
-                return ListTile(
-                  leading: Icon(request.type.icon, color: Colors.green.shade600,),
-                  contentPadding: const EdgeInsets.all(8.0),
-                  isThreeLine: true,
-                  subtitle: Text('${DateFormat('yyyy-MM-dd').format(request.date)} | ${request.type.label}', style: TextStyle(color: Colors.green.shade500),),
-                  title: Text(request.title,style: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
-                  onTap: () {
-
-                  },
-                );
+                return CustomTile(request: finished[index]);
               },
             ),
           ]
@@ -246,4 +226,51 @@ class _RequeteInfoState extends State<RequeteInfo> {
     );
   }
 
+}
+
+
+class CustomTile extends StatefulWidget {
+  final Request request;
+  const CustomTile({super.key, required this.request});
+
+  @override
+  State<CustomTile> createState() => _CustomTileState();
+}
+
+class _CustomTileState extends State<CustomTile> {
+  double _height = 0;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      //height: 110,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            leading: Icon(widget.request.type.icon, color: Colors.green.shade600,),
+            contentPadding: const EdgeInsets.all(8.0),
+            isThreeLine: true,
+            subtitle: Text('${DateFormat('yyyy-MM-dd').format(widget.request.date)} | ${widget.request.type.label}', style: TextStyle(color: Colors.green.shade500),),
+            title: Text(widget.request.title,style: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
+            onTap: () {
+              setState(() {
+                _height = 250 - _height;
+              });
+
+            },
+          ),
+          AnimatedContainer(
+              height: _height,
+              duration: const Duration(milliseconds: 250),
+              child: SingleChildScrollView(
+                child: Padding(padding: const EdgeInsets.all(15),
+                  child: Text(widget.request.desc, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 19),),
+                ),
+              )
+          ),
+        ],
+      ),
+    );
+  }
 }
