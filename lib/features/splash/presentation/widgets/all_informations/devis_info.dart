@@ -11,7 +11,7 @@ class DevisInfo extends StatefulWidget {
 class _DevisInfoState extends State<DevisInfo> {
   final TextEditingController _nnn3 = TextEditingController();
   TextEditingController get controller => _nnn3;
-  TextEditingController _datedeviss = TextEditingController();
+  DateTime? _datedeviss;
   final TextEditingController _nomdesociete3 = TextEditingController();
   final TextEditingController _numdevisadmin = TextEditingController();
   final TextEditingController _descridevisadmin = TextEditingController();
@@ -20,7 +20,6 @@ class _DevisInfoState extends State<DevisInfo> {
   @override
   void dispose() {
     super.dispose();
-    _datedeviss.dispose();
     _nomdesociete3.dispose();
     _numdevisadmin.dispose();
     _descridevisadmin.dispose();
@@ -105,7 +104,9 @@ class _DevisInfoState extends State<DevisInfo> {
                     ),
                     onComplete: (date) {
                       setState(() {
-                        _datedeviss = date as TextEditingController;
+                        if (date != null) {
+                          _datedeviss = date;
+                        }
                       });
                     },
                   ),

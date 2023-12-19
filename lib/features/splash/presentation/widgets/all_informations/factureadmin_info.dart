@@ -11,7 +11,7 @@ class FactureAdminInfo extends StatefulWidget {
 class _FactureAdminInfoState extends State<FactureAdminInfo> {
   final TextEditingController _nnn2 = TextEditingController();
   TextEditingController get controller => _nnn2;
-  TextEditingController _datefacadmin = TextEditingController();
+  DateTime? _datefacadmin;
   final TextEditingController _nomdesociete2 = TextEditingController();
   final TextEditingController _numfacadmin = TextEditingController();
   final TextEditingController _descrifacadmin = TextEditingController();
@@ -20,7 +20,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
   @override
   void dispose() {
     super.dispose();
-    _datefacadmin.dispose();
+
     _nomdesociete2.dispose();
     _numfacadmin.dispose();
     _descrifacadmin.dispose();
@@ -105,7 +105,9 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     ),
                     onComplete: (date) {
                       setState(() {
-                        _datefacadmin = date as TextEditingController;
+                        if (date != null) {
+                          _datefacadmin = date;
+                        }
                       });
                     },
                   ),

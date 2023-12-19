@@ -17,7 +17,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
   final TextEditingController _destination = TextEditingController();
   final TextEditingController _designation = TextEditingController();
   final TextEditingController _quantite = TextEditingController();
-  TextEditingController _datebon = TextEditingController();
+  DateTime? _datebon;
   @override
   void dispose() {
     super.dispose();
@@ -27,7 +27,6 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
     _designation.dispose();
     _quantite.dispose();
     _numboninterne.dispose();
-    _datebon.dispose();
   }
 
   List<BonSortieint> mainbonList = [
@@ -167,7 +166,9 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                   ),
                   onComplete: (date) {
                     setState(() {
-                      _datebon = date as TextEditingController;
+                      if (date != null) {
+                        _datebon = date;
+                      }
                     });
                   },
                 ),

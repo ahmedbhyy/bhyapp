@@ -15,7 +15,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
   final TextEditingController _numfacture = TextEditingController();
   final TextEditingController _montantfac = TextEditingController();
   final TextEditingController _modepaiment = TextEditingController();
-  TextEditingController _datedecheance = TextEditingController();
+  DateTime? _datedecheance;
 
   @override
   void dispose() {
@@ -24,7 +24,6 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
     _numfacture.dispose();
     _montantfac.dispose();
     _modepaiment.dispose();
-    _datedecheance.dispose();
   }
 
   @override
@@ -146,7 +145,9 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     ),
                     onComplete: (date) {
                       setState(() {
-                        _datedecheance = date as TextEditingController;
+                        if (date != null) {
+                          _datedecheance = date;
+                        }
                       });
                     },
                   ),

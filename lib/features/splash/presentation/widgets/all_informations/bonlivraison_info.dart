@@ -11,7 +11,7 @@ class BonLivraisonInfo extends StatefulWidget {
 class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
   final TextEditingController _nnn1 = TextEditingController();
   TextEditingController get controller => _nnn1;
-  TextEditingController _datebonliv = TextEditingController();
+  DateTime? _datebonliv;
   final TextEditingController _nomdesociete = TextEditingController();
   final TextEditingController _numbonliv = TextEditingController();
   final TextEditingController _descrip = TextEditingController();
@@ -20,7 +20,6 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
   @override
   void dispose() {
     super.dispose();
-    _datebonliv.dispose();
     _nomdesociete.dispose();
     _numbonliv.dispose();
     _descrip.dispose();
@@ -105,7 +104,9 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                     ),
                     onComplete: (date) {
                       setState(() {
-                        _datebonliv = date as TextEditingController;
+                        if (date != null) {
+                          _datebonliv = date;
+                        }
                       });
                     },
                   ),

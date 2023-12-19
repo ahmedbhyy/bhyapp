@@ -14,7 +14,7 @@ class _FactureInfoState extends State<FactureInfo> {
   TextEditingController get controller => _numfacc;
   final TextEditingController _numerodufacture = TextEditingController();
   final TextEditingController _nomdesociete = TextEditingController();
-  TextEditingController _datefacture = TextEditingController();
+  DateTime? _datefacture;
   final TextEditingController _designation1 = TextEditingController();
   final TextEditingController _montant = TextEditingController();
   final TextEditingController _totalfacture = TextEditingController();
@@ -25,7 +25,6 @@ class _FactureInfoState extends State<FactureInfo> {
     super.dispose();
     _numerodufacture.dispose();
     _nomdesociete.dispose();
-    _datefacture.dispose();
     _designation1.dispose();
     _quantite1.dispose();
     _montant.dispose();
@@ -171,7 +170,9 @@ class _FactureInfoState extends State<FactureInfo> {
                     ),
                     onComplete: (date) {
                       setState(() {
-                        _datefacture = date as TextEditingController;
+                        if (date != null) {
+                          _datefacture = date;
+                        }
                       });
                     },
                   ),

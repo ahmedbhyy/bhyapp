@@ -11,7 +11,7 @@ class DemandePrixInfo extends StatefulWidget {
 class _DemandePrixInfoState extends State<DemandePrixInfo> {
   final TextEditingController _nnn4 = TextEditingController();
   TextEditingController get controller => _nnn4;
-  TextEditingController _dateprix = TextEditingController();
+  DateTime? _dateprix;
   final TextEditingController _nomdesociete4 = TextEditingController();
   final TextEditingController _quantiteprix = TextEditingController();
   final TextEditingController _descriprixadmin = TextEditingController();
@@ -19,7 +19,6 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
   @override
   void dispose() {
     super.dispose();
-    _dateprix.dispose();
     _nomdesociete4.dispose();
     _descriprixadmin.dispose();
     _quantiteprix.dispose();
@@ -103,7 +102,9 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                     ),
                     onComplete: (date) {
                       setState(() {
-                        _dateprix = date as TextEditingController;
+                        if (date != null) {
+                          _dateprix = date;
+                        }
                       });
                     },
                   ),

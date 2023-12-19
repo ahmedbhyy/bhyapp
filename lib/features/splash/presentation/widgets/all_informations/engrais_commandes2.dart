@@ -11,7 +11,7 @@ class ToutsCommandes extends StatefulWidget {
 class _ToutsCommandesState extends State<ToutsCommandes> {
   final TextEditingController _nnn4 = TextEditingController();
   TextEditingController get controller => _nnn4;
-  TextEditingController _datedecomeng = TextEditingController();
+  DateTime? _datedecomeng;
   final TextEditingController _qte1 = TextEditingController();
   final TextEditingController _qte2 = TextEditingController();
   final TextEditingController _qte3 = TextEditingController();
@@ -27,7 +27,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
   @override
   void dispose() {
     super.dispose();
-    _datedecomeng.dispose();
+
     _qte1.dispose();
     _qte2.dispose();
     _qte3.dispose();
@@ -99,7 +99,9 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                     ),
                     onComplete: (date) {
                       setState(() {
-                        _datedecomeng = date as TextEditingController;
+                        if (date != null) {
+                          _datedecomeng = date;
+                        }
                       });
                     },
                   ),
