@@ -10,7 +10,6 @@ class OuvrierHeure extends StatefulWidget {
   State<OuvrierHeure> createState() => _OuvrierHeureState();
 }
 
-
 class _OuvrierHeureState extends State<OuvrierHeure> {
   final controller = TextEditingController();
   List<SupHour> supp = [];
@@ -25,7 +24,10 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
     final ouvrier = db.collection("ouvrier").doc(widget.id);
     ouvrier.get().then((doc) {
       setState(() {
-        supp = List<Map<String, dynamic>>.from((doc.data()?["heures_sup"] ?? []) as List).map((e) => SupHour(num: e['num'], date: DateTime.parse(e['date']))).toList();
+        supp = List<Map<String, dynamic>>.from(
+                (doc.data()?["heures_sup"] ?? []) as List)
+            .map((e) => SupHour(num: e['num'], date: DateTime.parse(e['date'])))
+            .toList();
       });
     });
     super.initState();
@@ -49,22 +51,19 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
             showDragHandle: true,
             scrollControlDisabledMaxHeightRatio: .8,
           );
-          if(res != null) {
+          if (res != null) {
             final db = FirebaseFirestore.instance;
             final ouvrier = db.collection("ouvrier").doc(widget.id);
             setState(() {
               supp.add(res);
               ouvrier.update({
-                "heures_sup": supp.map((e) => {
-                  "num": e.num,
-                  "date": e.date.toString()
-                })
+                "heures_sup":
+                    supp.map((e) => {"num": e.num, "date": e.date.toString()})
               });
             });
           }
         },
         child: const Icon(Icons.add),
-
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
@@ -86,17 +85,23 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
             child: ListView.separated(
               itemCount: supp.length,
               separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index)  {
+              itemBuilder: (context, index) {
                 final hsup = supp[index];
                 return ListTile(
-                  leading: Icon(Icons.timer_outlined, color: Colors.green.shade600,),
+                  leading: Icon(
+                    Icons.timer_outlined,
+                    color: Colors.green.shade600,
+                  ),
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
-                  subtitle: Text(DateFormat('yyyy-MM-dd').format(hsup.date), style: TextStyle(color: Colors.green.shade500),),
-                  title: Text(hsup.num.toString(),style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
-                  onTap: () {
-
-                  },
+                  subtitle: Text(
+                    DateFormat('yyyy-MM-dd').format(hsup.date),
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(hsup.num.toString(),
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () {},
                 );
               },
             ),
@@ -117,10 +122,9 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
             Column(
               children: [
                 TextField(
-                  onSubmitted: (val) {
-      
-                  },
+                  onSubmitted: (val) {},
                   controller: controller,
+                  maxLines: null,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -128,24 +132,31 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
                     label: Text("Nombres d'heures"),
                   ),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 CalendarDatePicker(
-                  initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(const Duration(days: 366)),
                   lastDate: DateTime.now().add(const Duration(days: 366)),
                   onDateChanged: (DateTime value) {
                     date = value;
                   },
                   currentDate: DateTime.now(),
                 ),
-                const SizedBox(height: 70,)
+                const SizedBox(
+                  height: 70,
+                )
               ],
             ),
             FilledButton(
                 onPressed: () {
-                  final tmp = SupHour(num: double.parse(controller.text), date: date);
+                  final tmp =
+                      SupHour(num: double.parse(controller.text), date: date);
                   Navigator.pop(context, tmp);
                 },
-                child: const Center(child: Text("ajouter heures supplémentaire")))
+                child:
+                    const Center(child: Text("ajouter heures supplémentaire")))
           ],
         ),
       ),

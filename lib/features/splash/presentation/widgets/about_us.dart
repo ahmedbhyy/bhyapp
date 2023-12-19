@@ -8,7 +8,7 @@ class AboutUs extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "About Us",
+          "Qui sommes-nous",
           style: TextStyle(
               fontFamily: 'Michroma',
               fontSize: 20,

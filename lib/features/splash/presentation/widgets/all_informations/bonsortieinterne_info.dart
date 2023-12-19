@@ -112,7 +112,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
               decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
-                  hintText: "chercher un Bon de sortie interne",
+                  labelText: "chercher un Bon de sortie interne",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -202,30 +202,36 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                 Column(
                   children: [
                     const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _designation,
-                            decoration: const InputDecoration(
-                              labelText: 'Désignation',
-                              labelStyle: TextStyle(fontSize: 14),
+                    IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _designation,
+                              decoration: const InputDecoration(
+                                labelText: 'Désignation',
+                                labelStyle: TextStyle(fontSize: 18),
+                              ),
+                              maxLines: null,
                             ),
-                            maxLines: null,
                           ),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: TextField(
-                            controller: _quantite,
-                            decoration: const InputDecoration(
-                              labelText: 'Quantité',
-                              labelStyle: TextStyle(fontSize: 15),
+                          const VerticalDivider(
+                            color: Colors.grey,
+                            thickness: 2,
+                            indent: 25,
+                          ),
+                          Expanded(
+                            child: TextField(
+                              controller: _quantite,
+                              decoration: const InputDecoration(
+                                labelText: 'Quantité',
+                                labelStyle: TextStyle(fontSize: 18),
+                              ),
+                              maxLines: null,
                             ),
-                            maxLines: null,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 20),
                   ],

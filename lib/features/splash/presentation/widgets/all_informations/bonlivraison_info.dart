@@ -55,6 +55,29 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
           ),
         ],
       ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              style: const TextStyle(fontSize: 17.0),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 20.0),
+                labelText: "chercher un Bon Livraison par (N°)",
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide:
+                      const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -63,10 +86,10 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: AlertDialog(
-            title: Text(hintText),
-            content: SizedBox(
+        return AlertDialog(
+          title: Text(hintText),
+          content: SingleChildScrollView(
+            child: SizedBox(
               width: 300,
               child: Column(
                 children: [
@@ -127,19 +150,19 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                 ],
               ),
             ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Enregistrer'),
-              ),
-            ],
           ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text('Enregistrer'),
+            ),
+          ],
         );
       },
     );

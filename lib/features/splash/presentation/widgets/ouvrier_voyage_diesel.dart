@@ -10,7 +10,6 @@ class OuvrierVoyageDiesel extends StatefulWidget {
   State<OuvrierVoyageDiesel> createState() => _OuvrierVoyageDieselState();
 }
 
-
 class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
   final descController = TextEditingController();
   final dieselController = TextEditingController();
@@ -26,7 +25,13 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
     final ouvrier = db.collection("ouvrier").doc(widget.id);
     ouvrier.get().then((doc) {
       setState(() {
-        voyages = List<Map<String, dynamic>>.from((doc.data()?["voyages"] ?? []) as List).map((e) => Voyage(description: e['desc'], diesel: e['diesel'], date: DateTime.parse(e['date']))).toList();
+        voyages = List<Map<String, dynamic>>.from(
+                (doc.data()?["voyages"] ?? []) as List)
+            .map((e) => Voyage(
+                description: e['desc'],
+                diesel: e['diesel'],
+                date: DateTime.parse(e['date'])))
+            .toList();
       });
     });
     super.initState();
@@ -50,23 +55,22 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
             showDragHandle: true,
             scrollControlDisabledMaxHeightRatio: .8,
           );
-          if(res != null) {
+          if (res != null) {
             final db = FirebaseFirestore.instance;
             final ouvrier = db.collection("ouvrier").doc(widget.id);
             setState(() {
               voyages.add(res);
               ouvrier.update({
                 "voyages": voyages.map((e) => {
-                  "diesel": e.diesel,
-                  "desc": e.description,
-                  "date": e.date.toString()
-                })
+                      "diesel": e.diesel,
+                      "desc": e.description,
+                      "date": e.date.toString()
+                    })
               });
             });
           }
         },
         child: const Icon(Icons.add),
-
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
@@ -88,17 +92,23 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
             child: ListView.separated(
               itemCount: voyages.length,
               separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index)  {
+              itemBuilder: (context, index) {
                 final voyage = voyages[index];
                 return ListTile(
-                  leading: Icon(Icons.local_gas_station_outlined, color: Colors.green.shade600,),
+                  leading: Icon(
+                    Icons.local_gas_station_outlined,
+                    color: Colors.green.shade600,
+                  ),
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
-                  subtitle: Text("${DateFormat('yyyy-MM-dd').format(voyage.date)} | ${voyage.diesel}L", style: TextStyle(color: Colors.green.shade500),),
-                  title: Text("${voyage.description}",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
-                  onTap: () {
-
-                  },
+                  subtitle: Text(
+                    "${DateFormat('yyyy-MM-dd').format(voyage.date)} | ${voyage.diesel}L",
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text("${voyage.description}",
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () {},
                 );
               },
             ),
@@ -119,21 +129,20 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
             Column(
               children: [
                 TextField(
-                  onSubmitted: (val) {
-      
-                  },
+                  onSubmitted: (val) {},
                   controller: descController,
+                  maxLines: null,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.card_travel_outlined),
                     label: Text("description du voyage"),
                   ),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 TextField(
-                  onSubmitted: (val) {
-      
-                  },
+                  onSubmitted: (val) {},
                   controller: dieselController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
@@ -142,21 +151,29 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
                     label: Text("quantité du diesel"),
                   ),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 CalendarDatePicker(
-                  initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(const Duration(days: 366)),
                   lastDate: DateTime.now().add(const Duration(days: 366)),
                   onDateChanged: (DateTime value) {
                     date = value;
                   },
                   currentDate: DateTime.now(),
                 ),
-                const SizedBox(height: 50,)
+                const SizedBox(
+                  height: 50,
+                )
               ],
             ),
             FilledButton(
                 onPressed: () {
-                  final tmp = Voyage(description: descController.text, date: date, diesel: double.parse(dieselController.text));
+                  final tmp = Voyage(
+                      description: descController.text,
+                      date: date,
+                      diesel: double.parse(dieselController.text));
                   Navigator.pop(context, tmp);
                 },
                 child: const Center(child: Text("Ajouter un voyage")))

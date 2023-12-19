@@ -53,6 +53,29 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
           ),
         ],
       ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              style: const TextStyle(fontSize: 17.0),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 20.0),
+                labelText: "chercher un Bon Commande par (Date)",
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide:
+                      const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -97,30 +120,36 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                   Column(
                     children: [
                       const SizedBox(height: 30),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _designation2,
-                              decoration: const InputDecoration(
-                                labelText: 'Désignation',
-                                labelStyle: TextStyle(fontSize: 14),
+                      IntrinsicHeight(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _designation2,
+                                decoration: const InputDecoration(
+                                  labelText: 'Désignation',
+                                  labelStyle: TextStyle(fontSize: 20),
+                                ),
+                                maxLines: null,
                               ),
-                              maxLines: null,
                             ),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: TextField(
-                              controller: _quantite2,
-                              decoration: const InputDecoration(
-                                labelText: 'Quantité',
-                                labelStyle: TextStyle(fontSize: 15),
+                            const VerticalDivider(
+                              color: Colors.grey,
+                              thickness: 2,
+                              indent: 25,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: _quantite2,
+                                decoration: const InputDecoration(
+                                  labelText: 'Quantité',
+                                  labelStyle: TextStyle(fontSize: 20),
+                                ),
+                                maxLines: null,
                               ),
-                              maxLines: null,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 20),
                     ],

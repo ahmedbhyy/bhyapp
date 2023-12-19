@@ -77,7 +77,7 @@ class _AutresState extends State<Autres> {
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 30.0, horizontal: 10.0),
-              hintText: hintText,
+              labelText: hintText,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
                 borderSide:

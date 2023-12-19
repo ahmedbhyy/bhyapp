@@ -10,7 +10,6 @@ class OuvrierPrime extends StatefulWidget {
   State<OuvrierPrime> createState() => _OuvrierPrimeState();
 }
 
-
 class _OuvrierPrimeState extends State<OuvrierPrime> {
   final controller = TextEditingController();
   List<Prime> primes = [];
@@ -25,7 +24,11 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
     final ouvrier = db.collection("ouvrier").doc(widget.id);
     ouvrier.get().then((doc) {
       setState(() {
-        primes = List<Map<String, dynamic>>.from((doc.data()?["primes"] ?? []) as List).map((e) => Prime(montant: e['montant'], date: DateTime.parse(e['date']))).toList();
+        primes = List<Map<String, dynamic>>.from(
+                (doc.data()?["primes"] ?? []) as List)
+            .map((e) =>
+                Prime(montant: e['montant'], date: DateTime.parse(e['date'])))
+            .toList();
       });
     });
     super.initState();
@@ -39,32 +42,29 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
         child: Container(height: 50.0),
       ),
       floatingActionButton: FloatingActionButton(
-          shape: const CircleBorder(),
-          onPressed: () async {
-            final res = await showModalBottomSheet<Prime>(
-                context: context,
-                builder: (context) {
-                  return _generateBottomSheet(context);
-                },
-                showDragHandle: true,
-                scrollControlDisabledMaxHeightRatio: .8,
-            );
-            if(res != null) {
-              final db = FirebaseFirestore.instance;
-              final ouvrier = db.collection("ouvrier").doc(widget.id);
-              setState(() {
-                primes.add(res);
-                ouvrier.update({
-                  "primes": primes.map((e) => {
-                    "montant": e.montant,
-                    "date": e.date.toString()
-                  })
-                });
+        shape: const CircleBorder(),
+        onPressed: () async {
+          final res = await showModalBottomSheet<Prime>(
+            context: context,
+            builder: (context) {
+              return _generateBottomSheet(context);
+            },
+            showDragHandle: true,
+            scrollControlDisabledMaxHeightRatio: .8,
+          );
+          if (res != null) {
+            final db = FirebaseFirestore.instance;
+            final ouvrier = db.collection("ouvrier").doc(widget.id);
+            setState(() {
+              primes.add(res);
+              ouvrier.update({
+                "primes": primes.map(
+                    (e) => {"montant": e.montant, "date": e.date.toString()})
               });
-            }
-          },
-          child: const Icon(Icons.add),
-
+            });
+          }
+        },
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
@@ -86,17 +86,23 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
             child: ListView.separated(
               itemCount: primes.length,
               separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index)  {
+              itemBuilder: (context, index) {
                 final prime = primes[index];
                 return ListTile(
-                  leading: Icon(Icons.payments, color: Colors.green.shade600,),
+                  leading: Icon(
+                    Icons.payments,
+                    color: Colors.green.shade600,
+                  ),
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
-                  subtitle: Text(DateFormat('yyyy-MM-dd').format(prime.date), style: TextStyle(color: Colors.green.shade500),),
-                  title: Text(prime.montant.toString(),style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
-                  onTap: () {
-
-                  },
+                  subtitle: Text(
+                    DateFormat('yyyy-MM-dd').format(prime.date),
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(prime.montant.toString(),
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () {},
                 );
               },
             ),
@@ -117,34 +123,40 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
             Column(
               children: [
                 TextField(
-                  onSubmitted: (val) {
-                      
-                  },
+                  onSubmitted: (val) {},
                   controller: controller,
+                  maxLines: null,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.euro),
+                    suffixText: 'DT',
                     label: Text("montant de la prime"),
                   ),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 CalendarDatePicker(
-                  initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(const Duration(days: 366)),
                   lastDate: DateTime.now().add(const Duration(days: 366)),
                   onDateChanged: (DateTime value) {
                     date = value;
                   },
                   currentDate: DateTime.now(),
                 ),
-                const SizedBox(height: 70,)
+                const SizedBox(
+                  height: 70,
+                )
               ],
             ),
             FilledButton(
                 onPressed: () {
-                  final tmp = Prime(montant: double.parse(controller.text), date: date);
+                  final tmp =
+                      Prime(montant: double.parse(controller.text), date: date);
                   Navigator.pop(context, tmp);
-                }, 
+                },
                 child: const Center(child: Text("Ajouter une prime")))
           ],
         ),

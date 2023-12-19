@@ -10,7 +10,6 @@ class OuvrierDeplacement extends StatefulWidget {
   State<OuvrierDeplacement> createState() => _OuvrierDeplacementState();
 }
 
-
 class _OuvrierDeplacementState extends State<OuvrierDeplacement> {
   final controller = TextEditingController();
   List<Deplacement> deps = [];
@@ -25,7 +24,11 @@ class _OuvrierDeplacementState extends State<OuvrierDeplacement> {
     final ouvrier = db.collection("ouvrier").doc(widget.id);
     ouvrier.get().then((doc) {
       setState(() {
-        deps = List<Map<String, dynamic>>.from((doc.data()?["deps"] ?? []) as List).map((e) => Deplacement(description: e['desc'], date: DateTime.parse(e['date']))).toList();
+        deps =
+            List<Map<String, dynamic>>.from((doc.data()?["deps"] ?? []) as List)
+                .map((e) => Deplacement(
+                    description: e['desc'], date: DateTime.parse(e['date'])))
+                .toList();
       });
     });
     super.initState();
@@ -49,22 +52,19 @@ class _OuvrierDeplacementState extends State<OuvrierDeplacement> {
             showDragHandle: true,
             scrollControlDisabledMaxHeightRatio: .8,
           );
-          if(res != null) {
+          if (res != null) {
             final db = FirebaseFirestore.instance;
             final ouvrier = db.collection("ouvrier").doc(widget.id);
             setState(() {
               deps.add(res);
               ouvrier.update({
-                "deps": deps.map((e) => {
-                  "desc": e.description,
-                  "date": e.date.toString()
-                })
+                "deps": deps.map(
+                    (e) => {"desc": e.description, "date": e.date.toString()})
               });
             });
           }
         },
         child: const Icon(Icons.add),
-
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
@@ -86,17 +86,23 @@ class _OuvrierDeplacementState extends State<OuvrierDeplacement> {
             child: ListView.separated(
               itemCount: deps.length,
               separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index)  {
+              itemBuilder: (context, index) {
                 final cong = deps[index];
                 return ListTile(
-                  leading: Icon(Icons.work_outline, color: Colors.green.shade600,),
+                  leading: Icon(
+                    Icons.work_outline,
+                    color: Colors.green.shade600,
+                  ),
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
-                  subtitle: Text(DateFormat('yyyy-MM-dd').format(cong.date), style: TextStyle(color: Colors.green.shade500),),
-                  title: Text(cong.description,style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
-                  onTap: () {
-
-                  },
+                  subtitle: Text(
+                    DateFormat('yyyy-MM-dd').format(cong.date),
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(cong.description,
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () {},
                 );
               },
             ),
@@ -118,27 +124,34 @@ class _OuvrierDeplacementState extends State<OuvrierDeplacement> {
               children: [
                 TextField(
                   controller: controller,
+                  maxLines: null,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.work_outline),
                     label: Text("description du déplacement"),
                   ),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 CalendarDatePicker(
-                  initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(const Duration(days: 366)),
                   lastDate: DateTime.now().add(const Duration(days: 366)),
                   onDateChanged: (DateTime value) {
                     date = value;
                   },
                   currentDate: DateTime.now(),
                 ),
-                const SizedBox(height: 70,)
+                const SizedBox(
+                  height: 70,
+                )
               ],
             ),
             FilledButton(
                 onPressed: () {
-                  final tmp = Deplacement(description: controller.text, date: date);
+                  final tmp =
+                      Deplacement(description: controller.text, date: date);
                   Navigator.pop(context, tmp);
                 },
                 child: const Center(child: Text("Ajouter un déplacement")))

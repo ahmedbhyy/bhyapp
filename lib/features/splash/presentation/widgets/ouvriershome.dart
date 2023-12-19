@@ -14,9 +14,13 @@ class _OuvrierHomeState extends State<OuvrierHome> {
   final TextEditingController _nomdeouvrier = TextEditingController();
 
   TextEditingController get controller => _nomdeouvrier;
+  final TextEditingController _lieudeouvrier = TextEditingController();
+
+  TextEditingController get controller2 => _lieudeouvrier;
   @override
   void dispose() {
     _nomdeouvrier.dispose();
+    _lieudeouvrier.dispose();
     super.dispose();
   }
 
@@ -83,7 +87,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                 decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 20.0),
-                    hintText: "chercher un ouvrier",
+                    labelText: "chercher un ouvrier (${displayList.length})",
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: Colors.white,
@@ -133,10 +137,23 @@ class _OuvrierHomeState extends State<OuvrierHome> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(hintText),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              hintText: 'Nom et Prénom',
+          content: SizedBox(
+            height: 150,
+            child: Column(
+              children: [
+                TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    labelText: 'Nom et Prénom',
+                  ),
+                ),
+                TextField(
+                  controller: controller2,
+                  decoration: const InputDecoration(
+                    labelText: 'Lieu de Travail',
+                  ),
+                ),
+              ],
             ),
           ),
           actions: <Widget>[

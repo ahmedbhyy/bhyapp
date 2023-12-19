@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/engrais_commandes2.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/engrais_details.dart';
 import 'package:bhyapp/les%20engrais/engrais_name.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -67,6 +68,17 @@ class _EngraisHomeState extends State<EngraisHome> {
               showEditDialog(context);
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ToutsCommandes(),
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: Padding(
@@ -81,7 +93,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
-                  hintText: "chercher un engrais",
+                  labelText: "chercher un engrais",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -222,7 +234,7 @@ class _EngraisHomeState extends State<EngraisHome> {
           content: TextField(
             controller: nomdengrais,
             decoration: const InputDecoration(
-              hintText: "Nom d'engrais",
+              labelText: "Nom d'engrais",
             ),
           ),
           actions: <Widget>[

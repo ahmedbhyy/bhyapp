@@ -61,17 +61,19 @@ class _EngraisDetailsState extends State<EngraisDetails> {
             buildTextFieldWithEditIcon(
               hintText: "Prix d'Achat",
               controller: _achatController,
+              suffixText: 'DT',
             ),
             const SizedBox(height: 20),
             buildTextFieldWithEditIcon(
               hintText: "Prix de Vente",
               controller: _venteController,
+              suffixText: 'DT',
             ),
             const SizedBox(height: 20),
             buildTextFieldWithEditIcon(
-              hintText: "Quantités",
-              controller: _quantiteController,
-            ),
+                hintText: "Quantités",
+                controller: _quantiteController,
+                suffixText: ''),
             const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
@@ -92,7 +94,10 @@ class _EngraisDetailsState extends State<EngraisDetails> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Commandes(id: widget.id,)),
+                  MaterialPageRoute(
+                      builder: (context) => Commandes(
+                            id: widget.id,
+                          )),
                 );
               },
               child: const Text('Ajouter une commande'),
@@ -103,8 +108,11 @@ class _EngraisDetailsState extends State<EngraisDetails> {
     );
   }
 
-  Widget buildTextFieldWithEditIcon(
-      {required String hintText, required TextEditingController controller}) {
+  Widget buildTextFieldWithEditIcon({
+    required String hintText,
+    required TextEditingController controller,
+    required String suffixText,
+  }) {
     return Row(
       children: [
         Expanded(
@@ -117,7 +125,8 @@ class _EngraisDetailsState extends State<EngraisDetails> {
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
-              hintText: hintText,
+              labelText: hintText,
+              suffixText: suffixText,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
                 borderSide:

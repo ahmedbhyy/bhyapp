@@ -20,6 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   PickedFile _imageFile = PickedFile("");
   final ImagePicker _picker = ImagePicker();
   String? username;
+  String? extractedUsername;
   @override
   void initState() {
     username = FirebaseAuth.instance.currentUser?.email;
@@ -28,6 +29,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (username != null) {
+      int atIndex = username!.indexOf('@');
+      extractedUsername =
+          atIndex != -1 ? username!.substring(0, atIndex) : null;
+    }
     return Stack(
       children: [
         Image.asset(
@@ -44,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 imageProfile(),
                 const SizedBox(height: 30),
                 Text(
-                  username as String,
+                  extractedUsername as String,
                   style: const TextStyle(
                     fontFamily: 'Michroma',
                     fontSize: 28,
@@ -71,26 +77,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   child: Container(
-                    width: 300,
+                    width: 320,
                     height: 40,
                     alignment: Alignment.center,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'About Us',
+                          'Qui sommes-nous',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
+                            color: Colors.lightGreen,
+                            fontSize: 18,
                             fontFamily: 'Michroma',
                             fontWeight: FontWeight.w400,
                             letterSpacing: 4.08,
                           ),
                         ),
-                        SizedBox(width: 110),
+                        SizedBox(width: 28),
                         Icon(
                           Icons.panorama_photosphere,
-                          color: Colors.white,
+                          color: Colors.amber,
                           size: 24,
                         ),
                       ],
@@ -116,26 +122,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   child: Container(
-                    width: 300,
+                    width: 320,
                     height: 40,
                     alignment: Alignment.center,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Edit Profil',
+                          'Modifiez votre profil',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
+                            color: Colors.lightGreen,
+                            fontSize: 16,
                             fontFamily: 'Michroma',
                             fontWeight: FontWeight.w400,
                             letterSpacing: 4.08,
                           ),
                         ),
-                        SizedBox(width: 90),
+                        SizedBox(width: 10),
                         Icon(
                           Icons.settings,
-                          color: Colors.white,
+                          color: Colors.amber,
                           size: 24,
                         ),
                       ],

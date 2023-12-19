@@ -10,7 +10,6 @@ class CongesOuvrier extends StatefulWidget {
   State<CongesOuvrier> createState() => _CongesOuvrierState();
 }
 
-
 class _CongesOuvrierState extends State<CongesOuvrier> {
   final controller = TextEditingController(text: "120");
   List<Conges> conges = [];
@@ -25,7 +24,11 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
     final ouvrier = db.collection("ouvrier").doc(widget.id);
     ouvrier.get().then((doc) {
       setState(() {
-        conges = List<Map<String, dynamic>>.from((doc.data()?["conges"] ?? []) as List).map((e) => Conges(cause: e['cause'], date: DateTime.parse(e['date']))).toList();
+        conges = List<Map<String, dynamic>>.from(
+                (doc.data()?["conges"] ?? []) as List)
+            .map((e) =>
+                Conges(cause: e['cause'], date: DateTime.parse(e['date'])))
+            .toList();
       });
     });
     super.initState();
@@ -49,22 +52,19 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
             showDragHandle: true,
             scrollControlDisabledMaxHeightRatio: .8,
           );
-          if(res != null) {
+          if (res != null) {
             final db = FirebaseFirestore.instance;
             final ouvrier = db.collection("ouvrier").doc(widget.id);
             setState(() {
               conges.add(res);
               ouvrier.update({
-                "conges": conges.map((e) => {
-                  "cause": e.cause,
-                  "date": e.date.toString()
-                })
+                "conges": conges
+                    .map((e) => {"cause": e.cause, "date": e.date.toString()})
               });
             });
           }
         },
         child: const Icon(Icons.add),
-
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
@@ -86,17 +86,23 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
             child: ListView.separated(
               itemCount: conges.length,
               separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index)  {
+              itemBuilder: (context, index) {
                 final cong = conges[index];
                 return ListTile(
-                  leading: Icon(Icons.sick_outlined, color: Colors.green.shade600,),
+                  leading: Icon(
+                    Icons.sick_outlined,
+                    color: Colors.green.shade600,
+                  ),
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
-                  subtitle: Text(DateFormat('yyyy-MM-dd').format(cong.date), style: TextStyle(color: Colors.green.shade500),),
-                  title: Text(cong.cause,style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
-                  onTap: () {
-
-                  },
+                  subtitle: Text(
+                    DateFormat('yyyy-MM-dd').format(cong.date),
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(cong.cause,
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () {},
                 );
               },
             ),
@@ -107,7 +113,6 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
   }
 
   Widget _generateBottomSheet(BuildContext context) {
-
     DateTime date = DateTime.now();
     return SingleChildScrollView(
       child: Padding(
@@ -118,26 +123,30 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
             Column(
               children: [
                 TextField(
-                  onSubmitted: (val) {
-      
-                  },
+                  onSubmitted: (val) {},
                   controller: controller,
+                  maxLines: null,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.sick),
                     label: Text("cause du congés"),
                   ),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 CalendarDatePicker(
-                  initialDate: DateTime.now(), firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(const Duration(days: 366)),
                   lastDate: DateTime.now().add(const Duration(days: 366)),
                   onDateChanged: (DateTime value) {
                     date = value;
                   },
                   currentDate: DateTime.now(),
                 ),
-                const SizedBox(height: 70,)
+                const SizedBox(
+                  height: 70,
+                )
               ],
             ),
             FilledButton(

@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 class Maindoeuvre extends StatefulWidget {
   final Oeuvre oeuvre;
   final Future<void> Function(Oeuvre) updateremotestate;
-  const Maindoeuvre({super.key, required this.oeuvre, required this.updateremotestate});
+  const Maindoeuvre(
+      {super.key, required this.oeuvre, required this.updateremotestate});
 
   @override
   State<Maindoeuvre> createState() => _MaindoeuvreState();
@@ -82,23 +83,33 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
               buildTextFieldWithEditIcon(
                 hintText: "Nombre d'Hommes",
                 controller: _nombrehomme,
+                iconData: Icons.man,
+                suffixText: '',
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
                 hintText: "Charge homme",
                 controller: _chargehomme,
+                iconData: Icons.euro,
+                suffixText: 'DT',
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
                 hintText: "Nombre de Femmes",
                 controller: _nombrefemme,
+                iconData: Icons.woman,
+                suffixText: '',
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
                 hintText: "Charge femme",
                 controller: _chargefemme,
+                iconData: Icons.euro,
+                suffixText: 'DT',
               ),
-              SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               const Text(
                 'Aprés Midi',
                 style: TextStyle(
@@ -114,35 +125,43 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
               buildTextFieldWithEditIcon(
                 hintText: "Nombre d'Hommes",
                 controller: _nombrehomme2,
+                iconData: Icons.man,
+                suffixText: '',
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
                 hintText: "Charge homme",
                 controller: _chargehomme2,
+                iconData: Icons.euro,
+                suffixText: 'DT',
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
                 hintText: "Nombre de Femmes",
                 controller: _nombrefemme2,
+                iconData: Icons.woman,
+                suffixText: '',
               ),
               const SizedBox(height: 20),
               buildTextFieldWithEditIcon(
                 hintText: "Charge femme",
                 controller: _chargefemme2,
+                iconData: Icons.euro,
+                suffixText: 'DT',
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10, left: 250),
                 child: ElevatedButton(
                   onPressed: () {
                     Oeuvre tmp = Oeuvre(
-                        matin_homme: int.parse(_nombrehomme.text),
-                        matin_femme: int.parse(_nombrefemme.text),
-                        matin_charge_homme: double.parse(_chargehomme.text),
-                        matin_charge_femme: double.parse(_chargefemme.text),
-                        midi_homme: int.parse(_nombrehomme2.text),
-                        midi_femme: int.parse(_nombrefemme2.text),
-                        midi_charge_homme: double.parse(_chargehomme2.text),
-                        midi_charge_femme: double.parse(_chargefemme2.text),
+                      matin_homme: int.parse(_nombrehomme.text),
+                      matin_femme: int.parse(_nombrefemme.text),
+                      matin_charge_homme: double.parse(_chargehomme.text),
+                      matin_charge_femme: double.parse(_chargefemme.text),
+                      midi_homme: int.parse(_nombrehomme2.text),
+                      midi_femme: int.parse(_nombrefemme2.text),
+                      midi_charge_homme: double.parse(_chargehomme2.text),
+                      midi_charge_femme: double.parse(_chargefemme2.text),
                     );
                     widget.updateremotestate(tmp);
                   },
@@ -156,8 +175,12 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
     );
   }
 
-  Widget buildTextFieldWithEditIcon(
-      {required String hintText, required TextEditingController controller}) {
+  Widget buildTextFieldWithEditIcon({
+    required String hintText,
+    required TextEditingController controller,
+    required IconData iconData,
+    required String suffixText,
+  }) {
     return Row(
       children: [
         Expanded(
@@ -170,6 +193,9 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
               labelText: hintText,
+              suffixText: suffixText,
+              suffixStyle: const TextStyle(fontSize: 20),
+              prefixIcon: Icon(iconData),
               hintStyle: const TextStyle(fontSize: 25),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),

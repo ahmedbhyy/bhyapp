@@ -11,7 +11,8 @@ class OuvrierDetails extends StatefulWidget {
   final String id;
 
   // ignore: non_constant_identifier_names
-  const OuvrierDetails({Key? key, required this.Ouvriername, required this.id}) : super(key: key);
+  const OuvrierDetails({Key? key, required this.Ouvriername, required this.id})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -49,12 +50,18 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                             builder: (context) => OuvrierPrime(id: widget.id)),
                       );
                     },
-                    child: const Text(
-                      'Prime',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 23,
-                          color: Colors.green),
+                    child: const Row(
+                      children: [
+                        Text(
+                          'Prime',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 23,
+                              color: Colors.green),
+                        ),
+                        SizedBox(width: 215),
+                        Icon(Icons.euro),
+                      ],
                     ),
                   ),
                 ),
@@ -67,15 +74,21 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CongesOuvrier(id:widget.id)),
+                            builder: (context) => CongesOuvrier(id: widget.id)),
                       );
                     },
-                    child: const Text(
-                      'Congés de Travail',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 23,
-                          color: Colors.green),
+                    child: const Row(
+                      children: [
+                        Text(
+                          'Congés de Travail',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 23,
+                              color: Colors.green),
+                        ),
+                        SizedBox(width: 92),
+                        Icon(Icons.view_timeline),
+                      ],
                     ),
                   ),
                 ),
@@ -91,12 +104,18 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                             builder: (context) => OuvrierHeure(id: widget.id)),
                       );
                     },
-                    child: const Text(
-                      'Heures Supplémentaires',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 23,
-                          color: Colors.green),
+                    child: const Row(
+                      children: [
+                        Text(
+                          'Heures Supplémentaires',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 23,
+                              color: Colors.green),
+                        ),
+                        SizedBox(width: 20),
+                        Icon(Icons.more_time),
+                      ],
                     ),
                   ),
                 ),
@@ -109,15 +128,23 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => OuvrierVoyageDiesel(id: widget.id,)),
+                            builder: (context) => OuvrierVoyageDiesel(
+                                  id: widget.id,
+                                )),
                       );
                     },
-                    child: const Text(
-                      'Voyages et Diesel',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 23,
-                          color: Colors.green),
+                    child: const Row(
+                      children: [
+                        Text(
+                          'Voyages et Diesel',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 23,
+                              color: Colors.green),
+                        ),
+                        SizedBox(width: 90),
+                        Icon(Icons.oil_barrel),
+                      ],
                     ),
                   ),
                 ),
@@ -130,15 +157,23 @@ class _OuvrierDetails extends State<OuvrierDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => OuvrierDeplacement(id: widget.id,)),
+                            builder: (context) => OuvrierDeplacement(
+                                  id: widget.id,
+                                )),
                       );
                     },
-                    child: const Text(
-                      'Déplacament',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 23,
-                          color: Colors.green),
+                    child: const Row(
+                      children: [
+                        Text(
+                          'Déplacament',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 23,
+                              color: Colors.green),
+                        ),
+                        SizedBox(width: 135),
+                        Icon(Icons.local_shipping),
+                      ],
                     ),
                   ),
                 ),

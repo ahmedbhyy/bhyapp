@@ -53,6 +53,29 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
           ),
         ],
       ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              style: const TextStyle(fontSize: 17.0),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 20.0),
+                labelText: "chercher une Demande par (Date)",
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide:
+                      const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -61,10 +84,10 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: AlertDialog(
-            title: Text(hintText),
-            content: SizedBox(
+        return AlertDialog(
+          title: Text(hintText),
+          content: SingleChildScrollView(
+            child: SizedBox(
               width: 350,
               child: Column(
                 children: [
@@ -117,19 +140,19 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                 ],
               ),
             ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Enregistrer'),
-              ),
-            ],
           ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text('Enregistrer'),
+            ),
+          ],
         );
       },
     );

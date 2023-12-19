@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class Voyages extends StatefulWidget {
   final Voyage transport;
   final Future<void> Function(Voyage) update;
-  const Voyages({Key? key, required this.transport, required this.update}) : super(key: key);
+  const Voyages({Key? key, required this.transport, required this.update})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -62,21 +63,21 @@ class _VoyagesState extends State<Voyages> {
               ),
               const SizedBox(height: 30),
               buildTextFieldWithEditIcon(
-                hintText: "Nombre de Voyages",
-                controller: _nombrevoyage,
-              ),
+                  hintText: "Nombre de Voyages",
+                  controller: _nombrevoyage,
+                  suffixText: 'Voyages'),
               const SizedBox(height: 30),
               buildTextFieldWithEditIcon(
-                hintText: "Cout",
-                controller: _coutvoyage,
-              ),
+                  hintText: "Cout", controller: _coutvoyage, suffixText: 'DT'),
               Padding(
                 padding: const EdgeInsets.only(top: 50, left: 8),
                 child: ElevatedButton(
                   onPressed: () {
-                    final tmp = Voyage(nombres: int.parse(_nombrevoyage.text), cout: double.parse(_coutvoyage.text));
+                    final tmp = Voyage(
+                        nombres: int.parse(_nombrevoyage.text),
+                        cout: double.parse(_coutvoyage.text));
                     widget.update(tmp);
-                    },
+                  },
                   child: const Text('Enregistrer'),
                 ),
               ),
@@ -87,8 +88,11 @@ class _VoyagesState extends State<Voyages> {
     );
   }
 
-  Widget buildTextFieldWithEditIcon(
-      {required String hintText, required TextEditingController controller}) {
+  Widget buildTextFieldWithEditIcon({
+    required String hintText,
+    required TextEditingController controller,
+    required String suffixText,
+  }) {
     return Row(
       children: [
         Expanded(
@@ -101,6 +105,7 @@ class _VoyagesState extends State<Voyages> {
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
               labelText: hintText,
+              suffixText: suffixText,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
                 borderSide:

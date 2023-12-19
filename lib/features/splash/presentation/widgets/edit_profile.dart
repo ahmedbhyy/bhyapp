@@ -24,7 +24,7 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Edit Profil",
+          "votre profil",
           style: TextStyle(
               fontFamily: 'Michroma',
               fontSize: 20,
@@ -39,16 +39,19 @@ class _SettingsState extends State<Settings> {
             const SizedBox(height: 20),
             buildTextFieldWithEditIcon(
               hintText: "Nom et Prénom",
+              iconData: Icons.person,
               controller: _nomuser,
             ),
             const SizedBox(height: 30),
             buildTextFieldWithEditIcon(
               hintText: "Profession",
+              iconData: Icons.work,
               controller: _profession,
             ),
             const SizedBox(height: 30),
             buildTextFieldWithEditIcon(
               hintText: "Firme",
+              iconData: Icons.place,
               controller: _firme,
             ),
             Padding(
@@ -64,8 +67,11 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Widget buildTextFieldWithEditIcon(
-      {required String hintText, required TextEditingController controller}) {
+  Widget buildTextFieldWithEditIcon({
+    required String hintText,
+    required TextEditingController controller,
+    required IconData iconData,
+  }) {
     return Row(
       children: [
         Expanded(
@@ -78,6 +84,7 @@ class _SettingsState extends State<Settings> {
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
               labelText: hintText,
+              prefixIcon: Icon(iconData),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),
                 borderSide:
