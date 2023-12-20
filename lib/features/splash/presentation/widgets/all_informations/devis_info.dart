@@ -110,7 +110,6 @@ class _DevisInfoState extends State<DevisInfo> {
                       });
                     },
                   ),
-                  const SizedBox(height: 20),
                   TextField(
                     controller: _nomdesociete3,
                     decoration: const InputDecoration(
@@ -120,7 +119,7 @@ class _DevisInfoState extends State<DevisInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _numdevisadmin,
                     decoration: const InputDecoration(
@@ -130,7 +129,7 @@ class _DevisInfoState extends State<DevisInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _descridevisadmin,
                     decoration: const InputDecoration(
@@ -140,7 +139,7 @@ class _DevisInfoState extends State<DevisInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _totaldevisadmin,
                     decoration: const InputDecoration(

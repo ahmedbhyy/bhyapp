@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bhyapp/features/splash/presentation/widgets/splash_body.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bhyapp/features/splash/presentation/widgets/about_us.dart';
@@ -43,10 +44,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
           height: double.infinity,
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 90),
+          padding: const EdgeInsets.only(top: 50),
           child: Center(
             child: Column(
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 365),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SplashBody()),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.logout,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
                 imageProfile(),
                 const SizedBox(height: 30),
                 Text(

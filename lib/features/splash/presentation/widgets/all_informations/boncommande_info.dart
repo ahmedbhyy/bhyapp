@@ -84,11 +84,11 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: AlertDialog(
-            title: Text(hintText),
-            content: SizedBox(
-              width: 300,
+        return AlertDialog(
+          title: Text(hintText),
+          content: SizedBox(
+            width: 300,
+            child: SingleChildScrollView(
               child: Column(
                 children: [
                   DateFormatField(
@@ -153,25 +153,32 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 250),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.add),
+                        ),
+                      ),
                       const SizedBox(height: 20),
                     ],
                   ),
                 ],
               ),
             ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Enregistrer'),
-              ),
-            ],
           ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text('Enregistrer'),
+            ),
+          ],
         );
       },
     );

@@ -28,6 +28,7 @@ class SplashBody extends StatelessWidget {
                     fontSize: 51,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF7f4f24),
+                    decoration: TextDecoration.none,
                   ),
                 ),
               ),

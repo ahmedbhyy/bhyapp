@@ -112,7 +112,7 @@ class _FactureInfoState extends State<FactureInfo> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                labelText: "chercher une facture (N°)",
+                labelText: "chercher une facture Par (N°)",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -151,11 +151,11 @@ class _FactureInfoState extends State<FactureInfo> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: AlertDialog(
-            title: Text(hintText),
-            content: SizedBox(
-              width: 300,
+        return AlertDialog(
+          title: Text(hintText),
+          content: SizedBox(
+            width: 300,
+            child: SingleChildScrollView(
               child: Column(
                 children: [
                   DateFormatField(
@@ -237,6 +237,7 @@ class _FactureInfoState extends State<FactureInfo> {
                                 decoration: const InputDecoration(
                                   labelText: 'Montant',
                                   labelStyle: TextStyle(fontSize: 17),
+                                  suffixText: 'DT',
                                 ),
                                 maxLines: null,
                               ),
@@ -244,7 +245,13 @@ class _FactureInfoState extends State<FactureInfo> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 255),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.add),
+                        ),
+                      ),
                     ],
                   ),
                   TextField(
@@ -261,19 +268,19 @@ class _FactureInfoState extends State<FactureInfo> {
                 ],
               ),
             ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Enregistrer'),
-              ),
-            ],
           ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text('Enregistrer'),
+            ),
+          ],
         );
       },
     );

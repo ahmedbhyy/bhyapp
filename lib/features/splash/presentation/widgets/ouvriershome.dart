@@ -151,6 +151,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                   controller: controller2,
                   decoration: const InputDecoration(
                     labelText: 'Lieu de Travail',
+                    suffixIcon: Icon(Icons.place),
                   ),
                 ),
               ],

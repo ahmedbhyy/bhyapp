@@ -93,7 +93,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
-                  labelText: "chercher un engrais",
+                  labelText: "chercher un engrais (${displayList.length})",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,

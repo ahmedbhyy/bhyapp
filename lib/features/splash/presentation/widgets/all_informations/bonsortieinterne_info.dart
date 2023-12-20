@@ -149,10 +149,10 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: AlertDialog(
-            title: Text(hintText),
-            content: Column(
+        return AlertDialog(
+          title: Text(hintText),
+          content: SingleChildScrollView(
+            child: Column(
               children: [
                 DateFormatField(
                   type: DateFormatType.type2,
@@ -239,19 +239,19 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                 ),
               ],
             ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Enregistrer'),
-              ),
-            ],
           ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text('Enregistrer'),
+            ),
+          ],
         );
       },
     );
