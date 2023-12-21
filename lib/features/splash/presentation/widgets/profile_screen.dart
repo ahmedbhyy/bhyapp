@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bhyapp/features/splash/presentation/widgets/splash_body.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bhyapp/features/splash/presentation/widgets/about_us.dart';
@@ -18,13 +19,24 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  PickedFile _imageFile = PickedFile("");
+  String _imageFile = '';
   final ImagePicker _picker = ImagePicker();
   String? username;
   String? extractedUsername;
   @override
   void initState() {
     username = FirebaseAuth.instance.currentUser?.email;
+    final newprofilpic = FirebaseAuth.instance.currentUser!.uid;
+    final store = FirebaseStorage.instance.ref();
+    final pdpref = store.child("profil/$newprofilpic.jpg");
+    try {
+      pdpref.getDownloadURL().then((value) {
+        setState(() {
+          _imageFile = value;
+        });
+      });
+    } catch (e) {}
+
     super.initState();
   }
 
@@ -196,14 +208,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             TextButton.icon(
               icon: const Icon(Icons.camera),
               onPressed: () {
-                takePhoto(ImageSource.camera);
+                takePhoto2(ImageSource.camera);
               },
               label: const Text("Camera"),
             ),
             TextButton.icon(
               icon: const Icon(Icons.image),
               onPressed: () {
-                takePhoto(ImageSource.gallery);
+                takePhoto2(ImageSource.gallery);
               },
               label: const Text("Gallery"),
             ),
@@ -218,11 +230,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Stack(children: <Widget>[
         CircleAvatar(
           radius: 80.0,
-          backgroundImage: _imageFile.path.isNotEmpty
-              ? FileImage(File(_imageFile.path))
-              : null,
+          backgroundImage:
+              _imageFile.isNotEmpty ? NetworkImage(_imageFile) : null,
           backgroundColor: Colors.grey,
-          child: _imageFile.path.isNotEmpty
+          child: _imageFile.isNotEmpty
               ? null
               : const Icon(
                   Icons.person,
@@ -258,9 +269,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     setState(() {
       if (pickedFile != null) {
-        _imageFile = PickedFile(pickedFile.path);
+        _imageFile = pickedFile.path;
         Navigator.pop(context);
       }
     });
+  }
+
+  Future<void> takePhoto2(ImageSource source) async {
+    final newprofilpic = FirebaseAuth.instance.currentUser!.uid;
+    final pickedFile = await ImagePicker().pickImage(
+      source: source,
+      imageQuality: 20,
+    );
+    if (((pickedFile?.path) ?? '').isNotEmpty) {
+      String path = pickedFile!.path;
+      File file = File(path);
+      final store = FirebaseStorage.instance.ref();
+      final pdpref = store.child("profil/$newprofilpic.jpg");
+      await pdpref.putFile(file);
+      path = await pdpref.getDownloadURL();
+      setState(() {
+        _imageFile = path;
+        Navigator.pop(context);
+      });
+      return;
+    }
   }
 }
