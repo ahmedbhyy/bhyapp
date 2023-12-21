@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_format_field/date_format_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -48,7 +47,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
               if(res != null) {
                 final db = FirebaseFirestore.instance;
                 final bons = db.collection("bons");
-                bons.add(res.toMap());
+                bons.doc(res.num).set(res.toMap(), SetOptions(merge: true));
                 setState(() {
                   displayList.add(res);
                 });
@@ -108,7 +107,17 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                       ),
                     ),
                     title: Text("Bon numéro ${bon.num}"),
-                    onTap: () {},
+                    onTap: () async{
+                      final bn = await Navigator.push<Bon>(context, MaterialPageRoute(builder: (context) {
+                        return AjoutBon(bon:bon);
+                      }));
+                      final db = FirebaseFirestore.instance;
+                      if (bn == null) return;
+                      db.collection("bons").doc(bon.num).set(bn.toMap(), SetOptions(merge: true));
+                      setState(() {
+                        displayList[displayList.indexOf(bon)] = bn;
+                      });
+                    },
                   );
                 }
               ),
@@ -122,7 +131,8 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
 
 
 class AjoutBon extends StatefulWidget {
-  const AjoutBon({super.key});
+  final Bon? bon;
+  const AjoutBon({super.key, this.bon});
 
   @override
   State<AjoutBon> createState() => _AjoutBonState();
@@ -132,8 +142,24 @@ class _AjoutBonState extends State<AjoutBon> {
   final TextEditingController _numerodubon = TextEditingController();
   final TextEditingController _beneficiaire = TextEditingController();
   final TextEditingController _destination = TextEditingController();
-  final List<Map<String, dynamic>> items = [];
+  List<Map<String, dynamic>> items = [];
+  String _title = "ajouter un bon de sortie";
   DateTime _datebon = DateTime.now();
+
+  @override
+  void initState() {
+    if(widget.bon != null) {
+      final bon = widget.bon!;
+      _numerodubon.text = bon.num.toString();
+      _beneficiaire.text = bon.beneficiaire;
+      _destination.text = bon.destination;
+      items = bon.items;
+      _datebon = bon.date;
+      _title = "modifier le bon de sortie";
+    }
+    super.initState();
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -146,9 +172,9 @@ class _AjoutBonState extends State<AjoutBon> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
-          "ajouter un bon de sortie",
-          style: TextStyle(
+        title: Text(
+          _title,
+          style: const TextStyle(
             fontSize: 15.5,
             fontWeight: FontWeight.bold,
             fontFamily: 'Michroma',
@@ -165,7 +191,7 @@ class _AjoutBonState extends State<AjoutBon> {
               child: Column(
                 children: [
                   CalendarDatePicker(
-                    initialDate: DateTime.now(),
+                    initialDate: _datebon,
                     firstDate: DateTime.now().subtract(const Duration(days: 366)),
                     lastDate: DateTime.now().add(const Duration(days: 366)),
                     onDateChanged: (DateTime value) {
@@ -175,10 +201,11 @@ class _AjoutBonState extends State<AjoutBon> {
                   ),
                   TextField(
                     controller: _numerodubon,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'N° du bon',
-                      labelStyle: TextStyle(fontSize: 20),
-                      icon: Icon(Icons.numbers),
+                      enabled: widget.bon == null,
+                      labelStyle: const TextStyle(fontSize: 20),
+                      icon: const Icon(Icons.numbers),
                     ),
                     maxLines: null,
                   ),
@@ -223,7 +250,17 @@ class _AjoutBonState extends State<AjoutBon> {
                           title: Text(item['quantite'].toString(),
                               style:
                               const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-                          onTap: () {},
+                          onTap: () async {
+                              final tmp = await showModalBottomSheet<Map<String, dynamic>>(context: context, builder: (context) {
+                                return ItemAdder(item: item,);
+                              });
+                              if(tmp != null) {
+                                setState(() {
+                                  items[items.indexOf(item)] = tmp;
+                                });
+
+                              }
+                          },
                         );
                       },
                     ),
@@ -236,7 +273,7 @@ class _AjoutBonState extends State<AjoutBon> {
                 bottom: 0,
                 child: FilledButton(
                   onPressed: () {
-                    if(_datebon == null || items.isEmpty || _beneficiaire.text.isEmpty || _destination.text.isEmpty || _numerodubon.text.isEmpty) {
+                    if(items.isEmpty || _beneficiaire.text.isEmpty || _destination.text.isEmpty || _numerodubon.text.isEmpty) {
                       return;
                     }
                     final firm = FirebaseAuth.instance.currentUser!.email!.split("@")[1].split('.')[0];
@@ -245,8 +282,8 @@ class _AjoutBonState extends State<AjoutBon> {
                         beneficiaire: _beneficiaire.text,
                         destination: _destination.text,
                         firm: firm,
-                        num: int.parse(_numerodubon.text),
-                        date: _datebon!,
+                        num: _numerodubon.text,
+                        date: _datebon,
                     );
                     Navigator.pop(context, bon);
                   },
@@ -258,57 +295,10 @@ class _AjoutBonState extends State<AjoutBon> {
                 left: 0,
                 child:  FilledButton.icon(
                     onPressed: () async {
-                      final _designation = TextEditingController();
-                      final _quantite = TextEditingController();
                       final res = await showModalBottomSheet<Map<String, dynamic>>(
                           context: context,
                           builder: (context) {
-                            return SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.all(40),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        TextField(
-                                          onSubmitted: (val) {},
-                                          controller: _designation,
-                                          decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            label: Text("désignation"),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        TextField(
-                                          onSubmitted: (val) {},
-                                          controller: _quantite,
-                                          keyboardType: TextInputType.number,
-                                          decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            label: Text("quantité"),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                      ],
-                                    ),
-                                    FilledButton(
-                                        onPressed: () {
-                                          final tmp = ({
-                                            "des": _designation.text,
-                                            "quantite": int.parse(_quantite.text)
-                                          });
-                                          Navigator.pop(context, tmp);
-                                        },
-                                        child: const Center(child: Text("ajouter")))
-                                  ],
-                                ),
-                              ),
-                            );
+                            return ItemAdder();
                           });
                       if(res != null) {
                         setState(() {
@@ -326,9 +316,82 @@ class _AjoutBonState extends State<AjoutBon> {
   }
 }
 
+class ItemAdder extends StatefulWidget {
+  final Map<String, dynamic>? item;
+  const ItemAdder({super.key, this.item});
+
+  @override
+  State<ItemAdder> createState() => _ItemAdderState();
+}
+
+class _ItemAdderState extends State<ItemAdder> {
+  final _designation = TextEditingController();
+  final _quantite = TextEditingController();
+
+  @override
+  void initState() {
+    if(widget.item != null) {
+      _designation.text = widget.item!["des"];
+      _quantite.text = widget.item!["quantite"].toString();
+    }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                TextField(
+                  onSubmitted: (val) {},
+                  controller: _designation,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("désignation"),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  onSubmitted: (val) {},
+                  controller: _quantite,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("quantité"),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
+            FilledButton(
+                onPressed: () {
+                  final tmp = ({
+                    "des": _designation.text,
+                    "quantite": int.parse(_quantite.text)
+                  });
+                  Navigator.pop(context, tmp);
+                },
+                child: Center(child: Text(widget.item == null ? "ajouter": "modifier")))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 
 class Bon {
-  final int num;
+  final String num;
   final String beneficiaire;
   final String destination;
   final String firm;
@@ -338,7 +401,6 @@ class Bon {
 
   Map<String, dynamic> toMap() {
     return {
-      "num": num,
       "beneficiaire": beneficiaire,
       "destination": destination,
       "firm": firm,
@@ -349,7 +411,7 @@ class Bon {
 
   static Bon fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Bon(
-      num: e["num"],
+      num: e.id,
       firm: e['firm'],
       beneficiaire: e["beneficiaire"],
       destination: e['destination'],
