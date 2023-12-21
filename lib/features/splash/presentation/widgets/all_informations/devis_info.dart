@@ -122,6 +122,7 @@ class _DevisInfoState extends State<DevisInfo> {
                   const SizedBox(height: 10),
                   TextField(
                     controller: _numdevisadmin,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'N° Devis',
                       labelStyle: TextStyle(fontSize: 20),
@@ -142,6 +143,7 @@ class _DevisInfoState extends State<DevisInfo> {
                   const SizedBox(height: 10),
                   TextField(
                     controller: _totaldevisadmin,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Montant Total',
                       labelStyle: TextStyle(fontSize: 20),

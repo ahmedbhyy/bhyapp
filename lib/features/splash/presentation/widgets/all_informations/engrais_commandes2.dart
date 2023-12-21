@@ -114,6 +114,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                           Expanded(
                             child: TextField(
                               controller: _qte1,
+                              keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 labelText: 'Ultra-Solution D.R.C Irrigation',
                                 suffixText: 'Qté',
@@ -129,6 +130,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                           Expanded(
                             child: TextField(
                               controller: _qte2,
+                              keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 labelText: 'Ultra Plus 45',
                                 suffixText: 'Qté',
@@ -148,6 +150,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                           Expanded(
                             child: TextField(
                               controller: _qte3,
+                              keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 labelText: 'Ultra Classic 45',
                                 suffixText: 'Qté',
@@ -163,6 +166,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                           Expanded(
                             child: TextField(
                               controller: _qte4,
+                              keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 labelText: 'Ultra DRC Foliar TDS',
                                 suffixText: 'Qté',
@@ -182,6 +186,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                           Expanded(
                             child: TextField(
                               controller: _qte5,
+                              keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 labelText: 'Actiphol',
                                 suffixText: 'Qté',
@@ -197,6 +202,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                           Expanded(
                             child: TextField(
                               controller: _qte6,
+                              keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 labelText: 'Rhizocote',
                                 suffixText: 'Qté',
@@ -216,6 +222,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                           Expanded(
                             child: TextField(
                               controller: _qte7,
+                              keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 labelText: 'Power Set',
                                 suffixText: 'Qté',
@@ -231,6 +238,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                           Expanded(
                             child: TextField(
                               controller: _qte8,
+                              keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                 labelText: 'Clustflo',
                                 suffixText: 'Qté',
@@ -245,6 +253,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                   ),
                   TextField(
                     controller: _qte9,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'ANIMAX',
                       suffixText: 'Qté',
@@ -263,6 +272,7 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                   ),
                   TextField(
                     controller: _totalcommeng,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Montant Total',
                       suffixText: 'DT',

@@ -107,13 +107,16 @@ class _TachesAjoutState extends State<TachesAjout> {
               const SizedBox(height: 15),
               TextField(
                 controller: _qte1,
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'quantité',
                   labelStyle: TextStyle(fontSize: 20),
                 ),
                 maxLines: null,
               ),
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               Container(
                 decoration: BoxDecoration(
                     color: Colors.green,
@@ -167,22 +170,35 @@ class _TachesAjoutState extends State<TachesAjout> {
               const SizedBox(height: 15),
               TextField(
                 controller: _qte2,
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Qté',
+                  labelText: 'quantité',
                   labelStyle: TextStyle(fontSize: 20),
                 ),
                 maxLines: null,
               ),
-              const SizedBox(height: 50,),
+              const SizedBox(
+                height: 50,
+              ),
               FilledButton(
                 onPressed: () {
-                  if(selectedValue == null && selectedValue2 == null) {
+                  if (selectedValue == null && selectedValue2 == null) {
                     Navigator.pop(context);
                     return;
                   }
                   Navigator.pop(context, {
-                    'job': selectedValue == null ? null : Job(type: selectedValue!, desc: _type.text, qte: int.parse(_qte1.text)),
-                    'item': selectedValue2 == null ? null : Item(type: selectedValue2!, nom: _nom.text, qte: int.parse(_qte2.text))
+                    'job': selectedValue == null
+                        ? null
+                        : Job(
+                            type: selectedValue!,
+                            desc: _type.text,
+                            qte: int.parse(_qte1.text)),
+                    'item': selectedValue2 == null
+                        ? null
+                        : Item(
+                            type: selectedValue2!,
+                            nom: _nom.text,
+                            qte: int.parse(_qte2.text))
                   });
                 },
                 child: const Text('Enregistrer'),
@@ -195,18 +211,21 @@ class _TachesAjoutState extends State<TachesAjout> {
   }
 }
 
-
 class TaskList extends StatefulWidget {
   final List<Job> jobs;
   final List<Item> items;
   final Future<void> Function(Job) updatejobs;
   final Future<void> Function(Item) updateitems;
-  const TaskList({super.key, required this.jobs, required this.items, required this.updatejobs, required this.updateitems});
+  const TaskList(
+      {super.key,
+      required this.jobs,
+      required this.items,
+      required this.updatejobs,
+      required this.updateitems});
 
   @override
   State<TaskList> createState() => _TaskListState();
 }
-
 
 class _TaskListState extends State<TaskList> {
   List<Job> jobs = [];
@@ -235,29 +254,31 @@ class _TaskListState extends State<TaskList> {
         floatingActionButton: FloatingActionButton(
           shape: const CircleBorder(),
           onPressed: () async {
-            final res = await Navigator.push<Map<String, dynamic>>(context, MaterialPageRoute(builder: (context) => const TachesAjout()));
+            final res = await Navigator.push<Map<String, dynamic>>(context,
+                MaterialPageRoute(builder: (context) => const TachesAjout()));
             final job = res?['job'] as Job?;
             final item = res?['item'] as Item?;
-            if(job != null) {
+            if (job != null) {
               widget.updatejobs(job);
             }
 
-            if(item != null) {
+            if (item != null) {
               widget.updateitems(item);
             }
 
-            setState(() {
-
-            });
+            setState(() {});
           },
           child: const Icon(Icons.add),
-
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         appBar: AppBar(
           bottom: const TabBar(tabs: [
-            Tab(text: "activité",),
-            Tab(text: "matériaux",),
+            Tab(
+              text: "activité",
+            ),
+            Tab(
+              text: "Utilisation d'engrais",
+            ),
           ]),
           title: const Text(
             "Tâches",
@@ -269,8 +290,7 @@ class _TaskListState extends State<TaskList> {
             ),
           ),
         ),
-        body: TabBarView(
-          children: [
+        body: TabBarView(children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -279,17 +299,23 @@ class _TaskListState extends State<TaskList> {
                 child: ListView.separated(
                   itemCount: jobs.length,
                   separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: (context, index)  {
+                  itemBuilder: (context, index) {
                     final job = jobs[index];
                     return ListTile(
-                      leading: Icon(Icons.agriculture_outlined, color: Colors.green.shade600,),
+                      leading: Icon(
+                        Icons.agriculture_outlined,
+                        color: Colors.green.shade600,
+                      ),
                       contentPadding: const EdgeInsets.all(8.0),
                       isThreeLine: true,
-                      subtitle: Text(job.type, style: TextStyle(color: Colors.green.shade500),),
-                      title: Text(job.desc,style: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
-                      onTap: () {
-
-                      },
+                      subtitle: Text(
+                        job.type,
+                        style: TextStyle(color: Colors.green.shade500),
+                      ),
+                      title: Text(job.desc,
+                          style: const TextStyle(
+                              fontSize: 25, fontWeight: FontWeight.bold)),
+                      onTap: () {},
                     );
                   },
                 ),
@@ -304,17 +330,23 @@ class _TaskListState extends State<TaskList> {
                 child: ListView.separated(
                   itemCount: items.length,
                   separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: (context, index)  {
+                  itemBuilder: (context, index) {
                     final item = items[index];
                     return ListTile(
-                      leading: Icon(Icons.payments, color: Colors.green.shade600,),
+                      leading: Icon(
+                        Icons.payments,
+                        color: Colors.green.shade600,
+                      ),
                       contentPadding: const EdgeInsets.all(8.0),
                       isThreeLine: true,
-                      subtitle: Text(item.type, style: TextStyle(color: Colors.green.shade500),),
-                      title: Text(item.nom,style: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold)),
-                      onTap: () {
-
-                      },
+                      subtitle: Text(
+                        item.type,
+                        style: TextStyle(color: Colors.green.shade500),
+                      ),
+                      title: Text(item.nom,
+                          style: const TextStyle(
+                              fontSize: 25, fontWeight: FontWeight.bold)),
+                      onTap: () {},
                     );
                   },
                 ),

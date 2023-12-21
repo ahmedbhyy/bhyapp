@@ -26,6 +26,7 @@ class _WeatherPageState extends State<WeatherPage> {
   late Future<Weather> kasserineWeather;
   // ignore: non_constant_identifier_names
   late Future<Weather> SidiBouzidWeather;
+  late Future<Weather> GafsaWeather;
 
   @override
   void initState() {
@@ -35,32 +36,34 @@ class _WeatherPageState extends State<WeatherPage> {
     KebiliWeather = weatherService.getWeather('Kebili');
     kasserineWeather = weatherService.getWeather('kasserine');
     SidiBouzidWeather = weatherService.getWeather('Sidi Bouzid');
+    GafsaWeather = weatherService.getWeather('Gafsa');
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('images/weather2.png'),
-            fit: BoxFit.cover,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('images/weather2.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 250, left: 10, right: 10),
+          child: Column(
+            children: [
+              _buildWeatherCard('Tunis', TunisWeather),
+              _buildWeatherCard('Nabeul', nabeulWeather),
+              _buildWeatherCard('Kebili', KebiliWeather),
+              _buildWeatherCard('Kasserine', kasserineWeather),
+              _buildWeatherCard('Sidi Bouzid', SidiBouzidWeather),
+              _buildWeatherCard('Gafsa', GafsaWeather),
+            ],
           ),
         ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 250, left: 10, right: 10),
-            child: Column(
-              children: [
-                _buildWeatherCard('Tunis', TunisWeather),
-                _buildWeatherCard('Nabeul', nabeulWeather),
-                _buildWeatherCard('Kebili', KebiliWeather),
-                _buildWeatherCard('Kasserine', kasserineWeather),
-                _buildWeatherCard('Sidi Bouzid', SidiBouzidWeather),
-              ],
-            ),
-          ),
-        ),
-      );
+      ),
+    );
   }
 
   Widget _buildWeatherCard(String location, Future<Weather> weather) {
@@ -74,6 +77,7 @@ class _WeatherPageState extends State<WeatherPage> {
               title: Text(location),
               subtitle:
                   Text('${weather.temperature}°C - ${weather.description}'),
+              trailing: _weatherIcon(weather.description),
             ),
           );
         } else if (snapshot.hasError) {
@@ -83,6 +87,31 @@ class _WeatherPageState extends State<WeatherPage> {
         }
       },
     );
+  }
+
+  Icon _weatherIcon(String weatherDescription) {
+    switch (weatherDescription.toLowerCase()) {
+      case 'clear sky':
+        return const Icon(Icons.wb_sunny);
+      case 'few clouds':
+        return const Icon(Icons.cloud);
+      case 'scattered clouds':
+        return const Icon(Icons.cloud);
+      case 'broken clouds':
+        return const Icon(Icons.cloud_queue);
+      case 'shower rain':
+        return const Icon(Icons.thunderstorm);
+      case 'rain':
+        return const Icon(Icons.thunderstorm);
+      case 'thunderstorm':
+        return const Icon(Icons.thunderstorm);
+      case 'snow':
+        return const Icon(Icons.ac_unit);
+      case 'mist':
+        return const Icon(Icons.cloud_circle);
+      default:
+        return const Icon(Icons.wb_sunny);
+    }
   }
 }
 

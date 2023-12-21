@@ -104,6 +104,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _numfacture,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'N° Facture',
                       labelStyle: TextStyle(fontSize: 20),
@@ -114,6 +115,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _montantfac,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Montant de la Facture',
                       labelStyle: TextStyle(fontSize: 20),

@@ -10,16 +10,19 @@ class FactureInfo extends StatefulWidget {
 }
 
 class _FactureInfoState extends State<FactureInfo> {
+  bool _isLoading = true;
   List<Facture> displayList = [];
   final search = TextEditingController();
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
     final factures = db.collection("factures");
-    final firm = FirebaseAuth.instance.currentUser!.email!.split("@")[1].split('.')[0];
+    final firm =
+        FirebaseAuth.instance.currentUser!.email!.split("@")[1].split('.')[0];
     factures.where("firm", isEqualTo: firm).get().then((qsnap) {
       setState(() {
         displayList = qsnap.docs.map((e) => Facture.fromMap(e)).toList();
+        _isLoading = false;
       });
     });
     super.initState();
@@ -43,8 +46,11 @@ class _FactureInfoState extends State<FactureInfo> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              final res = await Navigator.push<Facture>(context, MaterialPageRoute(builder: (context) => const AjoutFacture()));
-              if(res != null) {
+              final res = await Navigator.push<Facture>(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AjoutFacture()));
+              if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final factures = db.collection("factures");
                 factures.doc(res.num).set(res.toMap(), SetOptions(merge: true));
@@ -64,9 +70,7 @@ class _FactureInfoState extends State<FactureInfo> {
             child: TextField(
               controller: search,
               onChanged: (_) {
-                setState(() {
-
-                });
+                setState(() {});
               },
               style: const TextStyle(fontSize: 17.0),
               decoration: InputDecoration(
@@ -79,56 +83,124 @@ class _FactureInfoState extends State<FactureInfo> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                     borderSide:
-                    const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+                        const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
                   )),
             ),
           ),
-          const SizedBox(height: 20),
+          _isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6a040f)),
+                ))
+              : Container(),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(7.0),
               child: ListView.separated(
                   itemCount: displayList
-                      .where((element) => element.num.toString().contains(search.text))
-                      .toList().length,
+                      .where((element) =>
+                          element.num.toString().contains(search.text))
+                      .toList()
+                      .length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
                     final list = displayList
-                        .where((element) => element.num.toString().contains(search.text))
+                        .where((element) =>
+                            element.num.toString().contains(search.text))
                         .toList();
                     final facture = list[index];
                     return ListTile(
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "à ${facture.nom_soc} | ${facture.total}",
+                        "Nom de la Societé : ${facture.nom_soc} \nTotal : ${facture.total} DT",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      title: Text("facture numéro ${facture.num}"),
+                      title: Text("Numéro du Facture: ${facture.num}"),
+                      trailing: IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text(
+                                'Confirm Delete',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                              content: const Text(
+                                'Are you sure you want to delete this item?',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await deletefacture(displayList[index].num);
+                                    setState(() {
+                                      displayList.removeAt(index);
+                                    });
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                       onTap: () async {
-                        final facttmp = await Navigator.push<Facture>(context, MaterialPageRoute(builder: (context) {
-                          return AjoutFacture(facture: facture,);
+                        final facttmp = await Navigator.push<Facture>(context,
+                            MaterialPageRoute(builder: (context) {
+                          return AjoutFacture(
+                            facture: facture,
+                          );
                         }));
                         final db = FirebaseFirestore.instance;
                         if (facttmp == null) return;
-                        db.collection("factures").doc(facture.num).set(facttmp.toMap(), SetOptions(merge: true));
+                        db
+                            .collection("factures")
+                            .doc(facture.num)
+                            .set(facttmp.toMap(), SetOptions(merge: true));
                         setState(() {
                           displayList[displayList.indexOf(facture)] = facttmp;
                         });
                       },
                     );
-                  }
-              ),
+                  }),
             ),
           ),
         ],
       ),
     );
   }
-}
 
+  Future<void> deletefacture(String facId) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final facRef = db.collection('factures').doc(facId);
+
+      await facRef.delete();
+
+      print('Ouvrier deleted successfully');
+    } catch (e) {
+      print('Error deleting ouvrier: $e');
+    }
+  }
+}
 
 class AjoutFacture extends StatefulWidget {
   final Facture? facture;
@@ -148,7 +220,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
 
   @override
   void initState() {
-    if(widget.facture != null) {
+    if (widget.facture != null) {
       final facture = widget.facture!;
       _numerodufact.text = facture.num.toString();
       _totalfact.text = facture.total.toString();
@@ -167,6 +239,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
     _totalfact.dispose();
     _nomsoc.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,7 +265,8 @@ class _AjoutFactureState extends State<AjoutFacture> {
                 children: [
                   CalendarDatePicker(
                     initialDate: _datefact,
-                    firstDate: DateTime.now().subtract(const Duration(days: 366)),
+                    firstDate:
+                        DateTime.now().subtract(const Duration(days: 366)),
                     lastDate: DateTime.now().add(const Duration(days: 366)),
                     onDateChanged: (DateTime value) {
                       _datefact = value;
@@ -226,6 +300,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                       labelText: 'total de la facture',
                       labelStyle: TextStyle(fontSize: 20),
                       icon: Icon(Icons.euro),
+                      suffixText: 'DT',
                     ),
                     maxLines: null,
                   ),
@@ -248,16 +323,30 @@ class _AjoutFactureState extends State<AjoutFacture> {
                             item["des"],
                             style: TextStyle(color: Colors.green.shade500),
                           ),
-                          title: Text((item['quantite'] * item["montant"]).toString(),
-                              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                          title: Text(
+                              (item['quantite'] * item["montant"]).toString(),
+                              style: const TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.bold)),
                           onTap: () async {
-                            final tmp = await showModalBottomSheet<Map<String, dynamic>>(context: context, builder: (context) {
-                              return ItemAdder(item: item,);
-                            });
-                            if(tmp != null) {
+                            final tmp = await showModalBottomSheet<
+                                    Map<String, dynamic>>(
+                                context: context,
+                                builder: (context) {
+                                  return ItemAdder(
+                                    item: item,
+                                  );
+                                });
+                            if (tmp != null) {
                               setState(() {
                                 items[items.indexOf(item)] = tmp;
-                                _totalfact.text = items.fold(.0, (previousValue, element) => previousValue + element['montant']*element['quantite']).toString();
+                                _totalfact.text = items
+                                    .fold(
+                                        .0,
+                                        (previousValue, element) =>
+                                            previousValue +
+                                            element['montant'] *
+                                                element['quantite'])
+                                    .toString();
                               });
                             }
                           },
@@ -265,7 +354,6 @@ class _AjoutFactureState extends State<AjoutFacture> {
                       },
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -273,10 +361,15 @@ class _AjoutFactureState extends State<AjoutFacture> {
                 bottom: 0,
                 child: FilledButton(
                   onPressed: () {
-                    if(items.isEmpty || _nomsoc.text.isEmpty || _totalfact.text.isEmpty || _numerodufact.text.isEmpty) {
+                    if (items.isEmpty ||
+                        _nomsoc.text.isEmpty ||
+                        _totalfact.text.isEmpty ||
+                        _numerodufact.text.isEmpty) {
                       return;
                     }
-                    final firm = FirebaseAuth.instance.currentUser!.email!.split("@")[1].split('.')[0];
+                    final firm = FirebaseAuth.instance.currentUser!.email!
+                        .split("@")[1]
+                        .split('.')[0];
                     final bon = Facture(
                       items: items,
                       total: double.parse(_totalfact.text),
@@ -288,28 +381,34 @@ class _AjoutFactureState extends State<AjoutFacture> {
                     Navigator.pop(context, bon);
                   },
                   child: const Text("enregistrer"),
-                )
-            ),
+                )),
             Positioned(
                 bottom: 0,
                 left: 0,
-                child:  FilledButton.icon(
+                child: FilledButton.icon(
                     onPressed: () async {
-                      final res = await showModalBottomSheet<Map<String, dynamic>>(
-                          context: context,
-                          builder: (context) {
-                            return ItemAdder();
-                          });
-                      if(res != null) {
+                      final res =
+                          await showModalBottomSheet<Map<String, dynamic>>(
+                              context: context,
+                              builder: (context) {
+                                return ItemAdder();
+                              });
+                      if (res != null) {
                         setState(() {
                           items.add(res);
-                          _totalfact.text = items.fold(.0, (previousValue, element) => previousValue + element['montant']*element['quantite']).toString();
+                          _totalfact.text = items
+                              .fold(
+                                  .0,
+                                  (previousValue, element) =>
+                                      previousValue +
+                                      element['montant'] * element['quantite'])
+                              .toString();
                         });
                         print(res);
                       }
                     },
-                    icon: const Icon(Icons.add_outlined), label: const Text("ajouter"))
-            )
+                    icon: const Icon(Icons.add_outlined),
+                    label: const Text("ajouter")))
           ],
         ),
       ),
@@ -332,7 +431,7 @@ class _ItemAdderState extends State<ItemAdder> {
 
   @override
   void initState() {
-    if(widget.item != null) {
+    if (widget.item != null) {
       _designation.text = widget.item!["des"];
       _quantite.text = widget.item!["quantite"].toString();
       _montant.text = widget.item!["montant"].toString();
@@ -353,6 +452,7 @@ class _ItemAdderState extends State<ItemAdder> {
                 TextField(
                   onSubmitted: (val) {},
                   controller: _designation,
+                  maxLines: null,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     label: Text("désignation"),
@@ -364,6 +464,7 @@ class _ItemAdderState extends State<ItemAdder> {
                 TextField(
                   onSubmitted: (val) {},
                   controller: _quantite,
+                  maxLines: null,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -376,14 +477,16 @@ class _ItemAdderState extends State<ItemAdder> {
                 TextField(
                   onSubmitted: (val) {},
                   controller: _montant,
+                  maxLines: null,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     label: Text("montant"),
+                    suffixText: 'DT',
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 150,
                 ),
               ],
             ),
@@ -396,15 +499,14 @@ class _ItemAdderState extends State<ItemAdder> {
                   });
                   Navigator.pop(context, tmp);
                 },
-                child: Center(child: Text(widget.item == null ? "ajouter": "modifier")))
+                child: Center(
+                    child: Text(widget.item == null ? "ajouter" : "modifier")))
           ],
         ),
       ),
     );
   }
 }
-
-
 
 class Facture {
   final String num;
@@ -413,7 +515,13 @@ class Facture {
   final String firm;
   final DateTime date;
   final List<Map<String, dynamic>> items;
-  Facture({required this.nom_soc, required this.total, required this.date, required this.num, required this.items, required this.firm});
+  Facture(
+      {required this.nom_soc,
+      required this.total,
+      required this.date,
+      required this.num,
+      required this.items,
+      required this.firm});
 
   Map<String, dynamic> toMap() {
     return {

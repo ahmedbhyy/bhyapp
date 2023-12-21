@@ -143,6 +143,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                             Expanded(
                               child: TextField(
                                 controller: _quantite2,
+                                keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                   labelText: 'Quantité',
                                   labelStyle: TextStyle(fontSize: 20),

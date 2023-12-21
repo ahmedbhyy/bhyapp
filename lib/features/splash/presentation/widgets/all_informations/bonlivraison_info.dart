@@ -122,6 +122,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _numbonliv,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                         labelText: 'N° du Bon',
                         labelStyle: TextStyle(fontSize: 20),
@@ -140,6 +141,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _total,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Montant Total',
                       labelStyle: TextStyle(fontSize: 20),

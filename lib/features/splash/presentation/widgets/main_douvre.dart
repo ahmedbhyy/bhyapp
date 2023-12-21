@@ -186,6 +186,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
         Expanded(
           child: TextField(
             controller: controller,
+            keyboardType: TextInputType.number,
             style: const TextStyle(fontSize: 20.0),
             maxLines: null,
             textAlign: TextAlign.start,

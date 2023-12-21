@@ -168,8 +168,11 @@ class _EngraisHomeState extends State<EngraisHome> {
                               ),
                               TextButton(
                                 onPressed: () async {
+                                  Navigator.pop(context);
                                   await deleteengrais(displayList[index].id);
-                                  await refreshPage();
+                                  setState(() {
+                                    displayList.removeAt(index);
+                                  });
                                 },
                                 child: const Text('Delete'),
                               ),
@@ -208,15 +211,6 @@ class _EngraisHomeState extends State<EngraisHome> {
     } catch (e) {
       print('Error deleting ouvrier: $e');
     }
-  }
-
-  Future<void> refreshPage() async {
-    Navigator.pop(context); // Pop the current screen
-    await Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                EngraisHome(date: date))); // Push the page again
   }
 
   Widget bottomSheet(String filename) {

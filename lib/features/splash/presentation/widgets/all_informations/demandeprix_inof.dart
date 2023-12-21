@@ -130,6 +130,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _quantiteprix,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Quantité',
                       labelStyle: TextStyle(fontSize: 20),

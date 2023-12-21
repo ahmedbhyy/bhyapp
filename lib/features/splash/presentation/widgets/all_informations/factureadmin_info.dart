@@ -124,6 +124,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _numfacadmin,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'N° Facture',
                       labelStyle: TextStyle(fontSize: 20),
@@ -144,6 +145,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _totalfacadmin,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Total de la Facture',
                       labelStyle: TextStyle(fontSize: 20),

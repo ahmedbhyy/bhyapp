@@ -167,8 +167,11 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                               ),
                               TextButton(
                                 onPressed: () async {
+                                  Navigator.pop(context);
                                   await deleteOuvrier(displayList[index].id);
-                                  await refreshPage();
+                                  setState(() {
+                                    displayList.removeAt(index);
+                                  });
                                 },
                                 child: const Text('Delete'),
                               ),
@@ -194,12 +197,6 @@ class _OuvrierHomeState extends State<OuvrierHome> {
             ],
           )),
     );
-  }
-
-  Future<void> refreshPage() async {
-    Navigator.pop(context);
-    await Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const OuvrierHome()));
   }
 
   Future<void> deleteOuvrier(String ouvrierId) async {

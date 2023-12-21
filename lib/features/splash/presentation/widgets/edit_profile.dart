@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatefulWidget {
@@ -8,9 +10,21 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  bool _isLoading = true;
   final TextEditingController _nomuser = TextEditingController();
   final TextEditingController _profession = TextEditingController();
   final TextEditingController _firme = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late User _user;
+  @override
+  void initState() {
+    super.initState();
+    _user = _auth.currentUser!;
+    fetchUserData();
+    _isLoading = false;
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -24,7 +38,7 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "votre profil",
+          "votre profile",
           style: TextStyle(
               fontFamily: 'Michroma',
               fontSize: 20,
@@ -57,10 +71,21 @@ class _SettingsState extends State<Settings> {
             Padding(
               padding: const EdgeInsets.only(top: 35, left: 8),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  FocusScope.of(context).unfocus();
+                  saveUserData();
+                },
                 child: const Text('Enregistrer'),
               ),
             ),
+            const SizedBox(height: 30),
+            _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFF6a040f)),
+                  ))
+                : Container(),
           ],
         ),
       ),
@@ -95,5 +120,41 @@ class _SettingsState extends State<Settings> {
         ),
       ],
     );
+  }
+
+  Future<void> fetchUserData() async {
+    try {
+      DocumentSnapshot docSnapshot =
+          await _firestore.collection('users').doc(_user.uid).get();
+
+      if (docSnapshot.exists) {
+        Map<String, dynamic> userData =
+            (docSnapshot.data() as Map<String, dynamic>);
+        _nomuser.text = userData['nom et prenom'] ?? '';
+        _profession.text = userData['profession'] ?? '';
+        _firme.text = userData['lieu de travail'] ?? '';
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
+  Future<void> saveUserData() async {
+    try {
+      String nomuser = _nomuser.text;
+      String profession = _profession.text;
+      String firme = _firme.text;
+
+      await _firestore.collection('users').doc(_user.uid).set({
+        'nom et prenom': nomuser,
+        'profession': profession,
+        'lieu de travail': firme,
+      });
+      setState(() {});
+
+      print('User data saved to Firestore');
+    } catch (e) {
+      print('Error saving user data: $e');
+    }
   }
 }
