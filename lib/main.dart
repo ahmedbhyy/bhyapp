@@ -10,12 +10,22 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
+  final notificationSettings =
+      await FirebaseMessaging.instance.requestPermission(provisional: true);
   final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
   if (apnsToken != null) {
     // APNS token is available, make FCM plugin API requests...
   }
   final fcmToken = await FirebaseMessaging.instance.getToken();
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+    }
+  });
+  print(fcmToken);
   runApp(const Albaraka());
 }
 
@@ -26,10 +36,11 @@ class Albaraka extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      darkTheme: ThemeData.from(colorScheme: ColorScheme.fromSeed(seedColor: Colors.green.shade700)),
+      darkTheme: ThemeData.from(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green.shade700)),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-          /*inputDecorationTheme: InputDecorationTheme(
+        /*inputDecorationTheme: InputDecorationTheme(
             outlineBorder: BorderSide(
               color: Colors.red
             )

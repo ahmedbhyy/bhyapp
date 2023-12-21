@@ -11,8 +11,8 @@ class OuvrierHome extends StatefulWidget {
 }
 
 class _OuvrierHomeState extends State<OuvrierHome> {
+  bool _isLoading = true;
   final TextEditingController _nomdeouvrier = TextEditingController();
-
   TextEditingController get controller => _nomdeouvrier;
   final TextEditingController _lieudeouvrier = TextEditingController();
 
@@ -26,15 +26,21 @@ class _OuvrierHomeState extends State<OuvrierHome> {
 
   // ignore: non_constant_identifier_names
   List<Ouvriername> displayList = [];
+  List<Ouvriername> originalList = [];
+
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
     db.collection("ouvrier").get().then((qsnap) {
       setState(() {
-        displayList = qsnap.docs
-            .map((ouvier) =>
-                Ouvriername(name: ouvier.data()["nom"], id: ouvier.id))
+        originalList = qsnap.docs
+            .map((ouvier) => Ouvriername(
+                name: ouvier.data()["nom"],
+                lieu: ouvier.data()["lieu"],
+                id: ouvier.id))
             .toList();
+        displayList = List.from(originalList);
+        _isLoading = false;
       });
     });
     super.initState();
@@ -42,10 +48,14 @@ class _OuvrierHomeState extends State<OuvrierHome> {
 
   void updateList(String value) {
     setState(() {
-      displayList = displayList
-          .where((element) =>
-              element.name!.toLowerCase().contains(value.toLowerCase()))
-          .toList();
+      if (value.isEmpty) {
+        displayList = List.from(originalList);
+      } else {
+        displayList = originalList
+            .where((element) =>
+                element.name.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+      }
     });
   }
 
@@ -97,7 +107,14 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                           const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
                     )),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 10.0),
+              _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Color(0xFF6a040f)),
+                    ))
+                  : Container(),
               Expanded(
                 child: ListView.separated(
                   itemCount: displayList.length,
@@ -110,6 +127,55 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    subtitle: Text(
+                      'Lieu de travail : ${displayList[index].lieu}',
+                      style: TextStyle(
+                        color: displayList[index].lieu != null
+                            ? Colors.green
+                            : Colors.grey,
+                        fontSize: displayList[index].lieu != null ? 16 : 14,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text(
+                              'Confirm Delete',
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                            content: const Text(
+                              'Are you sure you want to delete this item?',
+                              style: TextStyle(
+                                fontSize: 17,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  await deleteOuvrier(displayList[index].id);
+                                  await refreshPage();
+                                },
+                                child: const Text('Delete'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                     onTap: () {
                       Navigator.push(
@@ -128,6 +194,25 @@ class _OuvrierHomeState extends State<OuvrierHome> {
             ],
           )),
     );
+  }
+
+  Future<void> refreshPage() async {
+    Navigator.pop(context);
+    await Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const OuvrierHome()));
+  }
+
+  Future<void> deleteOuvrier(String ouvrierId) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final ouvrierRef = db.collection('ouvrier').doc(ouvrierId);
+
+      await ouvrierRef.delete();
+
+      print('Ouvrier deleted successfully');
+    } catch (e) {
+      print('Error deleting ouvrier: $e');
+    }
   }
 
   Future<void> showEditDialog(BuildContext context, String hintText,
@@ -161,14 +246,16 @@ class _OuvrierHomeState extends State<OuvrierHome> {
             TextButton(
               onPressed: () {
                 String newName = controller.text;
+                String newlieu = controller2.text;
                 if (newName.isNotEmpty) {
                   setState(() {
                     if (newName.isNotEmpty) {
                       final db = FirebaseFirestore.instance;
                       final ouvrier = db.collection("ouvrier");
-                      ouvrier.add({'nom': newName}).then((value) {
-                        Ouvriername newOuvrier =
-                            Ouvriername(name: newName, id: value.id);
+                      ouvrier
+                          .add({'nom': newName, 'lieu': newlieu}).then((value) {
+                        Ouvriername newOuvrier = Ouvriername(
+                            name: newName, lieu: newlieu, id: value.id);
                         setState(() {
                           displayList.add(newOuvrier);
                         });

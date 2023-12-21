@@ -15,18 +15,26 @@ class EngraisHome extends StatefulWidget {
 }
 
 class _EngraisHomeState extends State<EngraisHome> {
+  bool _isLoading = true;
+  DateTime date = DateTime.now();
   @override
   void dispose() {
     super.dispose();
   }
 
   List<Engraisname> displayList = [];
+  List<Engraisname> originalList = [];
   void updateList(String value) {
     setState(() {
-      displayList = displayList
-          .where((element) =>
-              element.engrais_name.toLowerCase().contains(value.toLowerCase()))
-          .toList();
+      if (value.isEmpty) {
+        displayList = List.from(originalList);
+      } else {
+        displayList = originalList
+            .where((element) => element.engrais_name
+                .toLowerCase()
+                .contains(value.toLowerCase()))
+            .toList();
+      }
     });
   }
 
@@ -37,10 +45,13 @@ class _EngraisHomeState extends State<EngraisHome> {
     engrais.get().then((querySnapshot) {
       print("${querySnapshot.size} items");
       setState(() {
-        displayList = List.from(querySnapshot.docs.map((engrais) => Engraisname(
-            id: engrais.id,
-            engrais_name: engrais.data()["name"],
-            engrais_poster_url: engrais.data()["image"])));
+        originalList = List.from(querySnapshot.docs.map((engrais) =>
+            Engraisname(
+                id: engrais.id,
+                engrais_name: engrais.data()["name"],
+                engrais_poster_url: engrais.data()["image"])));
+        displayList = List.from(originalList);
+        _isLoading = false;
       });
     });
     super.initState();
@@ -105,6 +116,13 @@ class _EngraisHomeState extends State<EngraisHome> {
                 ),
               ),
               const SizedBox(height: 20.0),
+              _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Color(0xFF6a040f)),
+                    ))
+                  : Container(),
               Expanded(
                 child: ListView.separated(
                   itemCount: displayList.length,
@@ -120,6 +138,46 @@ class _EngraisHomeState extends State<EngraisHome> {
                     ),
                     leading:
                         Image.network(displayList[index].engrais_poster_url),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text(
+                              'Confirm Delete',
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                            content: const Text(
+                              'Are you sure you want to delete this item?',
+                              style: TextStyle(
+                                fontSize: 17,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  await deleteengrais(displayList[index].id);
+                                  await refreshPage();
+                                },
+                                child: const Text('Delete'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -139,6 +197,28 @@ class _EngraisHomeState extends State<EngraisHome> {
     );
   }
 
+  Future<void> deleteengrais(String engraisId) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final engraisRef = db.collection('engrais').doc(engraisId);
+
+      await engraisRef.delete();
+
+      print('Ouvrier deleted successfully');
+    } catch (e) {
+      print('Error deleting ouvrier: $e');
+    }
+  }
+
+  Future<void> refreshPage() async {
+    Navigator.pop(context); // Pop the current screen
+    await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                EngraisHome(date: date))); // Push the page again
+  }
+
   Widget bottomSheet(String filename) {
     return Container(
       height: 100.0,
@@ -147,7 +227,7 @@ class _EngraisHomeState extends State<EngraisHome> {
       child: Column(
         children: <Widget>[
           const Text(
-            "Choose Profile photo",
+            "Choisir la Photo de l'engrais",
             style: TextStyle(
               fontSize: 20.0,
             ),

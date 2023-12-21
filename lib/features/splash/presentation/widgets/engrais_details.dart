@@ -17,6 +17,7 @@ class _EngraisDetailsState extends State<EngraisDetails> {
   final TextEditingController _achatController = TextEditingController();
   final TextEditingController _venteController = TextEditingController();
   final TextEditingController _quantiteController = TextEditingController();
+  bool _isLoading = true;
 
   @override
   void dispose() {
@@ -35,6 +36,7 @@ class _EngraisDetailsState extends State<EngraisDetails> {
         _venteController.text = (value.data()?["priv"] ?? 0).toString();
         _achatController.text = (value.data()?["pria"] ?? 0).toString();
         _quantiteController.text = (value.data()?["quantity"] ?? 0).toString();
+        _isLoading = false;
       });
     });
     super.initState();
@@ -102,6 +104,14 @@ class _EngraisDetailsState extends State<EngraisDetails> {
               },
               child: const Text('Ajouter une commande'),
             ),
+            const SizedBox(height: 10),
+            _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFF6a040f)),
+                  ))
+                : Container(),
           ],
         ),
       ),

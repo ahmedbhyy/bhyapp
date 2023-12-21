@@ -11,7 +11,7 @@ class CongesOuvrier extends StatefulWidget {
 }
 
 class _CongesOuvrierState extends State<CongesOuvrier> {
-  final controller = TextEditingController(text: "120");
+  final controller = TextEditingController(text: "");
   List<Conges> conges = [];
   @override
   void dispose() {
@@ -129,7 +129,7 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.sick),
-                    label: Text("cause du congés"),
+                    label: Text("cause du congés et (Durée)"),
                   ),
                 ),
                 const SizedBox(

@@ -259,6 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       if (pickedFile != null) {
         _imageFile = PickedFile(pickedFile.path);
+        Navigator.pop(context);
       }
     });
   }
