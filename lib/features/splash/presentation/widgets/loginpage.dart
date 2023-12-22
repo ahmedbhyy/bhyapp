@@ -16,36 +16,37 @@ class LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
   bool isPasswordHidden = true;
   bool _isLoading = false;
+
   Future<bool> checkCredentials(String enteredUsername, String enteredPassword) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: enteredUsername, password: enteredPassword);
+      
+      return true;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+
+      } else if (e.code == 'wrong-password') {
+
+      }
+    }
+
+    return false; 
+  }
+
+
+  void handleLogin() async {
     setState(() {
       _isLoading = true; 
     });
 
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: enteredUsername, password: enteredPassword);
-      print("logged in with user !");
-      return true;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-    }
-
-    return false; // Authentication failed
-  }
-
-  // Function for handling the login button press
-  void handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      TextInput.finishAutofillContext();
       String enteredUsername = usernameController.text;
       String enteredPassword = passwordController.text;
 
       if (await checkCredentials(enteredUsername, enteredPassword)) {
+        TextInput.finishAutofillContext();
         // ignore: use_build_context_synchronously
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => StartPage(
@@ -60,15 +61,20 @@ class LoginPageState extends State<LoginPage> {
           ),
         );
       }
-   
+    
     }
+
+    setState(() {
+      _isLoading = false; 
+    });
+
  }
 
   @override
   void dispose() {
-    super.dispose();
     usernameController.dispose();
     passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -123,14 +129,15 @@ class LoginPageState extends State<LoginPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(9),
                     ),
-                    child: TextField(
+                    child: TextFormField(
                       controller: usernameController,
+                      keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.username],
+                      autofillHints: const [AutofillHints.email],
                       decoration: const InputDecoration(
-                        hintText: 'donner votre email',
+                        hintText: 'adresse e-mail',
                         border: InputBorder.none,
                       ),
                     ),
@@ -142,14 +149,14 @@ class LoginPageState extends State<LoginPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(9),
                     ),
-                    child: TextField(
+                    child: TextFormField(
                       controller: passwordController,
                       autofillHints: const [AutofillHints.password],
                       obscureText: isPasswordHidden,
                       decoration: InputDecoration(
-                        hintText: 'donner votre mot de passe',
+                        hintText: 'mot de passe',
                         border: InputBorder.none,
                         suffixIcon: GestureDetector(
                           onTap: () {
@@ -166,32 +173,22 @@ class LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 50, left: 10),
-                    child: ElevatedButton(
-                      onPressed: handleLogin,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xffFF9233),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Container(
-                        width: 150,
-                        height: 40,
-                        alignment: Alignment.center,
-                        child: const Text(
-                          'sign in',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontFamily: 'Michroma',
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
+                  const SizedBox(height: 60,),
+                  FilledButton(
+                    onPressed: handleLogin, 
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xffFF9233),
+                      padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 5),
                     ),
+                    child: const Text(
+                      'sign in',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontFamily: 'Michroma',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
                   ),
                 ],
               ),
