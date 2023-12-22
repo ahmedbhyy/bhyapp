@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bhyapp/features/splash/presentation/widgets/all_commandes.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/engrais_commandes2.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/engrais_details.dart';
 import 'package:bhyapp/les%20engrais/engrais_name.dart';
@@ -69,6 +70,14 @@ class _EngraisHomeState extends State<EngraisHome> {
             },
           ),
           IconButton(
+              icon: const Icon(Icons.shopping_bag),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AllCommandes()));
+              }),
+          IconButton(
             icon: Badge(
               label: Text("${panier.length}"),
               backgroundColor: Colors.green.shade500,
@@ -87,17 +96,21 @@ class _EngraisHomeState extends State<EngraisHome> {
                       }),
                 ),
               );
-              if(res != null && res) {
+              if (res != null && res) {
                 final db = FirebaseFirestore.instance;
                 final comms = db.collection('commandes');
-                final firm = (await db.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get()).data()!["lieu de travail"];
+                final firm = (await db
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .get())
+                    .data()!["lieu de travail"];
                 comms.add({
                   "firm": firm,
-                  "panier": panier.map((e) => e.toMap()), 
+                  "panier": panier.map((e) => e.toMap()),
                   "date": DateTime.now().toString(),
                 });
                 setState(() {
-                  panier.clear(); 
+                  panier.clear();
                 });
               }
             },
