@@ -11,6 +11,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/all_informations/req
 import 'package:bhyapp/features/splash/presentation/widgets/lesengraishome.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/ouvriershome.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -25,10 +26,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final Map<String, String> roles = {'m@g.me': 'admin', 'ahmed@bhy.me': 'user'};
+  String role = "user";
 
   @override
   void initState() {
+    final id = FirebaseAuth.instance.currentUser!.uid;
+    final db = FirebaseFirestore.instance;
+    db.collection("users").doc(id).get().then((value) {
+      setState(() {
+        role = value.data()!["role"];
+      });
+    });
     super.initState();
   }
 
@@ -228,7 +236,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Visibility(
-              visible: roles[widget.email] == "admin",
+              visible: isVisible(),
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -263,7 +271,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Visibility(
-              visible: roles[widget.email] == "admin",
+              visible: isVisible(),
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -298,7 +306,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Visibility(
-              visible: roles[widget.email] == "admin",
+              visible: isVisible(),
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -333,7 +341,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Visibility(
-              visible: roles[widget.email] == "admin",
+              visible: isVisible(),
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -368,7 +376,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Visibility(
-              visible: roles[widget.email] == "admin",
+              visible: isVisible(),
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -402,7 +410,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Visibility(
-              visible: roles[widget.email] == "admin",
+              visible: isVisible(),
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -437,7 +445,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Visibility(
-              visible: roles[widget.email] == "admin",
+              visible: isVisible(),
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -475,5 +483,9 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  bool isVisible() {
+    return role == "admin";
   }
 }
