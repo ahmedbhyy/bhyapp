@@ -30,6 +30,18 @@ class Engrai {
     );
   }
 
+  static Engrai fromMap2(Map<String, dynamic> e) {
+    return Engrai(
+      priv: e["priv"] as double, 
+      pria: e["pria"] as double, 
+      name: e["name"], 
+      url: e["image"], 
+      quantity: e["quantity"] as int,
+      id: "2",
+    );
+  }
+
+
   @override
   String toString() {
     return toMap().toString();
