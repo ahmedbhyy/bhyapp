@@ -109,6 +109,15 @@ class _EngraisHomeState extends State<EngraisHome> {
                   "panier": panier.map((e) => e.toMap()),
                   "date": DateTime.now().toString(),
                 });
+                
+                panier.forEach((element) {
+                  final tmp = displayList[displayList.indexWhere((e) => e.id == element.id)] = Engrai(url: element.url, id: element.id, priv: element.priv, pria: element.pria, name: element.name, quantity: displayList.firstWhere((e) => e.id == element.id).quantity - element.quantity);
+                  print("aaaaa");
+                  db.collection("engrais").doc(element.id).set({
+                    "quantity": tmp.quantity, 
+                  }, SetOptions(merge: true));
+                  
+                });
                 setState(() {
                   panier.clear();
                 });
