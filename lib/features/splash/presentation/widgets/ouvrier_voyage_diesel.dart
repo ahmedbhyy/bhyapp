@@ -153,7 +153,7 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 CalendarDatePicker(
                   initialDate: DateTime.now(),
@@ -165,7 +165,7 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
                   currentDate: DateTime.now(),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 10,
                 )
               ],
             ),

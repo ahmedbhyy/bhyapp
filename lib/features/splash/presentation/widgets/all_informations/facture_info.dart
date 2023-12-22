@@ -261,6 +261,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
           alignment: AlignmentDirectional.bottomEnd,
           children: [
             SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: Column(
                 children: [
                   CalendarDatePicker(
@@ -275,6 +276,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                   ),
                   TextField(
                     controller: _numerodufact,
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: 'N° de la facture',
                       enabled: widget.facture == null,
@@ -286,6 +288,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _nomsoc,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Nom de la société',
                       labelStyle: TextStyle(fontSize: 20),

@@ -66,27 +66,24 @@ class _AutresState extends State<Autres> {
 
   Widget buildTextFieldWithEditIcon(
       {required String hintText, required TextEditingController controller}) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: controller,
-            style: const TextStyle(fontSize: 20.0),
-            maxLines: null,
-            textAlign: TextAlign.start,
-            decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 30.0, horizontal: 10.0),
-              labelText: hintText,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20.0),
-                borderSide:
-                    const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
-              ),
-            ),
+    return TextFormField(
+      controller: controller,
+      style: const TextStyle(
+        fontSize: 20.0,
+      ),
+      minLines: 5,
+      maxLines: null,
+      textAlign: TextAlign.start,
+      decoration: InputDecoration(
+          labelText: hintText,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            borderSide: const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
           ),
-        ),
-      ],
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            borderSide: const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+          )),
     );
   }
 }

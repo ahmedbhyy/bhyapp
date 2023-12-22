@@ -165,7 +165,7 @@ class _RequeteInfoState extends State<RequeteInfo> {
                                     TextField(
                                       controller: _titlecontroller,
                                       decoration: const InputDecoration(
-                                          labelText: 'titre de la requete',
+                                          labelText: 'titre de la requête',
                                           labelStyle: TextStyle(fontSize: 20),
                                           prefixIcon: Icon(
                                               Icons.contact_support_outlined),
@@ -181,7 +181,7 @@ class _RequeteInfoState extends State<RequeteInfo> {
                                       controller: _desccontroller,
                                       decoration: const InputDecoration(
                                           labelText:
-                                              'Description de la requete',
+                                              'Description de la requête',
                                           labelStyle: TextStyle(fontSize: 20),
                                           border: OutlineInputBorder()),
                                     ),
@@ -208,7 +208,7 @@ class _RequeteInfoState extends State<RequeteInfo> {
                                           Navigator.pop(context, req);
                                         },
                                         child:
-                                            const Text("Envoyer une requete"))
+                                            const Text("Envoyer une requête"))
                                   ],
                                 ),
                               ),

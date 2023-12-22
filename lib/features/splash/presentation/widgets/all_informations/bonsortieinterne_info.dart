@@ -257,6 +257,7 @@ class _AjoutBonState extends State<AjoutBon> {
           alignment: AlignmentDirectional.bottomEnd,
           children: [
             SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: Column(
                 children: [
                   CalendarDatePicker(
@@ -269,8 +270,9 @@ class _AjoutBonState extends State<AjoutBon> {
                     },
                     currentDate: DateTime.now(),
                   ),
-                  TextField(
+                  TextFormField(
                     controller: _numerodubon,
+                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelText: 'N° du bon',
@@ -281,8 +283,9 @@ class _AjoutBonState extends State<AjoutBon> {
                     maxLines: null,
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  TextFormField(
                     controller: _beneficiaire,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Bénéficiaire',
                       labelStyle: TextStyle(fontSize: 20),
@@ -290,8 +293,9 @@ class _AjoutBonState extends State<AjoutBon> {
                     maxLines: null,
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  TextFormField(
                     controller: _destination,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Destination',
                       labelStyle: TextStyle(fontSize: 20),
@@ -429,6 +433,7 @@ class _ItemAdderState extends State<ItemAdder> {
                 TextField(
                   onSubmitted: (val) {},
                   controller: _designation,
+                  textInputAction: TextInputAction.next,
                   maxLines: null,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
