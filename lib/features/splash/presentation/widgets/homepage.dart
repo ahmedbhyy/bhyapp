@@ -1,10 +1,3 @@
-import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/admin_devis.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/bon_de_commande.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/bon_de_livraison.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/demande_prix.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/facture_administrative.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/adminscreens/note_reglement.dart';
-
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/boncommande_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonlivraison_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info.dart';
@@ -15,21 +8,17 @@ import 'package:bhyapp/features/splash/presentation/widgets/all_informations/fac
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/notereglement_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/rapport_adminn.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/requete_info.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/bon_sortie.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/facture.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/lesengraishome.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/ouvriershome.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/profile_screen.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/requetes.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/weather.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   final String email;
-  const HomePage({Key? key, required this.email}) : super(key: key);
+  HomePage({Key? key})
+      : email = FirebaseAuth.instance.currentUser!.email!,
+        super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -37,7 +26,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Map<String, String> roles = {'m@g.me': 'admin', 'ahmed@bhy.me': 'user'};
-  DateTime date = DateTime.now();
 
   @override
   void initState() {
@@ -55,8 +43,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => EngraisHome(date: date)),
+                  MaterialPageRoute(builder: (context) => const EngraisHome()),
                 );
               },
               child: Card(

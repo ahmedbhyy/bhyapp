@@ -45,12 +45,10 @@ class LoginPageState extends State<LoginPage> {
         TextInput.finishAutofillContext();
         // ignore: use_build_context_synchronously
         await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => StartPage(
-                    email: enteredUsername,
-                  )),
-        );
+            context,
+            MaterialPageRoute(
+              builder: (context) => const StartPage(),
+            ));
       } else {
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(

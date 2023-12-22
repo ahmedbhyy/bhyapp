@@ -1,53 +1,38 @@
-import 'package:date_format_field/date_format_field.dart';
+import 'package:bhyapp/les%20engrais/engrais_name.dart';
 import 'package:flutter/material.dart';
 
 class ToutsCommandes extends StatefulWidget {
-  const ToutsCommandes({super.key});
+  final List<Engrai> panier;
+  final Function(Engrai) onDelete;
+  const ToutsCommandes(
+      {super.key, required this.panier, required this.onDelete});
 
   @override
   State<ToutsCommandes> createState() => _ToutsCommandesState();
 }
 
 class _ToutsCommandesState extends State<ToutsCommandes> {
-  final TextEditingController _nnn4 = TextEditingController();
-  TextEditingController get controller => _nnn4;
-  DateTime? _datedecomeng;
-  final TextEditingController _qte1 = TextEditingController();
-  final TextEditingController _qte2 = TextEditingController();
-  final TextEditingController _qte3 = TextEditingController();
-  final TextEditingController _qte4 = TextEditingController();
-  final TextEditingController _qte5 = TextEditingController();
-  final TextEditingController _qte6 = TextEditingController();
-  final TextEditingController _qte7 = TextEditingController();
-  final TextEditingController _qte8 = TextEditingController();
-  final TextEditingController _qte9 = TextEditingController();
-  final TextEditingController _totalcommeng = TextEditingController();
-  final TextEditingController _destinationcommeng = TextEditingController();
-
   @override
   void dispose() {
     super.dispose();
+  }
 
-    _qte1.dispose();
-    _qte2.dispose();
-    _qte3.dispose();
-    _qte4.dispose();
-    _qte5.dispose();
-    _qte6.dispose();
-    _qte7.dispose();
-    _qte8.dispose();
-    _qte9.dispose();
-    _totalcommeng.dispose();
-    _destinationcommeng.dispose();
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FilledButton.icon(onPressed: () {
+        Navigator.pop(context, true);      
+      }, label: const Text("envoyer la commande"), icon: Icon(Icons.attach_money)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          "Tous les commandes",
+          "commandes",
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
@@ -55,249 +40,79 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
             color: Colors.green,
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              String hintText = "Ajouter une Commande";
-              showEditDialog(context, hintText, controller);
-            },
-            icon: const Icon(
-              Icons.add,
-              color: Colors.green,
-              size: 35,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 5.0),
+          Expanded(
+            child: ListView.separated(
+              itemCount: widget.panier.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final engrai = widget.panier[index];
+                return ListTile(
+                  leading: Icon(
+                    Icons.payments,
+                    color: Colors.green.shade600,
+                  ),
+                  contentPadding: const EdgeInsets.all(8.0),
+                  isThreeLine: true,
+                  subtitle: Text(
+                    "prix de vente: ${engrai.priv}\nprix d'achat: ${engrai.pria}\nquantité: ${engrai.quantity}",
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(engrai.name,
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                            'Confirm Delete',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          content: const Text(
+                            'Are you sure you want to delete this item?',
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                setState(() {
+                                  widget.onDelete(engrai);
+                                });
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [],
-        ),
-      ),
-    );
-  }
-
-  Future<void> showEditDialog(BuildContext context, String hintText,
-      TextEditingController controller) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(hintText),
-          content: SingleChildScrollView(
-            child: SizedBox(
-              width: 400,
-              child: Column(
-                children: [
-                  DateFormatField(
-                    type: DateFormatType.type2,
-                    decoration: const InputDecoration(
-                      labelStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      border: InputBorder.none,
-                      label: Text("Date de Commande"),
-                    ),
-                    onComplete: (date) {
-                      setState(() {
-                        if (date != null) {
-                          _datedecomeng = date;
-                        }
-                      });
-                    },
-                  ),
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _qte1,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Ultra-Solution D.R.C Irrigation',
-                                suffixText: 'Qté',
-                                labelStyle: TextStyle(fontSize: 15),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                          const VerticalDivider(
-                            color: Colors.grey,
-                            thickness: 2,
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: _qte2,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Ultra Plus 45',
-                                suffixText: 'Qté',
-                                labelStyle: TextStyle(fontSize: 15),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _qte3,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Ultra Classic 45',
-                                suffixText: 'Qté',
-                                labelStyle: TextStyle(fontSize: 15),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                          const VerticalDivider(
-                            color: Colors.grey,
-                            thickness: 2,
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: _qte4,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Ultra DRC Foliar TDS',
-                                suffixText: 'Qté',
-                                labelStyle: TextStyle(fontSize: 15),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _qte5,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Actiphol',
-                                suffixText: 'Qté',
-                                labelStyle: TextStyle(fontSize: 15),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                          const VerticalDivider(
-                            color: Colors.grey,
-                            thickness: 2,
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: _qte6,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Rhizocote',
-                                suffixText: 'Qté',
-                                labelStyle: TextStyle(fontSize: 15),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _qte7,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Power Set',
-                                suffixText: 'Qté',
-                                labelStyle: TextStyle(fontSize: 15),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                          const VerticalDivider(
-                            color: Colors.grey,
-                            thickness: 2,
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: _qte8,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Clustflo',
-                                suffixText: 'Qté',
-                                labelStyle: TextStyle(fontSize: 15),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  TextField(
-                    controller: _qte9,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'ANIMAX',
-                      suffixText: 'Qté',
-                      labelStyle: TextStyle(fontSize: 15),
-                    ),
-                    maxLines: null,
-                  ),
-                  TextField(
-                    controller: _destinationcommeng,
-                    decoration: const InputDecoration(
-                      labelText: 'Destination',
-                      suffixIcon: Icon(Icons.place),
-                      labelStyle: TextStyle(fontSize: 15),
-                    ),
-                    maxLines: null,
-                  ),
-                  TextField(
-                    controller: _totalcommeng,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Montant Total',
-                      suffixText: 'DT',
-                      labelStyle: TextStyle(fontSize: 15),
-                    ),
-                    maxLines: null,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('Enregistrer'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

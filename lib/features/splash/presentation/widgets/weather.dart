@@ -1,42 +1,35 @@
-import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/profile_screen.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-// ignore: use_key_in_widget_constructors
 class WeatherPage extends StatefulWidget {
+  const WeatherPage({Key? key}) : super(key: key);
   @override
-  // ignore: library_private_types_in_public_api
-  _WeatherPageState createState() => _WeatherPageState();
+  WeatherPageState createState() => WeatherPageState();
 }
 
-class _WeatherPageState extends State<WeatherPage> {
+class WeatherPageState extends State<WeatherPage> {
   String? username;
 
   final WeatherService weatherService =
       WeatherService('93121a5cf45f14b42696b5f1e84d605d');
 
-  // ignore: non_constant_identifier_names
-  late Future<Weather> TunisWeather;
+  late Future<Weather> tunisWeather;
   late Future<Weather> nabeulWeather;
-  // ignore: non_constant_identifier_names
-  late Future<Weather> KebiliWeather;
+  late Future<Weather> kebiliWeather;
   late Future<Weather> kasserineWeather;
-  // ignore: non_constant_identifier_names
-  late Future<Weather> SidiBouzidWeather;
-  late Future<Weather> GafsaWeather;
+  late Future<Weather> sidiBouzidWeather;
+  late Future<Weather> gafsaWeather;
 
   @override
   void initState() {
     super.initState();
-    TunisWeather = weatherService.getWeather('Tunis');
+    tunisWeather = weatherService.getWeather('Tunis');
     nabeulWeather = weatherService.getWeather('Nabeul');
-    KebiliWeather = weatherService.getWeather('Kebili');
+    kebiliWeather = weatherService.getWeather('Kebili');
     kasserineWeather = weatherService.getWeather('kasserine');
-    SidiBouzidWeather = weatherService.getWeather('Sidi Bouzid');
-    GafsaWeather = weatherService.getWeather('Gafsa');
+    sidiBouzidWeather = weatherService.getWeather('Sidi Bouzid');
+    gafsaWeather = weatherService.getWeather('Gafsa');
   }
 
   @override
@@ -53,12 +46,12 @@ class _WeatherPageState extends State<WeatherPage> {
           padding: const EdgeInsets.only(top: 250, left: 10, right: 10),
           child: Column(
             children: [
-              _buildWeatherCard('Tunis', TunisWeather),
+              _buildWeatherCard('Tunis', tunisWeather),
               _buildWeatherCard('Nabeul', nabeulWeather),
-              _buildWeatherCard('Kebili', KebiliWeather),
+              _buildWeatherCard('Kebili', kebiliWeather),
               _buildWeatherCard('Kasserine', kasserineWeather),
-              _buildWeatherCard('Sidi Bouzid', SidiBouzidWeather),
-              _buildWeatherCard('Gafsa', GafsaWeather),
+              _buildWeatherCard('Sidi Bouzid', sidiBouzidWeather),
+              _buildWeatherCard('Gafsa', gafsaWeather),
             ],
           ),
         ),

@@ -1,19 +1,18 @@
-import 'package:bhyapp/features/splash/presentation/widgets/engrais_commandes.dart';
+import 'package:bhyapp/les%20engrais/engrais_name.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class EngraisDetails extends StatefulWidget {
-  final String engraisName;
-  final String id;
-  EngraisDetails({Key? key, required this.engraisName, required this.id})
+  final Engrai engrai;
+  final List<Engrai> panier;
+  const EngraisDetails({Key? key, required this.engrai, required this.panier})
       : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _EngraisDetailsState createState() => _EngraisDetailsState();
+  EngraisDetailsState createState() => EngraisDetailsState();
 }
 
-class _EngraisDetailsState extends State<EngraisDetails> {
+class EngraisDetailsState extends State<EngraisDetails> {
   final TextEditingController _achatController = TextEditingController();
   final TextEditingController _venteController = TextEditingController();
   final TextEditingController _quantiteController = TextEditingController();
@@ -29,15 +28,12 @@ class _EngraisDetailsState extends State<EngraisDetails> {
 
   @override
   void initState() {
-    final db = FirebaseFirestore.instance;
-    final engrais = db.collection("engrais").doc(widget.id);
-    engrais.get().then((value) {
-      setState(() {
-        _venteController.text = (value.data()?["priv"] ?? 0).toString();
-        _achatController.text = (value.data()?["pria"] ?? 0).toString();
-        _quantiteController.text = (value.data()?["quantity"] ?? 0).toString();
-        _isLoading = false;
-      });
+    setState(() {
+      final eng = widget.engrai;
+      _venteController.text = eng.priv.toString();
+      _achatController.text = eng.pria.toString();
+      _quantiteController.text = eng.quantity.toString();
+      _isLoading = false;
     });
     super.initState();
   }
@@ -47,7 +43,7 @@ class _EngraisDetailsState extends State<EngraisDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.engraisName,
+          widget.engrai.name,
           style: const TextStyle(
             fontSize: 20,
             fontFamily: 'Michroma',
@@ -84,25 +80,48 @@ class _EngraisDetailsState extends State<EngraisDetails> {
                 final quantite = int.parse(_quantiteController.value.text);
 
                 final db = FirebaseFirestore.instance;
-                final details = db.collection("engrais").doc(widget.id);
+                final details = db.collection("engrais").doc(widget.engrai.id);
 
                 details.update(
                     {'priv': prixv, 'pria': prixa, 'quantity': quantite});
+                Navigator.pop(context, {
+                  "panier": false,
+                  "engrai": Engrai(
+                    quantity: quantite,
+                    priv: prixv,
+                    pria: prixa,
+                    name: widget.engrai.name,
+                    url: widget.engrai.url,
+                    id: widget.engrai.id,
+                  )
+                });
               },
               child: const Text('Enregistrer'),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Commandes(
-                            id: widget.id,
-                          )),
-                );
-              },
-              child: const Text('Ajouter une commande'),
+            FilledButton(
+              onPressed: widget.panier.any((e) => e.id == widget.engrai.id)
+                  ? null
+                  : () {
+                      final prixa = double.parse(_achatController.value.text);
+                      final prixv = double.parse(_venteController.value.text);
+                      final quantite =
+                          int.parse(_quantiteController.value.text);
+                      Navigator.pop(context, {
+                        "panier": true,
+                        "engrai": Engrai(
+                          quantity: quantite,
+                          priv: prixv,
+                          pria: prixa,
+                          name: widget.engrai.name,
+                          url: widget.engrai.url,
+                          id: widget.engrai.id,
+                        )
+                      });
+                    },
+              child: Text(widget.panier.any((e) => e.id == widget.engrai.id)
+                  ? 'dans le panier'
+                  : 'ajouter au panier'),
             ),
             const SizedBox(height: 10),
             _isLoading

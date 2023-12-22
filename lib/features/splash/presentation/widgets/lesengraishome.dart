@@ -2,39 +2,33 @@ import 'dart:io';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/engrais_commandes2.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/engrais_details.dart';
 import 'package:bhyapp/les%20engrais/engrais_name.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EngraisHome extends StatefulWidget {
-  final DateTime date;
-  const EngraisHome({super.key, required this.date});
+  const EngraisHome({super.key});
   @override
   State<EngraisHome> createState() => _EngraisHomeState();
 }
 
 class _EngraisHomeState extends State<EngraisHome> {
   bool _isLoading = true;
-  DateTime date = DateTime.now();
   @override
   void dispose() {
     super.dispose();
   }
 
-  List<Engraisname> displayList = [];
-  List<Engraisname> originalList = [];
+  List<Engrai> panier = [];
+
+  String search = "";
+  List<Engrai> displayList = [];
   void updateList(String value) {
     setState(() {
-      if (value.isEmpty) {
-        displayList = List.from(originalList);
-      } else {
-        displayList = originalList
-            .where((element) => element.engrais_name
-                .toLowerCase()
-                .contains(value.toLowerCase()))
-            .toList();
-      }
+      search = value;
     });
   }
 
@@ -43,14 +37,9 @@ class _EngraisHomeState extends State<EngraisHome> {
     final db = FirebaseFirestore.instance;
     final engrais = db.collection("engrais");
     engrais.get().then((querySnapshot) {
-      print("${querySnapshot.size} items");
       setState(() {
-        originalList = List.from(querySnapshot.docs.map((engrais) =>
-            Engraisname(
-                id: engrais.id,
-                engrais_name: engrais.data()["name"],
-                engrais_poster_url: engrais.data()["image"])));
-        displayList = List.from(originalList);
+        displayList =
+            List.from(querySnapshot.docs.map((e) => Engrai.fromMap(e)));
         _isLoading = false;
       });
     });
@@ -80,14 +69,37 @@ class _EngraisHomeState extends State<EngraisHome> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.push(
+            icon: Badge(
+              label: Text("${panier.length}"),
+              backgroundColor: Colors.green.shade500,
+              child: const Icon(Icons.shopping_cart),
+            ),
+            onPressed: () async {
+              final res = await Navigator.push<bool>(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ToutsCommandes(),
+                  builder: (context) => ToutsCommandes(
+                      panier: panier,
+                      onDelete: (engrai) {
+                        setState(() {
+                          panier.remove(engrai);
+                        });
+                      }),
                 ),
               );
+              if(res != null && res) {
+                final db = FirebaseFirestore.instance;
+                final comms = db.collection('commandes');
+                final firm = (await db.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get()).data()!["lieu de travail"];
+                comms.add({
+                  "firm": firm,
+                  "panier": panier.map((e) => e.toMap()), 
+                  "date": DateTime.now().toString(),
+                });
+                setState(() {
+                  panier.clear(); 
+                });
+              }
             },
           ),
         ],
@@ -104,7 +116,8 @@ class _EngraisHomeState extends State<EngraisHome> {
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
-                  labelText: "chercher un engrais (${displayList.length})",
+                  labelText:
+                      "chercher un engrais (${displayList.where((element) => element.name.toLowerCase().contains(search.toLowerCase())).toList().length})",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -125,74 +138,100 @@ class _EngraisHomeState extends State<EngraisHome> {
                   : Container(),
               Expanded(
                 child: ListView.separated(
-                  itemCount: displayList.length,
+                  itemCount: displayList
+                      .where((element) => element.name
+                          .toLowerCase()
+                          .contains(search.toLowerCase()))
+                      .toList()
+                      .length,
                   separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: (context, index) => ListTile(
-                    contentPadding: const EdgeInsets.all(8.0),
-                    title: Text(
-                      displayList[index].engrais_name,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                  itemBuilder: (context, index) {
+                    final item = displayList
+                        .where((element) => element.name
+                            .toLowerCase()
+                            .contains(search.toLowerCase()))
+                        .toList()[index];
+                    return ListTile(
+                      contentPadding: const EdgeInsets.all(8.0),
+                      title: Text(
+                        item.name,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    leading:
-                        Image.network(displayList[index].engrais_poster_url),
-                    trailing: IconButton(
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
+                      leading: CachedNetworkImage(
+                          imageUrl: item.url,
+                          height: 50,
+                          placeholder: (context, url) {
+                            return const SizedBox(
+                              height: 50,
+                            );
+                          }),
+                      trailing: IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text(
+                                'Confirm Delete',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                              content: const Text(
+                                'Are you sure you want to delete this item?',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await deleteengrais(item.id);
+                                    setState(() {
+                                      displayList.removeAt(index);
+                                    });
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text(
-                              'Confirm Delete',
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),
-                            ),
-                            content: const Text(
-                              'Are you sure you want to delete this item?',
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                  await deleteengrais(displayList[index].id);
-                                  setState(() {
-                                    displayList.removeAt(index);
-                                  });
-                                },
-                                child: const Text('Delete'),
-                              ),
-                            ],
+                      onTap: () async {
+                        final res = await Navigator.push<Map<String, dynamic>>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EngraisDetails(engrai: item, panier: panier),
                           ),
                         );
+                        if (res != null) {
+                          setState(() {
+                            if (res["panier"]) {
+                              panier.add(res["engrai"]);
+                            } else {
+                              displayList[displayList.indexOf(item)] =
+                                  res["engrai"];
+                            }
+                          });
+                        }
                       },
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EngraisDetails(
-                            engraisName: displayList[index].engrais_name,
-                            id: displayList[index].id,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -206,11 +245,7 @@ class _EngraisHomeState extends State<EngraisHome> {
       final engraisRef = db.collection('engrais').doc(engraisId);
 
       await engraisRef.delete();
-
-      print('Ouvrier deleted successfully');
-    } catch (e) {
-      print('Error deleting ouvrier: $e');
-    }
+    } finally {}
   }
 
   Widget bottomSheet(String filename) {
@@ -278,22 +313,27 @@ class _EngraisHomeState extends State<EngraisHome> {
 
   void createEngrais(
       {String path = "https://cdn-icons-png.flaticon.com/512/1670/1670075.png",
-      required String newEngraisname}) {
+      required String newEngraisname}) async {
     if (newEngraisname.isNotEmpty) {
       final db = FirebaseFirestore.instance;
       final engrais = db.collection("engrais");
-      engrais.add({
-        'name': newEngraisname,
-        'image': path,
-      }).then((value) async {
-        print('added engrais $value');
-        final doc = await value.get();
-        setState(() {
-          displayList.add(Engraisname(
-              engrais_name: doc.data()?["name"],
-              engrais_poster_url: doc.data()?["image"],
-              id: doc.id));
-        });
+      Engrai tmp = Engrai(
+          quantity: 0,
+          priv: .0,
+          pria: .0,
+          name: newEngraisname,
+          url: path,
+          id: "");
+      final doc = await engrais.add(tmp.toMap());
+      tmp = Engrai(
+          quantity: 0,
+          priv: .0,
+          pria: .0,
+          name: newEngraisname,
+          url: path,
+          id: doc.id);
+      setState(() {
+        displayList.add(tmp);
       });
     }
   }

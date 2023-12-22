@@ -18,7 +18,8 @@ class _TousCommandesState extends State<TousCommandes> {
     final doc = db.collection("engrais").doc(widget.id);
     doc.get().then((value) {
       setState(() {
-        commandes = List<Map<String, dynamic>>.from((value.data()?["commandes"] ?? []) as List);
+        commandes = List<Map<String, dynamic>>.from(
+            (value.data()?["commandes"] ?? []) as List);
       });
     });
     super.initState();
@@ -40,17 +41,21 @@ class _TousCommandesState extends State<TousCommandes> {
         ),
       ),
       body: ListView.separated(
-          separatorBuilder: (context, index) {
-            return Divider();
-          },
-          itemBuilder: (context, index) {
-            final now = (commandes[index]['date'] as Timestamp).toDate();
-        return ListTile(
-          leading: const Icon(Icons.shopping_cart_outlined, size: 70),
-          title: Text("commandes ${index+1}"), subtitle: Text(DateFormat('yyyy-MM-dd').format(now) + '\n${commandes[index]["desc"]}' + '\n${commandes[index]["prix"]}' + '\n${commandes[index]["quant"]}'),
-        );
-      }, itemCount: commandes.length,
-
+        separatorBuilder: (context, index) {
+          return Divider();
+        },
+        itemBuilder: (context, index) {
+          final now = (commandes[index]['date'] as Timestamp).toDate();
+          return ListTile(
+            leading: const Icon(Icons.shopping_cart_outlined, size: 70),
+            title: Text("commandes ${index + 1}"),
+            subtitle: Text(DateFormat('yyyy-MM-dd').format(now) +
+                '\n${commandes[index]["desc"]}' +
+                '\n${commandes[index]["prix"]}' +
+                '\n${commandes[index]["quant"]}'),
+          );
+        },
+        itemCount: commandes.length,
       ),
     );
   }
