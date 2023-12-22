@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:bhyapp/features/splash/presentation/widgets/all_commandes.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/engrais_commandes2.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/engrais_details.dart';
@@ -110,14 +111,21 @@ class _EngraisHomeState extends State<EngraisHome> {
                   "date": DateTime.now().toString(),
                 });
                 
-                panier.forEach((element) {
-                  final tmp = displayList[displayList.indexWhere((e) => e.id == element.id)] = Engrai(url: element.url, id: element.id, priv: element.priv, pria: element.pria, name: element.name, quantity: displayList.firstWhere((e) => e.id == element.id).quantity - element.quantity);
-                  print("aaaaa");
+                for (var element in panier) {
+                  final i = displayList.indexWhere((e) => e.id == element.id);
+                  displayList[i] = Engrai(
+                    url: element.url, 
+                    id: element.id, 
+                    priv: element.priv, 
+                    pria: element.pria, 
+                    name: element.name, 
+                    quantity: max(displayList[i].quantity - element.quantity, 0)
+                  );
                   db.collection("engrais").doc(element.id).set({
-                    "quantity": tmp.quantity, 
+                    "quantity": displayList[i].quantity, 
                   }, SetOptions(merge: true));
                   
-                });
+                }
                 setState(() {
                   panier.clear();
                 });
