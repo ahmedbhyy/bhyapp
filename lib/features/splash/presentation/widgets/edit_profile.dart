@@ -14,6 +14,7 @@ class _SettingsState extends State<Settings> {
   final TextEditingController _nomuser = TextEditingController();
   final TextEditingController _profession = TextEditingController();
   final TextEditingController _firme = TextEditingController();
+  final TextEditingController _role = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late User _user;
@@ -68,6 +69,13 @@ class _SettingsState extends State<Settings> {
               iconData: Icons.place,
               controller: _firme,
             ),
+            const SizedBox(height: 30),
+            buildTextFieldWithEditIcon(
+              hintText: "Rôle",
+              iconData: Icons.work,
+              controller: _role,
+              enabled: false,
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 35, left: 8),
               child: ElevatedButton(
@@ -96,15 +104,18 @@ class _SettingsState extends State<Settings> {
     required String hintText,
     required TextEditingController controller,
     required IconData iconData,
+    bool enabled = true,
   }) {
     return Row(
       children: [
         Expanded(
           child: TextField(
             controller: controller,
+            enabled: enabled,
             style: const TextStyle(fontSize: 20.0),
             maxLines: null,
             textAlign: TextAlign.start,
+            textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
@@ -133,6 +144,7 @@ class _SettingsState extends State<Settings> {
         _nomuser.text = userData['nom et prenom'] ?? '';
         _profession.text = userData['profession'] ?? '';
         _firme.text = userData['lieu de travail'] ?? '';
+        _role.text = userData['role'] ?? '';
       }
     } catch (e) {
       print('Error fetching user data: $e');
@@ -149,7 +161,7 @@ class _SettingsState extends State<Settings> {
         'nom et prenom': nomuser,
         'profession': profession,
         'lieu de travail': firme,
-      });
+      }, SetOptions(merge: true));
       setState(() {});
 
       print('User data saved to Firestore');

@@ -132,6 +132,7 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
                   onSubmitted: (val) {},
                   controller: descController,
                   maxLines: null,
+                  textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.card_travel_outlined),

@@ -17,26 +17,24 @@ class LoginPageState extends State<LoginPage> {
   bool isPasswordHidden = true;
   bool _isLoading = false;
 
-  Future<bool> checkCredentials(String enteredUsername, String enteredPassword) async {
+  Future<bool> checkCredentials(
+      String enteredUsername, String enteredPassword) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: enteredUsername, password: enteredPassword);
-      
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: enteredUsername, password: enteredPassword);
+
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-
-      } else if (e.code == 'wrong-password') {
-
-      }
+      } else if (e.code == 'wrong-password') {}
     }
 
-    return false; 
+    return false;
   }
-
 
   void handleLogin() async {
     setState(() {
-      _isLoading = true; 
+      _isLoading = true;
     });
 
     if (_formKey.currentState!.validate()) {
@@ -61,14 +59,12 @@ class LoginPageState extends State<LoginPage> {
           ),
         );
       }
-    
     }
 
     setState(() {
-      _isLoading = false; 
+      _isLoading = false;
     });
-
- }
+  }
 
   @override
   void dispose() {
@@ -98,13 +94,22 @@ class LoginPageState extends State<LoginPage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 20, top: 140),
-                    child: SizedBox(
-                      height: 200,
-                      child: Image.asset("images/logo baraka.PNG"),
+                    child: Container(
+                      width: 200,
+                      decoration: ShapeDecoration(
+                        image: const DecorationImage(
+                          image: AssetImage("images/logo baraka.PNG"),
+                          fit: BoxFit.fill,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      height: 220,
                     ),
                   ),
                   const Padding(
-                    padding: EdgeInsets.only(top: 50.0, left: 10),
+                    padding: EdgeInsets.only(top: 20.0, left: 10),
                     child: Text(
                       'Sign In',
                       style: TextStyle(
@@ -173,23 +178,25 @@ class LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 60,),
-                  FilledButton(
-                    onPressed: handleLogin, 
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xffFF9233),
-                      padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 5),
-                    ),
-                    child: const Text(
-                      'sign in',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontFamily: 'Michroma',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
+                  const SizedBox(
+                    height: 60,
                   ),
+                  FilledButton(
+                      onPressed: handleLogin,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xffFF9233),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 60, vertical: 5),
+                      ),
+                      child: const Text(
+                        'sign in',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontFamily: 'Michroma',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )),
                 ],
               ),
             ),

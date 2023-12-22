@@ -99,6 +99,7 @@ class _VoyagesState extends State<Voyages> {
           child: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.next,
             style: const TextStyle(fontSize: 20.0),
             maxLines: null,
             textAlign: TextAlign.start,

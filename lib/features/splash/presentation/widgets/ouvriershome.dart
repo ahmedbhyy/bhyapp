@@ -225,6 +225,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
               children: [
                 TextField(
                   controller: controller,
+                  textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     labelText: 'Nom et Prénom',
                   ),

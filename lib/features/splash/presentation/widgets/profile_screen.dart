@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           _imageFile = value;
         });
-      });
+      }, onError: (val) {});
     } catch (e) {}
 
     super.initState();
