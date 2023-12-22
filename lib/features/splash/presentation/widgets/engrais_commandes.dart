@@ -18,7 +18,6 @@ class _Commandes extends State<Commandes> {
   TextEditingController _quantcontroller = TextEditingController();
   TextEditingController _desccontroller = TextEditingController();
 
-
   @override
   void initState() {
     super.initState();
@@ -27,34 +26,43 @@ class _Commandes extends State<Commandes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          "Ajouter une Commandes",
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Michroma',
-            color: Colors.green,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const Text(
+            "Ajouter une Commandes",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Michroma',
+              color: Colors.green,
+            ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            buildTextFieldWithEditIcon(hintText: "Prix de vente", controller: _prixcontroller),
-            const SizedBox(height: 10,),
-            buildTextFieldWithEditIcon(hintText: "quantité", controller: _quantcontroller),
-            const SizedBox(height: 10,),
-            buildTextFieldWithEditIcon(hintText: "description de la commande", controller: _desccontroller),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              buildTextFieldWithEditIcon(
+                  hintText: "Prix de vente", controller: _prixcontroller),
+              const SizedBox(
+                height: 10,
+              ),
+              buildTextFieldWithEditIcon(
+                  hintText: "quantité", controller: _quantcontroller),
+              const SizedBox(
+                height: 10,
+              ),
+              buildTextFieldWithEditIcon(
+                  hintText: "description de la commande",
+                  controller: _desccontroller),
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
                   onPressed: () {
                     final db = FirebaseFirestore.instance;
                     final doc = db.collection("engrais").doc(widget.id);
                     doc.get().then((value) async {
-                      final commandes = List<Map<String, dynamic>>.from((value.data()?["commandes"] ?? []) as List);
+                      final commandes = List<Map<String, dynamic>>.from(
+                          (value.data()?["commandes"] ?? []) as List);
                       final DateTime? picked = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
@@ -62,49 +70,51 @@ class _Commandes extends State<Commandes> {
                         lastDate: DateTime(2101),
                       );
                       commandes.add({
-                        'prix' : double.parse(_prixcontroller.text),
+                        'prix': double.parse(_prixcontroller.text),
                         'quant': int.parse(_quantcontroller.text),
                         'desc': _desccontroller.text,
                         'date': picked
                       });
-        
-                      await doc.update({
-                        'commandes': commandes
-                      });
-        
+
+                      await doc.update({'commandes': commandes});
+
                       _desccontroller.text = '';
                       _prixcontroller.text = '';
                       _quantcontroller.text = '';
                     });
-        
                   },
                   child: const Text('Ajouter une commande'),
                 ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 350, left: 300),
-              child: IconButton(
-                onPressed: () {
-                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TousCommandes(id: widget.id,),
-                    ),
-                  );
-                },
-                icon: const Icon(
-                  Icons.storage,
-                  color: Colors.green,
-                  size: 40,
-                ),
               ),
-            )
-        ],),
-      )
-    );
+              Padding(
+                padding: const EdgeInsets.only(top: 350, left: 300),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TousCommandes(
+                          id: widget.id,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.storage,
+                    color: Colors.green,
+                    size: 40,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ));
   }
 
-  Widget buildTextFieldWithEditIcon({required String hintText, required TextEditingController controller,TextInputType type = TextInputType.text}) {
+  Widget buildTextFieldWithEditIcon(
+      {required String hintText,
+      required TextEditingController controller,
+      TextInputType type = TextInputType.text}) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
@@ -115,16 +125,14 @@ class _Commandes extends State<Commandes> {
         keyboardType: type,
         decoration: InputDecoration(
           contentPadding:
-          const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
           hintText: hintText,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20.0),
-            borderSide:
-            const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+            borderSide: const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
           ),
         ),
       ),
     );
   }
-
 }

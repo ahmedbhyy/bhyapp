@@ -19,13 +19,13 @@ class _RapportJournalier extends State<RapportJournalier> {
   DateTime date = DateTime.now();
   Oeuvre main_oeuvre = Oeuvre.nil;
   String autres = '';
-  Voyage transport  = Voyage.nil;
+  Voyage transport = Voyage.nil;
   List<Job> jobs = [];
   List<Item> items = [];
 
   @override
   void initState() {
-    _refreshmenusdata(to:date);
+    _refreshmenusdata(to: date);
     super.initState();
   }
 
@@ -57,7 +57,10 @@ class _RapportJournalier extends State<RapportJournalier> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Maindoeuvre(oeuvre: main_oeuvre, updateremotestate: updateremoteoeuvre,)),
+                        builder: (context) => Maindoeuvre(
+                              oeuvre: main_oeuvre,
+                              updateremotestate: updateremoteoeuvre,
+                            )),
                   );
                 },
                 child: Card(
@@ -88,7 +91,10 @@ class _RapportJournalier extends State<RapportJournalier> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Voyages(transport: transport, update: updateremotetransport)),
+                    MaterialPageRoute(
+                        builder: (context) => Voyages(
+                            transport: transport,
+                            update: updateremotetransport)),
                   );
                 },
                 child: Card(
@@ -119,7 +125,13 @@ class _RapportJournalier extends State<RapportJournalier> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => TaskList(jobs:jobs, items:items, updatejobs:updateremotejobs, updateitems: updateremoteitems,)),
+                    MaterialPageRoute(
+                        builder: (context) => TaskList(
+                              jobs: jobs,
+                              items: items,
+                              updatejobs: updateremotejobs,
+                              updateitems: updateremoteitems,
+                            )),
                   );
                 },
                 child: Card(
@@ -150,7 +162,11 @@ class _RapportJournalier extends State<RapportJournalier> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Autres(autres: autres, updatestate: updateremoteautres,)),
+                    MaterialPageRoute(
+                        builder: (context) => Autres(
+                              autres: autres,
+                              updatestate: updateremoteautres,
+                            )),
                   );
                 },
                 child: Card(
@@ -200,7 +216,7 @@ class _RapportJournalier extends State<RapportJournalier> {
 
     if (picked != null) {
       var normalised = picked.copyWith(hour: 0, minute: 0, millisecond: 0);
-      await _refreshmenusdata(to:normalised);
+      await _refreshmenusdata(to: normalised);
       setState(() {
         date = normalised;
       });
@@ -228,7 +244,6 @@ class _RapportJournalier extends State<RapportJournalier> {
     setState(() {
       main_oeuvre = tmp;
     });
-
   }
 
   Future<void> updateremoteautres(String autres) async {
@@ -236,14 +251,11 @@ class _RapportJournalier extends State<RapportJournalier> {
     final rapjournalier = db.collection('rapport_journalier');
     final documentname = DateFormat.yMMMd().format(date);
     final today = rapjournalier.doc(documentname);
-    today.set({
-      'autres': autres
-    }, SetOptions(merge: true));
+    today.set({'autres': autres}, SetOptions(merge: true));
 
     setState(() {
       autres = autres;
     });
-
   }
 
   Future<void> updateremotetransport(Voyage tmp) async {
@@ -261,7 +273,6 @@ class _RapportJournalier extends State<RapportJournalier> {
     setState(() {
       transport = tmp;
     });
-
   }
 
   Future<void> updateremotejobs(Job tmp) async {
@@ -274,7 +285,6 @@ class _RapportJournalier extends State<RapportJournalier> {
     today.set({
       'jobs': jobs.map((e) => Job.toMap(e)),
     }, SetOptions(merge: true));
-
   }
 
   Future<void> updateremoteitems(Item tmp) async {
@@ -287,7 +297,6 @@ class _RapportJournalier extends State<RapportJournalier> {
     today.set({
       'items': items.map((e) => Item.toMap(e)),
     }, SetOptions(merge: true));
-
   }
 
   Future<void> _refreshmenusdata({required DateTime to}) async {
@@ -298,19 +307,21 @@ class _RapportJournalier extends State<RapportJournalier> {
     final doc = await today.get();
     final data = doc.data();
     setState(() {
-      final main_map = ((data?['main'] ?? Oeuvre.nil_map) as Map<String, dynamic>);
-      final transport_map = ((data?['transport'] ?? Voyage.nil_map) as Map<String, dynamic>);
-      final jobs_map_list = List<Map<String, dynamic>>.from((data?['jobs'] ?? []) as List);
+      final main_map =
+          ((data?['main'] ?? Oeuvre.nil_map) as Map<String, dynamic>);
+      final transport_map =
+          ((data?['transport'] ?? Voyage.nil_map) as Map<String, dynamic>);
+      final jobs_map_list =
+          List<Map<String, dynamic>>.from((data?['jobs'] ?? []) as List);
       jobs = jobs_map_list.map((e) => Job.fromMap(e)).toList();
-      final items_map_list = List<Map<String, dynamic>>.from((data?['items'] ?? []) as List);
+      final items_map_list =
+          List<Map<String, dynamic>>.from((data?['items'] ?? []) as List);
       items = items_map_list.map((e) => Item.fromMap(e)).toList();
 
-      main_oeuvre  = Oeuvre.fromMap(main_map);
+      main_oeuvre = Oeuvre.fromMap(main_map);
       autres = (data?['autres'] ?? '');
       transport = Voyage.fromMap(transport_map);
     });
-
-
   }
 }
 
@@ -324,7 +335,15 @@ class Oeuvre {
   final double midi_charge_homme;
   final double midi_charge_femme;
 
-  static final nil = Oeuvre(matin_homme: 0, matin_charge_homme: 0.0, matin_charge_femme: .0, midi_femme: 0, midi_homme: 0, midi_charge_homme: .0, midi_charge_femme: .0, matin_femme: 0 );
+  static final nil = Oeuvre(
+      matin_homme: 0,
+      matin_charge_homme: 0.0,
+      matin_charge_femme: .0,
+      midi_femme: 0,
+      midi_homme: 0,
+      midi_charge_homme: .0,
+      midi_charge_femme: .0,
+      matin_femme: 0);
   static final nil_map = {
     'matin_charge_homme': .0,
     'matin_femme': 0,
@@ -349,8 +368,15 @@ class Oeuvre {
     );
   }
 
-
-  Oeuvre({ required this.matin_homme, required this.matin_charge_femme, required this.matin_charge_homme, required this.midi_femme, required this.midi_homme, required this.midi_charge_femme, required this.midi_charge_homme, required this.matin_femme});
+  Oeuvre(
+      {required this.matin_homme,
+      required this.matin_charge_femme,
+      required this.matin_charge_homme,
+      required this.midi_femme,
+      required this.midi_homme,
+      required this.midi_charge_femme,
+      required this.midi_charge_homme,
+      required this.matin_femme});
 }
 
 class Voyage {
@@ -373,7 +399,6 @@ class Voyage {
   Voyage({required this.nombres, required this.cout});
 }
 
-
 class Item {
   final String type;
   final String nom;
@@ -387,19 +412,11 @@ class Item {
   };
 
   static Item fromMap(Map<String, dynamic> e) {
-    return Item(
-      type: e['type'],
-      nom: e['nom'],
-      qte: e['qte']
-    );
+    return Item(type: e['type'], nom: e['nom'], qte: e['qte']);
   }
 
   static Map<String, dynamic> toMap(Item e) {
-    return {
-      'type': e.type,
-      'nom': e.nom,
-      'qte': e.qte
-    };
+    return {'type': e.type, 'nom': e.nom, 'qte': e.qte};
   }
 
   Item({required this.type, required this.nom, required this.qte});
@@ -418,19 +435,11 @@ class Job {
   };
 
   static Job fromMap(Map<String, dynamic> e) {
-    return Job(
-        type: e['type'],
-        desc: e['desc'],
-        qte: e['qte']
-    );
+    return Job(type: e['type'], desc: e['desc'], qte: e['qte']);
   }
 
   static Map<String, dynamic> toMap(Job e) {
-    return {
-        'type': e.type,
-        'desc': e.desc,
-        'qte': e.qte
-    };
+    return {'type': e.type, 'desc': e.desc, 'qte': e.qte};
   }
 
   Job({required this.type, required this.desc, required this.qte});

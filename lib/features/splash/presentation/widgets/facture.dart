@@ -42,7 +42,6 @@ class _FactureState extends State<Facture> {
             color: Colors.green,
           ),
         ),
-        
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -284,5 +283,3 @@ class _TableExampleState extends State<TableExample> {
     );
   }
 }
-
-
