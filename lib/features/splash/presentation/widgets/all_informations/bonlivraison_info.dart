@@ -53,7 +53,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
           IconButton(
             onPressed: () async {
               final data = await showEditDialog(context);
-              if(data != null) {
+              if (data != null) {
                 saveData(data);
               }
             },
@@ -104,8 +104,8 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(bon.totalliv.toString(),
-                      style:
-                      const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () async {
                     _total.text = bon.totalliv.toString();
                     _descrip.text = bon.descripliv;
@@ -118,7 +118,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                     _numbonliv.clear();
                     _nomdesociete.clear();
                     _datebonliv = DateTime.now();
-                    if(res != null) {
+                    if (res != null) {
                       bons[index] = res;
                       saveData(res, index: index, modify: true);
                     }
@@ -132,12 +132,15 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
     );
   }
 
-  Future<Bon?> showEditDialog(BuildContext context, {bool modify=false}) async {
+  Future<Bon?> showEditDialog(BuildContext context,
+      {bool modify = false}) async {
     return showDialog<Bon>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(modify ? "modifier un Bon de Livraison" : "Ajouter un Bon de Livraison"),
+          title: Text(modify
+              ? "modifier un Bon de Livraison"
+              : "Ajouter un Bon de Livraison"),
           content: SingleChildScrollView(
             child: SizedBox(
               width: 300,
@@ -217,7 +220,8 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                 String des = _descrip.text;
                 String tot = _total.text;
 
-                if(tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
 
                 final tmp = Bon(
                   dateliv: _datebonliv,
@@ -227,9 +231,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                   totalliv: double.parse(tot),
                 );
 
-
                 Navigator.pop(context, tmp);
-
               },
               child: Text(modify ? "modifier" : 'Enregistrer'),
             ),
@@ -239,15 +241,17 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
     );
   }
 
-  Future<void> saveData(Bon tmp, {bool modify=false, int index=-1}) async {
+  Future<void> saveData(Bon tmp, {bool modify = false, int index = -1}) async {
     try {
-
-      await db.collection('bonlivraison').doc(tmp.numbonliv).set(tmp.toMap(), SetOptions(merge: true));
+      await db
+          .collection('bonlivraison')
+          .doc(tmp.numbonliv)
+          .set(tmp.toMap(), SetOptions(merge: true));
       setState(() {
-        if(!modify) {
+        if (!modify) {
           bons.add(tmp);
         } else {
-          if(index >= 0) {
+          if (index >= 0) {
             bons[index] = tmp;
           }
         }
@@ -260,15 +264,12 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
   }
 
   Future<void> fetchData() async {
-
     final docs = await db.collection('bonlivraison').get();
     setState(() {
       bons = List<Bon>.from(docs.docs.map((e) => Bon.fromMap(e)).toList());
     });
-
   }
 }
-
 
 class Bon {
   final String nomsocieteliv;
@@ -277,8 +278,12 @@ class Bon {
   final double totalliv;
   final DateTime dateliv;
 
-
-  Bon({required this.dateliv, required this.descripliv, required this.nomsocieteliv, required this.numbonliv, required this.totalliv});
+  Bon(
+      {required this.dateliv,
+      required this.descripliv,
+      required this.nomsocieteliv,
+      required this.numbonliv,
+      required this.totalliv});
 
   Map<String, dynamic> toMap() {
     return {
@@ -304,6 +309,4 @@ class Bon {
   String toString() {
     return toMap().toString();
   }
-
-
 }

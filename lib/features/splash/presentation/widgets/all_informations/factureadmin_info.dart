@@ -52,7 +52,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
           IconButton(
             onPressed: () async {
               final data = await showEditDialog(context);
-              if(data != null) {
+              if (data != null) {
                 saveData(data);
               }
             },
@@ -103,8 +103,8 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(facture.total.toString(),
-                      style:
-                      const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () async {
                     _total.text = facture.total.toString();
                     _desc.text = facture.desc;
@@ -117,7 +117,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     _numfac.clear();
                     _nomsoc.clear();
                     _date = DateTime.now();
-                    if(res != null) {
+                    if (res != null) {
                       factures[index] = res;
                       saveData(res, index: index, modify: true);
                     }
@@ -131,7 +131,8 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
     );
   }
 
-  Future<Facture?> showEditDialog(BuildContext context, {bool modify=false}) async {
+  Future<Facture?> showEditDialog(BuildContext context,
+      {bool modify = false}) async {
     return showDialog<Facture>(
       context: context,
       builder: (BuildContext context) {
@@ -215,16 +216,15 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                 String des = _desc.text;
                 String tot = _total.text;
 
-                if(tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
 
                 final tmp = Facture(
                     date: _date,
                     desc: des,
                     nomsoc: nom,
                     num: num,
-                    total: double.parse(tot)
-                );
-
+                    total: double.parse(tot));
 
                 Navigator.pop(context, tmp);
               },
@@ -236,15 +236,18 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
     );
   }
 
-  Future<void> saveData(Facture tmp, {bool modify=false, int index=-1}) async {
+  Future<void> saveData(Facture tmp,
+      {bool modify = false, int index = -1}) async {
     try {
-
-      await db.collection('adminfacture').doc(tmp.num).set(tmp.toMap(), SetOptions(merge: true));
+      await db
+          .collection('adminfacture')
+          .doc(tmp.num)
+          .set(tmp.toMap(), SetOptions(merge: true));
       setState(() {
-        if(!modify) {
+        if (!modify) {
           factures.add(tmp);
         } else {
-          if(index >= 0) {
+          if (index >= 0) {
             factures[index] = tmp;
           }
         }
@@ -257,15 +260,13 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
   }
 
   Future<void> fetchData() async {
-
     final docs = await db.collection('adminfacture').get();
     setState(() {
-      factures = List<Facture>.from(docs.docs.map((e) => Facture.fromMap(e)).toList());
+      factures =
+          List<Facture>.from(docs.docs.map((e) => Facture.fromMap(e)).toList());
     });
-
   }
 }
-
 
 class Facture {
   final String nomsoc;
@@ -274,8 +275,12 @@ class Facture {
   final double total;
   final DateTime date;
 
-
-  Facture({required this.nomsoc, required this.num, required this.desc, required this.total, required this.date});
+  Facture(
+      {required this.nomsoc,
+      required this.num,
+      required this.desc,
+      required this.total,
+      required this.date});
 
   Map<String, dynamic> toMap() {
     return {
@@ -301,6 +306,4 @@ class Facture {
   String toString() {
     return toMap().toString();
   }
-
-
 }

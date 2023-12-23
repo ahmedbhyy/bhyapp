@@ -16,17 +16,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  final String email;
-  HomePage({Key? key})
-      : email = FirebaseAuth.instance.currentUser!.email!,
-        super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String role = "user";
+  UserLocal? user;
 
   @override
   void initState() {
@@ -34,7 +31,11 @@ class _HomePageState extends State<HomePage> {
     final db = FirebaseFirestore.instance;
     db.collection("users").doc(id).get().then((value) {
       setState(() {
-        role = value.data()!["role"];
+        user = UserLocal(
+          role: value.data()!["role"],
+          firm: value.data()!["lieu de travail"],
+          uid: id,
+        );
       });
     });
     super.initState();
@@ -59,11 +60,17 @@ class _HomePageState extends State<HomePage> {
               child: OuvrierHome(),
             ),
             const SizedBox(height: 20),
-            const MenuCard(
-              source: 'images/rapport2.png',
-              title: 'Rapport Journalier',
-              child: RapportJournalier(),
-            ),
+            user != null && user!.role != "admin"
+                ? MenuCard(
+                    source: 'images/rapport2.png',
+                    title: 'Rapport Journalier',
+                    child: RapportJournalier(user: user),
+                  )
+                : MenuCard(
+                    source: 'images/rapport2.png',
+                    title: 'Les Rapports Journaliers (Admin)',
+                    child: RapportAdmin(user: user),
+                  ),
             const SizedBox(height: 20),
             const MenuCard(
               source: 'images/bondesortie2.png',
@@ -81,15 +88,6 @@ class _HomePageState extends State<HomePage> {
               source: 'images/requetes.png',
               title: 'Requêtes',
               child: RequeteInfo(),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const MenuCard(
-                source: 'images/rapport2.png',
-                title: 'Les Rapports Journaliers (Admin)',
-                child: RapportAdmin(),
-              ),
             ),
             const SizedBox(height: 20),
             Visibility(
@@ -132,7 +130,7 @@ class _HomePageState extends State<HomePage> {
               visible: isVisible(),
               child: const MenuCard(
                 source: 'images/demandeprix.png',
-                title: 'Demande d\'offre de Prix',
+                title: "Demande d'offre de Prix",
                 child: DemandePrixInfo(),
               ),
             ),
@@ -152,7 +150,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool isVisible() {
-    return role == "admin";
+    return user != null && user!.role == "admin";
   }
 }
 
@@ -199,4 +197,12 @@ class MenuCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class UserLocal {
+  final String uid;
+  final String role;
+  final String firm;
+
+  UserLocal({required this.uid, required this.role, required this.firm});
 }

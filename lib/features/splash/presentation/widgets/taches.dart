@@ -1,3 +1,4 @@
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -215,13 +216,15 @@ class TaskList extends StatefulWidget {
   final List<Job> jobs;
   final List<Item> items;
   final Future<void> Function(Job) updatejobs;
+  final UserLocal? user;
   final Future<void> Function(Item) updateitems;
   const TaskList(
       {super.key,
       required this.jobs,
       required this.items,
       required this.updatejobs,
-      required this.updateitems});
+      required this.updateitems,
+      this.user});
 
   @override
   State<TaskList> createState() => _TaskListState();
@@ -247,30 +250,38 @@ class _TaskListState extends State<TaskList> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        bottomNavigationBar: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          child: Container(height: 50.0),
-        ),
-        floatingActionButton: FloatingActionButton(
-          shape: const CircleBorder(),
-          onPressed: () async {
-            final res = await Navigator.push<Map<String, dynamic>>(context,
-                MaterialPageRoute(builder: (context) => const TachesAjout()));
-            final job = res?['job'] as Job?;
-            final item = res?['item'] as Item?;
-            if (job != null) {
-              widget.updatejobs(job);
-            }
+        bottomNavigationBar: widget.user!.role == "admin"
+            ? null
+            : BottomAppBar(
+                shape: const CircularNotchedRectangle(),
+                child: Container(height: 50.0),
+              ),
+        floatingActionButton: widget.user!.role == "admin"
+            ? null
+            : FloatingActionButton(
+                shape: const CircleBorder(),
+                onPressed: () async {
+                  final res = await Navigator.push<Map<String, dynamic>>(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const TachesAjout()));
+                  final job = res?['job'] as Job?;
+                  final item = res?['item'] as Item?;
+                  if (job != null) {
+                    widget.updatejobs(job);
+                  }
 
-            if (item != null) {
-              widget.updateitems(item);
-            }
+                  if (item != null) {
+                    widget.updateitems(item);
+                  }
 
-            setState(() {});
-          },
-          child: const Icon(Icons.add),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+                  setState(() {});
+                },
+                child: const Icon(Icons.add),
+              ),
+        floatingActionButtonLocation: widget.user!.role == "admin"
+            ? null
+            : FloatingActionButtonLocation.centerDocked,
         appBar: AppBar(
           bottom: const TabBar(tabs: [
             Tab(

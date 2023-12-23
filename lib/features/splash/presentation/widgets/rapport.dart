@@ -3,12 +3,14 @@ import 'package:bhyapp/features/splash/presentation/widgets/taches.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/autres.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/voyage_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'homepage.dart';
+
 class RapportJournalier extends StatefulWidget {
-  const RapportJournalier({Key? key}) : super(key: key);
+  final UserLocal? user;
+  const RapportJournalier({Key? key, this.user}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -58,9 +60,9 @@ class _RapportJournalier extends State<RapportJournalier> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => Maindoeuvre(
-                              oeuvre: main_oeuvre,
-                              updateremotestate: updateremoteoeuvre,
-                            )),
+                            oeuvre: main_oeuvre,
+                            updateremotestate: updateremoteoeuvre,
+                            user: widget.user)),
                   );
                 },
                 child: Card(
@@ -94,7 +96,8 @@ class _RapportJournalier extends State<RapportJournalier> {
                     MaterialPageRoute(
                         builder: (context) => Voyages(
                             transport: transport,
-                            update: updateremotetransport)),
+                            update: updateremotetransport,
+                            user: widget.user)),
                   );
                 },
                 child: Card(
@@ -127,11 +130,11 @@ class _RapportJournalier extends State<RapportJournalier> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => TaskList(
-                              jobs: jobs,
-                              items: items,
-                              updatejobs: updateremotejobs,
-                              updateitems: updateremoteitems,
-                            )),
+                            jobs: jobs,
+                            items: items,
+                            updatejobs: updateremotejobs,
+                            updateitems: updateremoteitems,
+                            user: widget.user)),
                   );
                 },
                 child: Card(
@@ -164,9 +167,9 @@ class _RapportJournalier extends State<RapportJournalier> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => Autres(
-                              autres: autres,
-                              updatestate: updateremoteautres,
-                            )),
+                            autres: autres,
+                            updatestate: updateremoteautres,
+                            user: widget.user)),
                   );
                 },
                 child: Card(
@@ -226,7 +229,7 @@ class _RapportJournalier extends State<RapportJournalier> {
   Future<void> updateremoteoeuvre(Oeuvre tmp) async {
     final db = FirebaseFirestore.instance;
     final rapjournalier = db.collection('rapport_journalier');
-    final documentname = DateFormat.yMMMd().format(date);
+    final documentname = DateFormat.yMMMd().format(date) + widget.user!.firm;
     final today = rapjournalier.doc(documentname);
     today.set({
       'main': {
@@ -249,10 +252,9 @@ class _RapportJournalier extends State<RapportJournalier> {
   Future<void> updateremoteautres(String autres) async {
     final db = FirebaseFirestore.instance;
     final rapjournalier = db.collection('rapport_journalier');
-    final documentname = DateFormat.yMMMd().format(date);
+    final documentname = DateFormat.yMMMd().format(date) + widget.user!.firm;
     final today = rapjournalier.doc(documentname);
     today.set({'autres': autres}, SetOptions(merge: true));
-
     setState(() {
       autres = autres;
     });
@@ -261,7 +263,7 @@ class _RapportJournalier extends State<RapportJournalier> {
   Future<void> updateremotetransport(Voyage tmp) async {
     final db = FirebaseFirestore.instance;
     final rapjournalier = db.collection('rapport_journalier');
-    final documentname = DateFormat.yMMMd().format(date);
+    final documentname = DateFormat.yMMMd().format(date) + widget.user!.firm;
     final today = rapjournalier.doc(documentname);
     today.set({
       'transport': {
@@ -278,9 +280,8 @@ class _RapportJournalier extends State<RapportJournalier> {
   Future<void> updateremotejobs(Job tmp) async {
     final db = FirebaseFirestore.instance;
     final rapjournalier = db.collection('rapport_journalier');
-    final documentname = DateFormat.yMMMd().format(date);
+    final documentname = DateFormat.yMMMd().format(date) + widget.user!.firm;
     final today = rapjournalier.doc(documentname);
-
     jobs.add(tmp);
     today.set({
       'jobs': jobs.map((e) => Job.toMap(e)),
@@ -290,7 +291,7 @@ class _RapportJournalier extends State<RapportJournalier> {
   Future<void> updateremoteitems(Item tmp) async {
     final db = FirebaseFirestore.instance;
     final rapjournalier = db.collection('rapport_journalier');
-    final documentname = DateFormat.yMMMd().format(date);
+    final documentname = DateFormat.yMMMd().format(date) + widget.user!.firm;
     final today = rapjournalier.doc(documentname);
 
     items.add(tmp);
@@ -302,7 +303,7 @@ class _RapportJournalier extends State<RapportJournalier> {
   Future<void> _refreshmenusdata({required DateTime to}) async {
     final db = FirebaseFirestore.instance;
     final rapjournalier = db.collection('rapport_journalier');
-    final documentname = DateFormat.yMMMd().format(to);
+    final documentname = DateFormat.yMMMd().format(date) + widget.user!.firm;
     final today = rapjournalier.doc(documentname);
     final doc = await today.get();
     final data = doc.data();

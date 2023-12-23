@@ -51,7 +51,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
           IconButton(
             onPressed: () async {
               final dem = await showEditDialog(context);
-              if(dem != null) {
+              if (dem != null) {
                 saveOffreData(dem);
               }
             },
@@ -102,18 +102,19 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(demande.quantiteprix.toString(),
-                      style:
-                      const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () async {
                     _nomsoc.text = demande.nomsociete;
                     _desc.text = demande.description;
                     _quantite.text = demande.quantiteprix.toString();
                     date = demande.date;
-                    final res = await showEditDialog(context, modify: true, demande: demande);
+                    final res = await showEditDialog(context,
+                        modify: true, demande: demande);
                     _nomsoc.clear();
                     _desc.clear();
                     _quantite.clear();
-                    if(res != null) {
+                    if (res != null) {
                       demandes[index] = res;
                       saveOffreData(res, index: index, modify: true);
                     }
@@ -127,12 +128,15 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
     );
   }
 
-  Future<Demande?> showEditDialog(BuildContext context, {bool modify=false, Demande? demande}) async {
+  Future<Demande?> showEditDialog(BuildContext context,
+      {bool modify = false, Demande? demande}) async {
     return showDialog<Demande>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(modify ? "modifier une demande d'offre" : "ajouter une demande d'offre"),
+          title: Text(modify
+              ? "modifier une demande d'offre"
+              : "ajouter une demande d'offre"),
           content: SingleChildScrollView(
             child: SizedBox(
               width: 350,
@@ -198,15 +202,18 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                 String decripprix = _desc.text;
                 String quantiteprix = _quantite.text;
 
-                if(nomsociete4.isEmpty || decripprix.isEmpty || quantiteprix.isEmpty ) return;
+                if (nomsociete4.isEmpty ||
+                    decripprix.isEmpty ||
+                    quantiteprix.isEmpty) return;
 
                 final tmp = Demande(
                   date: date,
                   description: decripprix,
-                  id: demande != null ? demande.id : date.toString()+Random().nextInt(1000000).toString(),
+                  id: demande != null
+                      ? demande.id
+                      : date.toString() + Random().nextInt(1000000).toString(),
                   nomsociete: nomsociete4,
                   quantiteprix: int.parse(quantiteprix),
-
                 );
 
                 Navigator.pop(context, tmp);
@@ -219,16 +226,18 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
     );
   }
 
-  Future<void> saveOffreData(Demande tmp, {bool modify=false, int index=-1}) async {
+  Future<void> saveOffreData(Demande tmp,
+      {bool modify = false, int index = -1}) async {
     try {
-
-
-      await _firestore.collection('demandeprix').doc(tmp.id).set(tmp.toMap(), SetOptions(merge: true));
+      await _firestore
+          .collection('demandeprix')
+          .doc(tmp.id)
+          .set(tmp.toMap(), SetOptions(merge: true));
       setState(() {
-        if(!modify) {
+        if (!modify) {
           demandes.add(tmp);
         } else {
-          if(index >= 0) {
+          if (index >= 0) {
             demandes[index] = tmp;
           }
         }
@@ -243,11 +252,11 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
   Future<void> fetchOffreData() async {
     final docs = await _firestore.collection('demandeprix').get();
     setState(() {
-      demandes = List<Demande>.from(docs.docs.map((e) => Demande.fromMap(e)).toList());
+      demandes =
+          List<Demande>.from(docs.docs.map((e) => Demande.fromMap(e)).toList());
     });
   }
 }
-
 
 class Demande {
   final String nomsociete;
@@ -256,8 +265,12 @@ class Demande {
   final DateTime date;
   final String id;
 
-
-  Demande({required this.date, required this.nomsociete, required this.description, required this.quantiteprix, required this.id});
+  Demande(
+      {required this.date,
+      required this.nomsociete,
+      required this.description,
+      required this.quantiteprix,
+      required this.id});
 
   Map<String, dynamic> toMap() {
     return {
@@ -270,19 +283,15 @@ class Demande {
 
   static fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Demande(
-      date: DateTime.parse(e["dateprix"]),
-      nomsociete: e["nomsociete"],
-      description: e["description"],
-      quantiteprix: e["quantiteprix"],
-      id: e.id
-    );
+        date: DateTime.parse(e["dateprix"]),
+        nomsociete: e["nomsociete"],
+        description: e["description"],
+        quantiteprix: e["quantiteprix"],
+        id: e.id);
   }
 
   @override
   String toString() {
     return toMap().toString();
   }
-
-
 }
-
