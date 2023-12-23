@@ -115,7 +115,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                     _quantite.clear();
                     if(res != null) {
                       demandes[index] = res;
-                      saveOffreData(res);
+                      saveOffreData(res, index: index, modify: true);
                     }
                   },
                 );
@@ -219,13 +219,19 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
     );
   }
 
-  Future<void> saveOffreData(Demande tmp) async {
+  Future<void> saveOffreData(Demande tmp, {bool modify=false, int index=-1}) async {
     try {
 
 
       await _firestore.collection('demandeprix').doc(tmp.id).set(tmp.toMap(), SetOptions(merge: true));
       setState(() {
-        demandes.add(tmp);
+        if(!modify) {
+          demandes.add(tmp);
+        } else {
+          if(index >= 0) {
+            demandes[index] = tmp;
+          }
+        }
       });
 
       print('Offre data saved to Firestore');
