@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class BonLivraisonInfo extends StatefulWidget {
   const BonLivraisonInfo({super.key});
@@ -12,12 +12,19 @@ class BonLivraisonInfo extends StatefulWidget {
 class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
   final TextEditingController _nnn1 = TextEditingController();
   TextEditingController get controller => _nnn1;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  DateTime? _datebonliv = DateTime.now();
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  DateTime _datebonliv = DateTime.now();
   final TextEditingController _nomdesociete = TextEditingController();
   final TextEditingController _numbonliv = TextEditingController();
   final TextEditingController _descrip = TextEditingController();
   final TextEditingController _total = TextEditingController();
+  List<Bon> bons = [];
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -44,9 +51,11 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {
-              String hintText = "Ajouter un Bon de Livraison";
-              showEditDialog(context, hintText, controller);
+            onPressed: () async {
+              final data = await showEditDialog(context);
+              if(data != null) {
+                saveData(data);
+              }
             },
             icon: const Icon(
               Icons.add,
@@ -77,18 +86,58 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
               ),
             ),
           ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: bons.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final bon = bons[index];
+                return ListTile(
+                  leading: Icon(
+                    Icons.payments,
+                    color: Colors.green.shade600,
+                  ),
+                  contentPadding: const EdgeInsets.all(8.0),
+                  isThreeLine: true,
+                  subtitle: Text(
+                    DateFormat('yyyy-MM-dd').format(bon.dateliv),
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(bon.totalliv.toString(),
+                      style:
+                      const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () async {
+                    _total.text = bon.totalliv.toString();
+                    _descrip.text = bon.descripliv;
+                    _numbonliv.text = bon.numbonliv;
+                    _nomdesociete.text = bon.nomsocieteliv;
+                    _datebonliv = bon.dateliv;
+                    final res = await showEditDialog(context, modify: true);
+                    _total.clear();
+                    _descrip.clear();
+                    _numbonliv.clear();
+                    _nomdesociete.clear();
+                    _datebonliv = DateTime.now();
+                    if(res != null) {
+                      bons[index] = res;
+                      saveData(res, index: index, modify: true);
+                    }
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> showEditDialog(BuildContext context, String hintText,
-      TextEditingController controller) async {
-    return showDialog<void>(
+  Future<Bon?> showEditDialog(BuildContext context, {bool modify=false}) async {
+    return showDialog<Bon>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(hintText),
+          title: Text(modify ? "modifier un Bon de Livraison" : "Ajouter un Bon de Livraison"),
           content: SingleChildScrollView(
             child: SizedBox(
               width: 300,
@@ -108,6 +157,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                     controller: _numbonliv,
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
+                    enabled: !modify,
                     decoration: const InputDecoration(
                         labelText: 'N° du Bon',
                         labelStyle: TextStyle(fontSize: 20),
@@ -162,10 +212,26 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
             ),
             TextButton(
               onPressed: () {
-                savebonlivData();
-                Navigator.pop(context);
+                String nom = _nomdesociete.text;
+                String num = _numbonliv.text;
+                String des = _descrip.text;
+                String tot = _total.text;
+
+                if(tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
+
+                final tmp = Bon(
+                  dateliv: _datebonliv,
+                  descripliv: des,
+                  nomsocieteliv: nom,
+                  numbonliv: num,
+                  totalliv: double.parse(tot),
+                );
+
+
+                Navigator.pop(context, tmp);
+
               },
-              child: const Text('Enregistrer'),
+              child: Text(modify ? "modifier" : 'Enregistrer'),
             ),
           ],
         );
@@ -173,25 +239,71 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
     );
   }
 
-  Future<void> savebonlivData() async {
+  Future<void> saveData(Bon tmp, {bool modify=false, int index=-1}) async {
     try {
-      String nomsociete = _nomdesociete.text;
-      String numbonliv = _numbonliv.text;
-      String descrip = _descrip.text;
-      String total = _total.text;
 
-      await _firestore.collection('bonlivraison').doc().set({
-        'nomsocieteliv': nomsociete,
-        'numbonliv': numbonliv,
-        'descripliv': descrip,
-        'totalliv': total,
-        'dateliv': _datebonliv.toString(),
-      }, SetOptions(merge: true));
-      setState(() {});
+      await db.collection('bonlivraison').doc(tmp.numbonliv).set(tmp.toMap(), SetOptions(merge: true));
+      setState(() {
+        if(!modify) {
+          bons.add(tmp);
+        } else {
+          if(index >= 0) {
+            bons[index] = tmp;
+          }
+        }
+      });
 
-      print('Offre data saved to Firestore');
+      print('data saved to Firestore');
     } catch (e) {
-      print('Error saving Offre data: $e');
+      print('Error saving data: $e');
     }
   }
+
+  Future<void> fetchData() async {
+
+    final docs = await db.collection('bonlivraison').get();
+    setState(() {
+      bons = List<Bon>.from(docs.docs.map((e) => Bon.fromMap(e)).toList());
+    });
+
+  }
+}
+
+
+class Bon {
+  final String nomsocieteliv;
+  final String numbonliv;
+  final String descripliv;
+  final double totalliv;
+  final DateTime dateliv;
+
+
+  Bon({required this.dateliv, required this.descripliv, required this.nomsocieteliv, required this.numbonliv, required this.totalliv});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nomsocieteliv': nomsocieteliv,
+      'numbonliv': numbonliv,
+      'descripliv': descripliv,
+      'totalliv': totalliv,
+      'dateliv': dateliv.toString(),
+    };
+  }
+
+  static fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
+    return Bon(
+      nomsocieteliv: e["nomsocieteliv"],
+      numbonliv: e["numbonliv"],
+      descripliv: e["descripliv"],
+      totalliv: e["totalliv"],
+      dateliv: DateTime.parse(e["dateliv"]),
+    );
+  }
+
+  @override
+  String toString() {
+    return toMap().toString();
+  }
+
+
 }

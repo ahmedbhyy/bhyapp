@@ -1,6 +1,8 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DevisInfo extends StatefulWidget {
   const DevisInfo({super.key});
@@ -10,14 +12,19 @@ class DevisInfo extends StatefulWidget {
 }
 
 class _DevisInfoState extends State<DevisInfo> {
-  final TextEditingController _nnn3 = TextEditingController();
-  TextEditingController get controller => _nnn3;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  DateTime? _datedeviss = DateTime.now();
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  DateTime _datedeviss = DateTime.now();
   final TextEditingController _nomdesociete3 = TextEditingController();
   final TextEditingController _numdevisadmin = TextEditingController();
   final TextEditingController _descridevisadmin = TextEditingController();
   final TextEditingController _totaldevisadmin = TextEditingController();
+  List<Devi> devis = [];
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -44,9 +51,11 @@ class _DevisInfoState extends State<DevisInfo> {
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {
-              String hintText = "Ajouter un Devis";
-              showEditDialog(context, hintText, controller);
+            onPressed: () async {
+              final data = await showEditDialog(context);
+              if(data != null) {
+                saveData(data);
+              }
             },
             icon: const Icon(
               Icons.add,
@@ -77,18 +86,58 @@ class _DevisInfoState extends State<DevisInfo> {
               ),
             ),
           ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: devis.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final devi = devis[index];
+                return ListTile(
+                  leading: Icon(
+                    Icons.payments,
+                    color: Colors.green.shade600,
+                  ),
+                  contentPadding: const EdgeInsets.all(8.0),
+                  isThreeLine: true,
+                  subtitle: Text(
+                    DateFormat('yyyy-MM-dd').format(devi.datedevis),
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(devi.totaldevis.toString(),
+                      style:
+                      const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () async {
+                    _totaldevisadmin.text = devi.totaldevis.toString();
+                    _descridevisadmin.text = devi.descridevis;
+                    _numdevisadmin.text = devi.numdevis;
+                    _nomdesociete3.text = devi.nomsocietedevis;
+                    _datedeviss = devi.datedevis;
+                    final res = await showEditDialog(context, modify: true);
+                    _totaldevisadmin.clear();
+                    _descridevisadmin.clear();
+                    _numdevisadmin.clear();
+                    _nomdesociete3.clear();
+                    _datedeviss = DateTime.now();
+                    if(res != null) {
+                      devis[index] = res;
+                      saveData(res, index: index, modify: true);
+                    }
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> showEditDialog(BuildContext context, String hintText,
-      TextEditingController controller) async {
-    return showDialog<void>(
+  Future<Devi?> showEditDialog(BuildContext context, {bool modify=false}) async {
+    return showDialog<Devi>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(hintText),
+          title: Text(modify ? "modifier un devis" : "ajouter un devis"),
           content: SingleChildScrollView(
             child: SizedBox(
               width: 350,
@@ -109,6 +158,7 @@ class _DevisInfoState extends State<DevisInfo> {
                     controller: _numdevisadmin,
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
+                    enabled: !modify,
                     decoration: const InputDecoration(
                       labelText: 'N° Devis',
                       labelStyle: TextStyle(fontSize: 20),
@@ -164,10 +214,25 @@ class _DevisInfoState extends State<DevisInfo> {
             ),
             TextButton(
               onPressed: () {
-                saveDevisData();
-                Navigator.pop(context);
+                String nom = _nomdesociete3.text;
+                String num = _numdevisadmin.text;
+                String des = _descridevisadmin.text;
+                String tot = _totaldevisadmin.text;
+
+                if(tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
+
+                final tmp = Devi(
+                  datedevis: _datedeviss,
+                  descridevis: des,
+                  nomsocietedevis: nom,
+                  numdevis: num,
+                  totaldevis: double.parse(tot)
+                );
+
+
+                Navigator.pop(context, tmp);
               },
-              child: const Text('Enregistrer'),
+              child: Text(modify ? "modifier" : 'Enregistrer'),
             ),
           ],
         );
@@ -175,25 +240,71 @@ class _DevisInfoState extends State<DevisInfo> {
     );
   }
 
-  Future<void> saveDevisData() async {
+  Future<void> saveData(Devi tmp, {bool modify=false, int index=-1}) async {
     try {
-      String nomsociete3 = _nomdesociete3.text;
-      String numdevis = _numdevisadmin.text;
-      String descridevisadmin = _descridevisadmin.text;
-      String totaldevis = _totaldevisadmin.text;
 
-      await _firestore.collection('devis').doc().set({
-        'nomsocietedevis': nomsociete3,
-        'numdevis': numdevis,
-        'descridevis': descridevisadmin,
-        'totaldevis': totaldevis,
-        'datedevis': _datedeviss.toString(),
-      }, SetOptions(merge: true));
-      setState(() {});
+      await db.collection('devis').doc(tmp.numdevis).set(tmp.toMap(), SetOptions(merge: true));
+      setState(() {
+        if(!modify) {
+          devis.add(tmp);
+        } else {
+          if(index >= 0) {
+            devis[index] = tmp;
+          }
+        }
+      });
 
-      print('Offre data saved to Firestore');
+      print('data saved to Firestore');
     } catch (e) {
-      print('Error saving Offre data: $e');
+      print('Error saving data: $e');
     }
   }
+
+  Future<void> fetchData() async {
+
+    final docs = await db.collection('devis').get();
+    setState(() {
+      devis = List<Devi>.from(docs.docs.map((e) => Devi.fromMap(e)).toList());
+    });
+
+  }
+}
+
+
+class Devi {
+  final String nomsocietedevis;
+  final String numdevis;
+  final String descridevis;
+  final double totaldevis;
+  final DateTime datedevis;
+
+
+  Devi({required this.nomsocietedevis, required this.numdevis, required this.descridevis, required this.totaldevis, required this.datedevis});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nomsocietedevis': nomsocietedevis,
+      'numdevis': numdevis,
+      'descridevis': descridevis,
+      'totaldevis': totaldevis,
+      'datedevis': datedevis.toString(),
+    };
+  }
+
+  static fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
+    return Devi(
+      nomsocietedevis: e["nomsocietedevis"],
+      numdevis: e["numdevis"],
+      descridevis: e["descridevis"],
+      totaldevis: e["totaldevis"],
+      datedevis: DateTime.parse(e["datedevis"]),
+    );
+  }
+
+  @override
+  String toString() {
+    return toMap().toString();
+  }
+
+
 }

@@ -1,6 +1,8 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DemandePrixInfo extends StatefulWidget {
   const DemandePrixInfo({super.key});
@@ -10,20 +12,25 @@ class DemandePrixInfo extends StatefulWidget {
 }
 
 class _DemandePrixInfoState extends State<DemandePrixInfo> {
-  final TextEditingController _nnn4 = TextEditingController();
-  TextEditingController get controller => _nnn4;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  DateTime? _dateprix = DateTime.now();
-  final TextEditingController _nomdesociete4 = TextEditingController();
-  final TextEditingController _quantiteprix = TextEditingController();
-  final TextEditingController _descriprixadmin = TextEditingController();
+  DateTime date = DateTime.now();
+  final TextEditingController _nomsoc = TextEditingController();
+  final TextEditingController _quantite = TextEditingController();
+  final TextEditingController _desc = TextEditingController();
+  List<Demande> demandes = [];
+
+  @override
+  void initState() {
+    fetchOffreData();
+    super.initState();
+  }
 
   @override
   void dispose() {
     super.dispose();
-    _nomdesociete4.dispose();
-    _descriprixadmin.dispose();
-    _quantiteprix.dispose();
+    _nomsoc.dispose();
+    _desc.dispose();
+    _quantite.dispose();
   }
 
   @override
@@ -42,9 +49,11 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {
-              String hintText = "Ajouter un Demande d'offre";
-              showEditDialog(context, hintText, controller);
+            onPressed: () async {
+              final dem = await showEditDialog(context);
+              if(dem != null) {
+                saveOffreData(dem);
+              }
             },
             icon: const Icon(
               Icons.add,
@@ -75,25 +84,62 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
               ),
             ),
           ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: demandes.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final demande = demandes[index];
+                return ListTile(
+                  leading: Icon(
+                    Icons.payments,
+                    color: Colors.green.shade600,
+                  ),
+                  contentPadding: const EdgeInsets.all(8.0),
+                  isThreeLine: true,
+                  subtitle: Text(
+                    DateFormat('yyyy-MM-dd').format(demande.date),
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(demande.quantiteprix.toString(),
+                      style:
+                      const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () async {
+                    _nomsoc.text = demande.nomsociete;
+                    _desc.text = demande.description;
+                    _quantite.text = demande.quantiteprix.toString();
+                    date = demande.date;
+                    final res = await showEditDialog(context, modify: true, demande: demande);
+                    _nomsoc.clear();
+                    _desc.clear();
+                    _quantite.clear();
+                    if(res != null) {
+                      demandes[index] = res;
+                      saveOffreData(res);
+                    }
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> showEditDialog(BuildContext context, String hintText,
-      TextEditingController controller) async {
-    return showDialog<void>(
+  Future<Demande?> showEditDialog(BuildContext context, {bool modify=false, Demande? demande}) async {
+    return showDialog<Demande>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(hintText),
+          title: Text(modify ? "modifier une demande d'offre" : "ajouter une demande d'offre"),
           content: SingleChildScrollView(
             child: SizedBox(
               width: 350,
               child: Column(
                 children: [
                   TextField(
-                    controller: _nomdesociete4,
+                    controller: _nomsoc,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Nom de la société',
@@ -104,7 +150,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                   ),
                   const SizedBox(height: 10),
                   TextField(
-                    controller: _descriprixadmin,
+                    controller: _desc,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Description de Demande',
@@ -115,7 +161,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                   ),
                   const SizedBox(height: 10),
                   TextField(
-                    controller: _quantiteprix,
+                    controller: _quantite,
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
@@ -126,12 +172,12 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                     maxLines: null,
                   ),
                   CalendarDatePicker(
-                    initialDate: _dateprix,
+                    initialDate: date,
                     firstDate:
                         DateTime.now().subtract(const Duration(days: 366)),
                     lastDate: DateTime.now().add(const Duration(days: 366)),
                     onDateChanged: (DateTime value) {
-                      _dateprix = value;
+                      date = value;
                     },
                     currentDate: DateTime.now(),
                   ),
@@ -148,10 +194,24 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
             ),
             TextButton(
               onPressed: () {
-                saveOffreData();
-                Navigator.pop(context);
+                String nomsociete4 = _nomsoc.text;
+                String decripprix = _desc.text;
+                String quantiteprix = _quantite.text;
+
+                if(nomsociete4.isEmpty || decripprix.isEmpty || quantiteprix.isEmpty ) return;
+
+                final tmp = Demande(
+                  date: date,
+                  description: decripprix,
+                  id: demande != null ? demande.id : date.toString()+Random().nextInt(1000000).toString(),
+                  nomsociete: nomsociete4,
+                  quantiteprix: int.parse(quantiteprix),
+
+                );
+
+                Navigator.pop(context, tmp);
               },
-              child: const Text('Enregistrer'),
+              child: Text(modify ? "modifier" : 'Enregistrer'),
             ),
           ],
         );
@@ -159,23 +219,64 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
     );
   }
 
-  Future<void> saveOffreData() async {
+  Future<void> saveOffreData(Demande tmp) async {
     try {
-      String nomsociete4 = _nomdesociete4.text;
-      String decripprix = _descriprixadmin.text;
-      String quantiteprix = _quantiteprix.text;
 
-      await _firestore.collection('demandeprix').doc().set({
-        'nomsociete': nomsociete4,
-        'description': decripprix,
-        'quantiteprix': quantiteprix,
-        'dateprix': _dateprix.toString(),
-      }, SetOptions(merge: true));
-      setState(() {});
+
+      await _firestore.collection('demandeprix').doc(tmp.id).set(tmp.toMap(), SetOptions(merge: true));
+      setState(() {
+        demandes.add(tmp);
+      });
 
       print('Offre data saved to Firestore');
     } catch (e) {
       print('Error saving Offre data: $e');
     }
   }
+
+  Future<void> fetchOffreData() async {
+    final docs = await _firestore.collection('demandeprix').get();
+    setState(() {
+      demandes = List<Demande>.from(docs.docs.map((e) => Demande.fromMap(e)).toList());
+    });
+  }
 }
+
+
+class Demande {
+  final String nomsociete;
+  final String description;
+  final int quantiteprix;
+  final DateTime date;
+  final String id;
+
+
+  Demande({required this.date, required this.nomsociete, required this.description, required this.quantiteprix, required this.id});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nomsociete': nomsociete,
+      'description': description,
+      'quantiteprix': quantiteprix,
+      'dateprix': date.toString(),
+    };
+  }
+
+  static fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
+    return Demande(
+      date: DateTime.parse(e["dateprix"]),
+      nomsociete: e["nomsociete"],
+      description: e["description"],
+      quantiteprix: e["quantiteprix"],
+      id: e.id
+    );
+  }
+
+  @override
+  String toString() {
+    return toMap().toString();
+  }
+
+
+}
+

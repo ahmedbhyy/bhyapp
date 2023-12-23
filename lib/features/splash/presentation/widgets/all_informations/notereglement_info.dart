@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NoteReglementInfo extends StatefulWidget {
   const NoteReglementInfo({super.key});
@@ -9,14 +10,19 @@ class NoteReglementInfo extends StatefulWidget {
 }
 
 class _NoteReglementInfoState extends State<NoteReglementInfo> {
-  final TextEditingController _nnn5 = TextEditingController();
-  TextEditingController get controller => _nnn5;
   final TextEditingController _nomfournisseur = TextEditingController();
   final TextEditingController _numfacture = TextEditingController();
   final TextEditingController _montantfac = TextEditingController();
   final TextEditingController _modepaiment = TextEditingController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  DateTime? _datedenote = DateTime.now();
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  DateTime _datedenote = DateTime.now();
+  List<Note> notes = [];
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -43,9 +49,11 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {
-              String hintText = "Ajouter une Note";
-              showEditDialog(context, hintText, controller);
+            onPressed: () async {
+              final data = await showEditDialog(context);
+              if(data != null) {
+                saveData(data);
+              }
             },
             icon: const Icon(
               Icons.add,
@@ -76,18 +84,58 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
               ),
             ),
           ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: notes.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final note = notes[index];
+                return ListTile(
+                  leading: Icon(
+                    Icons.payments,
+                    color: Colors.green.shade600,
+                  ),
+                  contentPadding: const EdgeInsets.all(8.0),
+                  isThreeLine: true,
+                  subtitle: Text(
+                    DateFormat('yyyy-MM-dd').format(note.date),
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(note.montantfacture.toString(),
+                      style:
+                      const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () async {
+                    _nomfournisseur.text = note.nomfournisseur;
+                    _numfacture.text = note.numfacture;
+                    _montantfac.text = note.montantfacture.toString();
+                    _modepaiment.text = note.modepaiment;
+                    _datedenote = note.date;
+                    final res = await showEditDialog(context, modify: true);
+                    _nomfournisseur.clear();
+                    _numfacture.clear();
+                    _montantfac.clear();
+                    _modepaiment.clear();
+                    _datedenote = DateTime.now();
+                    if(res != null) {
+                      notes[index] = res;
+                      saveData(res, index: index, modify: true);
+                    }
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> showEditDialog(BuildContext context, String hintText,
-      TextEditingController controller) async {
-    return showDialog<void>(
+  Future<Note?> showEditDialog(BuildContext context, {bool modify=false}) async {
+    return showDialog<Note>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(hintText),
+          title: Text(modify ? "modifier une note" : "ajouter une Note"),
           content: SingleChildScrollView(
             child: SizedBox(
               width: 350,
@@ -108,6 +156,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     controller: _numfacture,
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
+                    enabled: !modify,
                     decoration: const InputDecoration(
                       labelText: 'N° Facture',
                       labelStyle: TextStyle(fontSize: 20),
@@ -163,10 +212,25 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
             ),
             TextButton(
               onPressed: () {
-                saveNoteData();
-                Navigator.pop(context);
+                String nomfournisseur = _nomfournisseur.text;
+                String numfacture = _numfacture.text;
+                String montantfac = _montantfac.text;
+                String modepaiment = _modepaiment.text;
+
+                if(nomfournisseur.isEmpty || numfacture.isEmpty || montantfac.isEmpty || modepaiment.isEmpty) return;
+
+                final tmp = Note(
+                    date: _datedenote,
+                    modepaiment: modepaiment,
+                    montantfacture: double.parse(montantfac),
+                    nomfournisseur: nomfournisseur,
+                    numfacture: numfacture
+                );
+
+
+                Navigator.pop(context, tmp);
               },
-              child: const Text('Enregistrer'),
+              child: Text(modify ? "modifier" : 'Enregistrer'),
             ),
           ],
         );
@@ -174,25 +238,70 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
     );
   }
 
-  Future<void> saveNoteData() async {
+  Future<void> saveData(Note tmp, {bool modify=false, int index=-1}) async {
     try {
-      String nomfournisseur = _nomfournisseur.text;
-      String numfacture = _numfacture.text;
-      String montantfac = _montantfac.text;
-      String modepaiment = _modepaiment.text;
 
-      await _firestore.collection('noteregle').doc().set({
-        'nomfournisseur': nomfournisseur,
-        'numfacture': numfacture,
-        'montantfacture': montantfac,
-        'modepaiment': modepaiment,
-        'datenote': _datedenote.toString(),
-      }, SetOptions(merge: true));
-      setState(() {});
+      await db.collection('noteregle').doc(tmp.numfacture).set(tmp.toMap(), SetOptions(merge: true));
+      setState(() {
+        if(!modify) {
+          notes.add(tmp);
+        } else {
+          if(index >= 0) {
+            notes[index] = tmp;
+          }
+        }
+      });
 
       print('Note data saved to Firestore');
     } catch (e) {
       print('Error saving Note data: $e');
     }
   }
+
+  Future<void> fetchData() async {
+
+      final docs = await db.collection('noteregle').get();
+      setState(() {
+        notes = List<Note>.from(docs.docs.map((e) => Note.fromMap(e)).toList());
+      });
+
+  }
+}
+
+class Note {
+  final String nomfournisseur;
+  final String numfacture;
+  final double montantfacture;
+  final String modepaiment;
+  final DateTime date;
+
+
+  Note({required this.date, required this.modepaiment, required this.montantfacture, required this.nomfournisseur, required this.numfacture});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nomfournisseur': nomfournisseur,
+      'numfacture': numfacture,
+      'montantfacture': montantfacture,
+      'modepaiment': modepaiment,
+      'date': date.toString(),
+    };
+  }
+
+  static fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
+    return Note(
+        date: DateTime.parse(e["date"]),
+        modepaiment: e["modepaiment"],
+        montantfacture: e["montantfacture"],
+        nomfournisseur: e["nomfournisseur"],
+        numfacture: e["numfacture"],
+    );
+  }
+
+  @override
+  String toString() {
+    return toMap().toString();
+  }
+
+
 }
