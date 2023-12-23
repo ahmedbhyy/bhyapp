@@ -110,21 +110,20 @@ class _EngraisHomeState extends State<EngraisHome> {
                   "panier": panier.map((e) => e.toMap()),
                   "date": DateTime.now().toString(),
                 });
-                
+
                 for (var element in panier) {
                   final i = displayList.indexWhere((e) => e.id == element.id);
                   displayList[i] = Engrai(
-                    url: element.url, 
-                    id: element.id, 
-                    priv: element.priv, 
-                    pria: element.pria, 
-                    name: element.name, 
-                    quantity: max(displayList[i].quantity - element.quantity, 0)
-                  );
+                      url: element.url,
+                      id: element.id,
+                      priv: element.priv,
+                      pria: element.pria,
+                      name: element.name,
+                      quantity:
+                          max(displayList[i].quantity - element.quantity, 0));
                   db.collection("engrais").doc(element.id).set({
-                    "quantity": displayList[i].quantity, 
+                    "quantity": displayList[i].quantity,
                   }, SetOptions(merge: true));
-                  
                 }
                 setState(() {
                   panier.clear();

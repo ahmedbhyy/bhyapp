@@ -24,7 +24,6 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
       });
     });
 
-
     super.initState();
   }
 
@@ -46,8 +45,8 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              final res = await Navigator.push<Bon>(
-                  context, MaterialPageRoute(builder: (context) => const AjoutBon()));
+              final res = await Navigator.push<Bon>(context,
+                  MaterialPageRoute(builder: (context) => const AjoutBon()));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final bons = db.collection("bons_commandes");
@@ -81,15 +80,15 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                     borderSide:
-                    const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
+                        const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
                   )),
             ),
           ),
           _isLoading
               ? const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6a040f)),
-              ))
+                  child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6a040f)),
+                ))
               : Container(),
           Expanded(
             child: Padding(
@@ -97,14 +96,14 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
               child: ListView.separated(
                   itemCount: displayList
                       .where((element) =>
-                      element.beneficiaire.contains(search.text))
+                          element.beneficiaire.contains(search.text))
                       .toList()
                       .length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
                     final list = displayList
                         .where((element) =>
-                        element.beneficiaire.contains(search.text))
+                            element.beneficiaire.contains(search.text))
                         .toList();
                     final bon = list[index];
                     return ListTile(
@@ -163,8 +162,8 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                       onTap: () async {
                         final bn = await Navigator.push<Bon>(context,
                             MaterialPageRoute(builder: (context) {
-                              return AjoutBon(bon: bon);
-                            }));
+                          return AjoutBon(bon: bon);
+                        }));
                         final db = FirebaseFirestore.instance;
                         if (bn == null) return;
                         db
@@ -260,7 +259,7 @@ class _AjoutBonState extends State<AjoutBon> {
                   CalendarDatePicker(
                     initialDate: _datebon,
                     firstDate:
-                    DateTime.now().subtract(const Duration(days: 366)),
+                        DateTime.now().subtract(const Duration(days: 366)),
                     lastDate: DateTime.now().add(const Duration(days: 366)),
                     onDateChanged: (DateTime value) {
                       _datebon = value;
@@ -313,7 +312,7 @@ class _AjoutBonState extends State<AjoutBon> {
                                   fontSize: 25, fontWeight: FontWeight.bold)),
                           onTap: () async {
                             final tmp = await showModalBottomSheet<
-                                Map<String, dynamic>>(
+                                    Map<String, dynamic>>(
                                 context: context,
                                 builder: (context) {
                                   return ItemAdder(
@@ -358,11 +357,11 @@ class _AjoutBonState extends State<AjoutBon> {
                 child: FilledButton.icon(
                     onPressed: () async {
                       final res =
-                      await showModalBottomSheet<Map<String, dynamic>>(
-                          context: context,
-                          builder: (context) {
-                            return const ItemAdder();
-                          });
+                          await showModalBottomSheet<Map<String, dynamic>>(
+                              context: context,
+                              builder: (context) {
+                                return const ItemAdder();
+                              });
                       if (res != null) {
                         setState(() {
                           items.add(res);
@@ -461,11 +460,11 @@ class Bon {
   final DateTime date;
   final List<Map<String, dynamic>> items;
   Bon({
-        required this.date,
-        required this.num,
-        required this.beneficiaire,
-        required this.items,
-      });
+    required this.date,
+    required this.num,
+    required this.beneficiaire,
+    required this.items,
+  });
 
   Map<String, dynamic> toMap() {
     return {

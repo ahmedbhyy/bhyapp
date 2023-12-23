@@ -51,7 +51,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
           IconButton(
             onPressed: () async {
               final data = await showEditDialog(context);
-              if(data != null) {
+              if (data != null) {
                 saveData(data);
               }
             },
@@ -102,8 +102,8 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(note.montantfacture.toString(),
-                      style:
-                      const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () async {
                     _nomfournisseur.text = note.nomfournisseur;
                     _numfacture.text = note.numfacture;
@@ -116,7 +116,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     _montantfac.clear();
                     _modepaiment.clear();
                     _datedenote = DateTime.now();
-                    if(res != null) {
+                    if (res != null) {
                       notes[index] = res;
                       saveData(res, index: index, modify: true);
                     }
@@ -130,7 +130,8 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
     );
   }
 
-  Future<Note?> showEditDialog(BuildContext context, {bool modify=false}) async {
+  Future<Note?> showEditDialog(BuildContext context,
+      {bool modify = false}) async {
     return showDialog<Note>(
       context: context,
       builder: (BuildContext context) {
@@ -217,16 +218,17 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                 String montantfac = _montantfac.text;
                 String modepaiment = _modepaiment.text;
 
-                if(nomfournisseur.isEmpty || numfacture.isEmpty || montantfac.isEmpty || modepaiment.isEmpty) return;
+                if (nomfournisseur.isEmpty ||
+                    numfacture.isEmpty ||
+                    montantfac.isEmpty ||
+                    modepaiment.isEmpty) return;
 
                 final tmp = Note(
                     date: _datedenote,
                     modepaiment: modepaiment,
                     montantfacture: double.parse(montantfac),
                     nomfournisseur: nomfournisseur,
-                    numfacture: numfacture
-                );
-
+                    numfacture: numfacture);
 
                 Navigator.pop(context, tmp);
               },
@@ -238,15 +240,17 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
     );
   }
 
-  Future<void> saveData(Note tmp, {bool modify=false, int index=-1}) async {
+  Future<void> saveData(Note tmp, {bool modify = false, int index = -1}) async {
     try {
-
-      await db.collection('noteregle').doc(tmp.numfacture).set(tmp.toMap(), SetOptions(merge: true));
+      await db
+          .collection('noteregle')
+          .doc(tmp.numfacture)
+          .set(tmp.toMap(), SetOptions(merge: true));
       setState(() {
-        if(!modify) {
+        if (!modify) {
           notes.add(tmp);
         } else {
-          if(index >= 0) {
+          if (index >= 0) {
             notes[index] = tmp;
           }
         }
@@ -259,12 +263,10 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
   }
 
   Future<void> fetchData() async {
-
-      final docs = await db.collection('noteregle').get();
-      setState(() {
-        notes = List<Note>.from(docs.docs.map((e) => Note.fromMap(e)).toList());
-      });
-
+    final docs = await db.collection('noteregle').get();
+    setState(() {
+      notes = List<Note>.from(docs.docs.map((e) => Note.fromMap(e)).toList());
+    });
   }
 }
 
@@ -275,8 +277,12 @@ class Note {
   final String modepaiment;
   final DateTime date;
 
-
-  Note({required this.date, required this.modepaiment, required this.montantfacture, required this.nomfournisseur, required this.numfacture});
+  Note(
+      {required this.date,
+      required this.modepaiment,
+      required this.montantfacture,
+      required this.nomfournisseur,
+      required this.numfacture});
 
   Map<String, dynamic> toMap() {
     return {
@@ -290,11 +296,11 @@ class Note {
 
   static fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Note(
-        date: DateTime.parse(e["date"]),
-        modepaiment: e["modepaiment"],
-        montantfacture: e["montantfacture"],
-        nomfournisseur: e["nomfournisseur"],
-        numfacture: e["numfacture"],
+      date: DateTime.parse(e["date"]),
+      modepaiment: e["modepaiment"],
+      montantfacture: e["montantfacture"],
+      nomfournisseur: e["nomfournisseur"],
+      numfacture: e["numfacture"],
     );
   }
 
@@ -302,6 +308,4 @@ class Note {
   String toString() {
     return toMap().toString();
   }
-
-
 }

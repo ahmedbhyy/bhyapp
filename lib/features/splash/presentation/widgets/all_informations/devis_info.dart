@@ -53,7 +53,7 @@ class _DevisInfoState extends State<DevisInfo> {
           IconButton(
             onPressed: () async {
               final data = await showEditDialog(context);
-              if(data != null) {
+              if (data != null) {
                 saveData(data);
               }
             },
@@ -104,8 +104,8 @@ class _DevisInfoState extends State<DevisInfo> {
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(devi.totaldevis.toString(),
-                      style:
-                      const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () async {
                     _totaldevisadmin.text = devi.totaldevis.toString();
                     _descridevisadmin.text = devi.descridevis;
@@ -118,7 +118,7 @@ class _DevisInfoState extends State<DevisInfo> {
                     _numdevisadmin.clear();
                     _nomdesociete3.clear();
                     _datedeviss = DateTime.now();
-                    if(res != null) {
+                    if (res != null) {
                       devis[index] = res;
                       saveData(res, index: index, modify: true);
                     }
@@ -132,7 +132,8 @@ class _DevisInfoState extends State<DevisInfo> {
     );
   }
 
-  Future<Devi?> showEditDialog(BuildContext context, {bool modify=false}) async {
+  Future<Devi?> showEditDialog(BuildContext context,
+      {bool modify = false}) async {
     return showDialog<Devi>(
       context: context,
       builder: (BuildContext context) {
@@ -219,16 +220,15 @@ class _DevisInfoState extends State<DevisInfo> {
                 String des = _descridevisadmin.text;
                 String tot = _totaldevisadmin.text;
 
-                if(tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
 
                 final tmp = Devi(
-                  datedevis: _datedeviss,
-                  descridevis: des,
-                  nomsocietedevis: nom,
-                  numdevis: num,
-                  totaldevis: double.parse(tot)
-                );
-
+                    datedevis: _datedeviss,
+                    descridevis: des,
+                    nomsocietedevis: nom,
+                    numdevis: num,
+                    totaldevis: double.parse(tot));
 
                 Navigator.pop(context, tmp);
               },
@@ -240,15 +240,17 @@ class _DevisInfoState extends State<DevisInfo> {
     );
   }
 
-  Future<void> saveData(Devi tmp, {bool modify=false, int index=-1}) async {
+  Future<void> saveData(Devi tmp, {bool modify = false, int index = -1}) async {
     try {
-
-      await db.collection('devis').doc(tmp.numdevis).set(tmp.toMap(), SetOptions(merge: true));
+      await db
+          .collection('devis')
+          .doc(tmp.numdevis)
+          .set(tmp.toMap(), SetOptions(merge: true));
       setState(() {
-        if(!modify) {
+        if (!modify) {
           devis.add(tmp);
         } else {
-          if(index >= 0) {
+          if (index >= 0) {
             devis[index] = tmp;
           }
         }
@@ -261,15 +263,12 @@ class _DevisInfoState extends State<DevisInfo> {
   }
 
   Future<void> fetchData() async {
-
     final docs = await db.collection('devis').get();
     setState(() {
       devis = List<Devi>.from(docs.docs.map((e) => Devi.fromMap(e)).toList());
     });
-
   }
 }
-
 
 class Devi {
   final String nomsocietedevis;
@@ -278,8 +277,12 @@ class Devi {
   final double totaldevis;
   final DateTime datedevis;
 
-
-  Devi({required this.nomsocietedevis, required this.numdevis, required this.descridevis, required this.totaldevis, required this.datedevis});
+  Devi(
+      {required this.nomsocietedevis,
+      required this.numdevis,
+      required this.descridevis,
+      required this.totaldevis,
+      required this.datedevis});
 
   Map<String, dynamic> toMap() {
     return {
@@ -305,6 +308,4 @@ class Devi {
   String toString() {
     return toMap().toString();
   }
-
-
 }

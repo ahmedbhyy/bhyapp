@@ -1,3 +1,4 @@
+import 'package:bhyapp/features/splash/presentation/widgets/edit_profile.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/start.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -44,11 +45,26 @@ class LoginPageState extends State<LoginPage> {
       if (await checkCredentials(enteredUsername, enteredPassword)) {
         TextInput.finishAutofillContext();
         // ignore: use_build_context_synchronously
-        await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const StartPage(),
-            ));
+        if (FirebaseAuth.instance.currentUser!.displayName == null) {
+          final go = await Navigator.push<bool>(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const Settings(),
+              ));
+          if (go != null && go) {
+            await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const StartPage(),
+                ));
+          }
+        } else {
+          await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const StartPage(),
+              ));
+        }
       } else {
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(

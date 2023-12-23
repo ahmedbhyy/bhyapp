@@ -1,9 +1,12 @@
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:flutter/material.dart';
 
 class Autres extends StatefulWidget {
   final String autres;
   final Future<void> Function(String) updatestate;
-  const Autres({super.key, required this.autres, required this.updatestate});
+  final UserLocal? user;
+  const Autres(
+      {super.key, required this.autres, required this.updatestate, this.user});
 
   @override
   State<Autres> createState() => _AutresState();
@@ -68,6 +71,7 @@ class _AutresState extends State<Autres> {
       {required String hintText, required TextEditingController controller}) {
     return TextFormField(
       controller: controller,
+      enabled: widget.user!.role != "admin",
       style: const TextStyle(
         fontSize: 20.0,
       ),

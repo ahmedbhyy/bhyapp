@@ -46,8 +46,8 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              final res = await Navigator.push<Bon>(
-                  context, MaterialPageRoute(builder: (context) => const AjoutBon()));
+              final res = await Navigator.push<Bon>(context,
+                  MaterialPageRoute(builder: (context) => const AjoutBon()));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final bons = db.collection("bons");

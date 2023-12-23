@@ -1,12 +1,16 @@
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Maindoeuvre extends StatefulWidget {
   final Oeuvre oeuvre;
+  final UserLocal? user;
   final Future<void> Function(Oeuvre) updateremotestate;
   const Maindoeuvre(
-      {super.key, required this.oeuvre, required this.updateremotestate});
+      {super.key,
+      required this.oeuvre,
+      required this.updateremotestate,
+      this.user});
 
   @override
   State<Maindoeuvre> createState() => _MaindoeuvreState();
@@ -36,7 +40,6 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
 
   @override
   void initState() {
-    print(widget.oeuvre.midi_homme);
     _nombrehomme.text = widget.oeuvre.matin_homme.toString();
     _nombrehomme2.text = widget.oeuvre.midi_homme.toString();
     _nombrefemme.text = widget.oeuvre.matin_femme.toString();
@@ -151,22 +154,24 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10, left: 250),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Oeuvre tmp = Oeuvre(
-                      matin_homme: int.parse(_nombrehomme.text),
-                      matin_femme: int.parse(_nombrefemme.text),
-                      matin_charge_homme: double.parse(_chargehomme.text),
-                      matin_charge_femme: double.parse(_chargefemme.text),
-                      midi_homme: int.parse(_nombrehomme2.text),
-                      midi_femme: int.parse(_nombrefemme2.text),
-                      midi_charge_homme: double.parse(_chargehomme2.text),
-                      midi_charge_femme: double.parse(_chargefemme2.text),
-                    );
-                    widget.updateremotestate(tmp);
-                  },
-                  child: const Text('Enregistrer'),
-                ),
+                child: widget.user!.role == "admin"
+                    ? null
+                    : ElevatedButton(
+                        onPressed: () {
+                          Oeuvre tmp = Oeuvre(
+                            matin_homme: int.parse(_nombrehomme.text),
+                            matin_femme: int.parse(_nombrefemme.text),
+                            matin_charge_homme: double.parse(_chargehomme.text),
+                            matin_charge_femme: double.parse(_chargefemme.text),
+                            midi_homme: int.parse(_nombrehomme2.text),
+                            midi_femme: int.parse(_nombrefemme2.text),
+                            midi_charge_homme: double.parse(_chargehomme2.text),
+                            midi_charge_femme: double.parse(_chargefemme2.text),
+                          );
+                          widget.updateremotestate(tmp);
+                        },
+                        child: const Text('Enregistrer'),
+                      ),
               ),
             ],
           ),
@@ -187,6 +192,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
           child: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
+            enabled: widget.user!.role != "admin",
             textInputAction: TextInputAction.next,
             style: const TextStyle(fontSize: 20.0),
             maxLines: null,

@@ -100,8 +100,8 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(prime.montant.toString(),
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
                 );
               },

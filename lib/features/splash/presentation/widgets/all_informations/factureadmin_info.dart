@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class FactureAdminInfo extends StatefulWidget {
   const FactureAdminInfo({super.key});
@@ -10,23 +10,28 @@ class FactureAdminInfo extends StatefulWidget {
 }
 
 class _FactureAdminInfoState extends State<FactureAdminInfo> {
-  final TextEditingController _nnn2 = TextEditingController();
-  TextEditingController get controller => _nnn2;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  DateTime? _datefacadmin = DateTime.now();
-  final TextEditingController _nomdesociete2 = TextEditingController();
-  final TextEditingController _numfacadmin = TextEditingController();
-  final TextEditingController _descrifacadmin = TextEditingController();
-  final TextEditingController _totalfacadmin = TextEditingController();
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  DateTime _date = DateTime.now();
+  final TextEditingController _nomsoc = TextEditingController();
+  final TextEditingController _numfac = TextEditingController();
+  final TextEditingController _desc = TextEditingController();
+  final TextEditingController _total = TextEditingController();
+  List<Facture> factures = [];
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
 
   @override
   void dispose() {
     super.dispose();
 
-    _nomdesociete2.dispose();
-    _numfacadmin.dispose();
-    _descrifacadmin.dispose();
-    _totalfacadmin.dispose();
+    _nomsoc.dispose();
+    _numfac.dispose();
+    _desc.dispose();
+    _total.dispose();
   }
 
   @override
@@ -45,9 +50,11 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {
-              String hintText = "Ajouter une Facture Administrative";
-              showEditDialog(context, hintText, controller);
+            onPressed: () async {
+              final data = await showEditDialog(context);
+              if (data != null) {
+                saveData(data);
+              }
             },
             icon: const Icon(
               Icons.add,
@@ -78,25 +85,66 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
               ),
             ),
           ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: factures.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final facture = factures[index];
+                return ListTile(
+                  leading: Icon(
+                    Icons.payments,
+                    color: Colors.green.shade600,
+                  ),
+                  contentPadding: const EdgeInsets.all(8.0),
+                  isThreeLine: true,
+                  subtitle: Text(
+                    DateFormat('yyyy-MM-dd').format(facture.date),
+                    style: TextStyle(color: Colors.green.shade500),
+                  ),
+                  title: Text(facture.total.toString(),
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
+                  onTap: () async {
+                    _total.text = facture.total.toString();
+                    _desc.text = facture.desc;
+                    _numfac.text = facture.num;
+                    _nomsoc.text = facture.nomsoc;
+                    _date = facture.date;
+                    final res = await showEditDialog(context, modify: true);
+                    _total.clear();
+                    _desc.clear();
+                    _numfac.clear();
+                    _nomsoc.clear();
+                    _date = DateTime.now();
+                    if (res != null) {
+                      factures[index] = res;
+                      saveData(res, index: index, modify: true);
+                    }
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> showEditDialog(BuildContext context, String hintText,
-      TextEditingController controller) async {
-    return showDialog<void>(
+  Future<Facture?> showEditDialog(BuildContext context,
+      {bool modify = false}) async {
+    return showDialog<Facture>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(hintText),
+          title: Text(modify ? "modifier la facture" : "ajouter une facture"),
           content: SingleChildScrollView(
             child: SizedBox(
               width: 350,
               child: Column(
                 children: [
                   TextField(
-                    controller: _nomdesociete2,
+                    controller: _nomsoc,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Nom de la société',
@@ -106,9 +154,10 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     maxLines: null,
                   ),
                   TextField(
-                    controller: _numfacadmin,
+                    controller: _numfac,
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
+                    enabled: !modify,
                     decoration: const InputDecoration(
                       labelText: 'N° Facture',
                       labelStyle: TextStyle(fontSize: 20),
@@ -117,7 +166,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     maxLines: null,
                   ),
                   TextField(
-                    controller: _descrifacadmin,
+                    controller: _desc,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Description de la Facture',
@@ -127,7 +176,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     maxLines: null,
                   ),
                   TextField(
-                    controller: _totalfacadmin,
+                    controller: _total,
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
@@ -140,12 +189,12 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                   ),
                   const SizedBox(height: 10),
                   CalendarDatePicker(
-                    initialDate: _datefacadmin,
+                    initialDate: _date,
                     firstDate:
                         DateTime.now().subtract(const Duration(days: 366)),
                     lastDate: DateTime.now().add(const Duration(days: 366)),
                     onDateChanged: (DateTime value) {
-                      _datefacadmin = value;
+                      _date = value;
                     },
                     currentDate: DateTime.now(),
                   ),
@@ -162,10 +211,24 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
             ),
             TextButton(
               onPressed: () {
-                savefacadminData();
-                Navigator.pop(context);
+                String nom = _nomsoc.text;
+                String num = _numfac.text;
+                String des = _desc.text;
+                String tot = _total.text;
+
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
+
+                final tmp = Facture(
+                    date: _date,
+                    desc: des,
+                    nomsoc: nom,
+                    num: num,
+                    total: double.parse(tot));
+
+                Navigator.pop(context, tmp);
               },
-              child: const Text('Enregistrer'),
+              child: Text(modify ? "modifier" : 'Enregistrer'),
             ),
           ],
         );
@@ -173,25 +236,74 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
     );
   }
 
-  Future<void> savefacadminData() async {
+  Future<void> saveData(Facture tmp,
+      {bool modify = false, int index = -1}) async {
     try {
-      String nomsociete2 = _nomdesociete2.text;
-      String numfacadmin = _numfacadmin.text;
-      String descrifacadmin = _descrifacadmin.text;
-      String totalfacadmin = _totalfacadmin.text;
+      await db
+          .collection('adminfacture')
+          .doc(tmp.num)
+          .set(tmp.toMap(), SetOptions(merge: true));
+      setState(() {
+        if (!modify) {
+          factures.add(tmp);
+        } else {
+          if (index >= 0) {
+            factures[index] = tmp;
+          }
+        }
+      });
 
-      await _firestore.collection('adminfacture').doc().set({
-        'nomsocietefac': nomsociete2,
-        'numfacadmin': numfacadmin,
-        'descrifacadmin': descrifacadmin,
-        'totalfacadmin': totalfacadmin,
-        'datefacadmin': _datefacadmin.toString(),
-      }, SetOptions(merge: true));
-      setState(() {});
-
-      print('Offre data saved to Firestore');
+      print('data saved to Firestore');
     } catch (e) {
-      print('Error saving Offre data: $e');
+      print('Error saving data: $e');
     }
+  }
+
+  Future<void> fetchData() async {
+    final docs = await db.collection('adminfacture').get();
+    setState(() {
+      factures =
+          List<Facture>.from(docs.docs.map((e) => Facture.fromMap(e)).toList());
+    });
+  }
+}
+
+class Facture {
+  final String nomsoc;
+  final String num;
+  final String desc;
+  final double total;
+  final DateTime date;
+
+  Facture(
+      {required this.nomsoc,
+      required this.num,
+      required this.desc,
+      required this.total,
+      required this.date});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nomsocietefac': nomsoc,
+      'numfacadmin': num,
+      'descrifacadmin': desc,
+      'totalfacadmin': total,
+      'datefacadmin': date.toString(),
+    };
+  }
+
+  static fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
+    return Facture(
+      nomsoc: e["nomsocietefac"],
+      num: e["numfacadmin"],
+      desc: e["descrifacadmin"],
+      total: e["totalfacadmin"],
+      date: DateTime.parse(e["datefacadmin"]),
+    );
+  }
+
+  @override
+  String toString() {
+    return toMap().toString();
   }
 }

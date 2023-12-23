@@ -164,6 +164,19 @@ class _SettingsState extends State<Settings> {
       }, SetOptions(merge: true));
       setState(() {});
 
+      final firsttime = FirebaseAuth.instance.currentUser!.displayName == null;
+      if (nomuser.isNotEmpty &&
+          profession.isNotEmpty &&
+          firme.isNotEmpty &&
+          firsttime) {
+        FirebaseAuth.instance.currentUser!.updateDisplayName("done");
+        _firestore
+            .collection('users')
+            .doc(_user.uid)
+            .set({"role": "user"}, SetOptions(merge: true));
+        Navigator.pop(context, true);
+      }
+
       print('User data saved to Firestore');
     } catch (e) {
       print('Error saving user data: $e');

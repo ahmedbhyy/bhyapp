@@ -1,10 +1,13 @@
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
 import 'package:flutter/material.dart';
 
 class Voyages extends StatefulWidget {
   final Voyage transport;
+  final UserLocal? user;
   final Future<void> Function(Voyage) update;
-  const Voyages({Key? key, required this.transport, required this.update})
+  const Voyages(
+      {Key? key, required this.transport, required this.update, this.user})
       : super(key: key);
 
   @override
@@ -71,15 +74,17 @@ class _VoyagesState extends State<Voyages> {
                   hintText: "Cout", controller: _coutvoyage, suffixText: 'DT'),
               Padding(
                 padding: const EdgeInsets.only(top: 50, left: 8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    final tmp = Voyage(
-                        nombres: int.parse(_nombrevoyage.text),
-                        cout: double.parse(_coutvoyage.text));
-                    widget.update(tmp);
-                  },
-                  child: const Text('Enregistrer'),
-                ),
+                child: widget.user!.role == "admin"
+                    ? null
+                    : ElevatedButton(
+                        onPressed: () {
+                          final tmp = Voyage(
+                              nombres: int.parse(_nombrevoyage.text),
+                              cout: double.parse(_coutvoyage.text));
+                          widget.update(tmp);
+                        },
+                        child: const Text('Enregistrer'),
+                      ),
               ),
             ],
           ),
@@ -99,6 +104,7 @@ class _VoyagesState extends State<Voyages> {
           child: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
+            enabled: widget.user!.role != "admin",
             textInputAction: TextInputAction.next,
             style: const TextStyle(fontSize: 20.0),
             maxLines: null,
