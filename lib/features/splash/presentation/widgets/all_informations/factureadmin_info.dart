@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,8 @@ class FactureAdminInfo extends StatefulWidget {
 class _FactureAdminInfoState extends State<FactureAdminInfo> {
   final TextEditingController _nnn2 = TextEditingController();
   TextEditingController get controller => _nnn2;
-  DateTime? _datefacadmin;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  DateTime? _datefacadmin = DateTime.now();
   final TextEditingController _nomdesociete2 = TextEditingController();
   final TextEditingController _numfacadmin = TextEditingController();
   final TextEditingController _descrifacadmin = TextEditingController();
@@ -93,27 +95,9 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
               width: 350,
               child: Column(
                 children: [
-                  DateFormatField(
-                    type: DateFormatType.type2,
-                    decoration: const InputDecoration(
-                      labelStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      border: InputBorder.none,
-                      label: Text("Date de Facture"),
-                    ),
-                    onComplete: (date) {
-                      setState(() {
-                        if (date != null) {
-                          _datefacadmin = date;
-                        }
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
                   TextField(
                     controller: _nomdesociete2,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Nom de la société',
                       labelStyle: TextStyle(fontSize: 20),
@@ -121,9 +105,9 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
                   TextField(
                     controller: _numfacadmin,
+                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'N° Facture',
@@ -132,9 +116,9 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
                   TextField(
                     controller: _descrifacadmin,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Description de la Facture',
                       labelStyle: TextStyle(fontSize: 20),
@@ -142,9 +126,9 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
                   TextField(
                     controller: _totalfacadmin,
+                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Total de la Facture',
@@ -154,7 +138,17 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
+                  CalendarDatePicker(
+                    initialDate: _datefacadmin,
+                    firstDate:
+                        DateTime.now().subtract(const Duration(days: 366)),
+                    lastDate: DateTime.now().add(const Duration(days: 366)),
+                    onDateChanged: (DateTime value) {
+                      _datefacadmin = value;
+                    },
+                    currentDate: DateTime.now(),
+                  ),
                 ],
               ),
             ),
@@ -167,12 +161,37 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                savefacadminData();
+                Navigator.pop(context);
+              },
               child: const Text('Enregistrer'),
             ),
           ],
         );
       },
     );
+  }
+
+  Future<void> savefacadminData() async {
+    try {
+      String nomsociete2 = _nomdesociete2.text;
+      String numfacadmin = _numfacadmin.text;
+      String descrifacadmin = _descrifacadmin.text;
+      String totalfacadmin = _totalfacadmin.text;
+
+      await _firestore.collection('adminfacture').doc().set({
+        'nomsocietefac': nomsociete2,
+        'numfacadmin': numfacadmin,
+        'descrifacadmin': descrifacadmin,
+        'totalfacadmin': totalfacadmin,
+        'datefacadmin': _datefacadmin.toString(),
+      }, SetOptions(merge: true));
+      setState(() {});
+
+      print('Offre data saved to Firestore');
+    } catch (e) {
+      print('Error saving Offre data: $e');
+    }
   }
 }

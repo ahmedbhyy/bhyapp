@@ -47,7 +47,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
             icon: const Icon(Icons.add),
             onPressed: () async {
               final res = await Navigator.push<Bon>(
-                  context, MaterialPageRoute(builder: (context) => AjoutBon()));
+                  context, MaterialPageRoute(builder: (context) => const AjoutBon()));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final bons = db.collection("bons");
@@ -381,7 +381,7 @@ class _AjoutBonState extends State<AjoutBon> {
                           await showModalBottomSheet<Map<String, dynamic>>(
                               context: context,
                               builder: (context) {
-                                return ItemAdder();
+                                return const ItemAdder();
                               });
                       if (res != null) {
                         setState(() {
@@ -390,8 +390,8 @@ class _AjoutBonState extends State<AjoutBon> {
                         print(res);
                       }
                     },
-                    icon: Icon(Icons.add_outlined),
-                    label: Text("ajouter")))
+                    icon: const Icon(Icons.add_outlined),
+                    label: const Text("ajouter")))
           ],
         ),
       ),

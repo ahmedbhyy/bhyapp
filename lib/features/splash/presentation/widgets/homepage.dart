@@ -47,437 +47,103 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const EngraisHome()),
-                );
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0),
-                ),
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'images/engrais.png',
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Les Engrais',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const MenuCard(
+              source: 'images/engrais.png',
+              title: 'Les Engrais',
+              child: EngraisHome(),
             ),
             const SizedBox(height: 20),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const OuvrierHome()),
-                );
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0),
-                ),
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'images/ImageOuvrier.png',
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Les Ouvriers',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const MenuCard(
+              source: 'images/ImageOuvrier.png',
+              title: 'Les Ouvriers',
+              child: OuvrierHome(),
             ),
             const SizedBox(height: 20),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const RapportJournalier()),
-                );
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0),
-                ),
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'images/rapport2.png',
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Rapport Journalier',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const MenuCard(
+              source: 'images/rapport2.png',
+              title: 'Rapport Journalier',
+              child: RapportJournalier(),
             ),
             const SizedBox(height: 20),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const BonSortieInfo()),
-                );
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0),
-                ),
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'images/bondesortie2.png',
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Bon de sortie interne',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const MenuCard(
+              source: 'images/bondesortie2.png',
+              title: 'Bon de sortie interne',
+              child: BonSortieInfo(),
             ),
             const SizedBox(height: 20),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FactureInfo()),
-                );
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0),
-                ),
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'images/facture.png',
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Factures',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const MenuCard(
+              source: 'images/facture.png',
+              title: 'Factures',
+              child: FactureInfo(),
             ),
             const SizedBox(height: 20),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RequeteInfo()),
-                );
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0),
-                ),
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'images/requetes.png',
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Requêtes',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ],
-                ),
+            const MenuCard(
+              source: 'images/requetes.png',
+              title: 'Requêtes',
+              child: RequeteInfo(),
+            ),
+            const SizedBox(height: 20),
+            Visibility(
+              visible: isVisible(),
+              child: const MenuCard(
+                source: 'images/rapport2.png',
+                title: 'Les Rapports Journaliers (Admin)',
+                child: RapportAdmin(),
               ),
             ),
             const SizedBox(height: 20),
             Visibility(
               visible: isVisible(),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const RapportAdmin()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/rapport2.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Les Rapports Journaliers (Admin)',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              child: const MenuCard(
+                source: 'images/boncommande3.png',
+                title: 'Bon de Commande',
+                child: BonCommandeInfo(),
               ),
             ),
             const SizedBox(height: 20),
             Visibility(
               visible: isVisible(),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const BonCommandeInfo()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/boncommande3.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Bon de Commande',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              child: const MenuCard(
+                source: 'images/bondelivraison3.png',
+                title: 'Bon de Livraison',
+                child: BonLivraisonInfo(),
               ),
             ),
             const SizedBox(height: 20),
             Visibility(
               visible: isVisible(),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const BonLivraisonInfo()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/bondelivraison3.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Bon de Livraison',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              child: const MenuCard(
+                source: 'images/facture.png',
+                title: 'Facture Administrative',
+                child: FactureAdminInfo(),
               ),
             ),
             const SizedBox(height: 20),
             Visibility(
               visible: isVisible(),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const FactureAdminInfo()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/facture.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Facture Administrative',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              child: const MenuCard(
+                source: 'images/devis.png',
+                title: 'Devis',
+                child: DevisInfo(),
               ),
             ),
             const SizedBox(height: 20),
             Visibility(
               visible: isVisible(),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const DevisInfo()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/devis.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Devis',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              child: const MenuCard(
+                source: 'images/demandeprix.png',
+                title: 'Demande d\'offre de Prix',
+                child: DemandePrixInfo(),
               ),
             ),
             const SizedBox(height: 20),
             Visibility(
-              visible: isVisible(),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const DemandePrixInfo()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/demandeprix.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Demande d\'offre de Prix',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const NoteReglementInfo()),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/notereglement.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Note de Règlement',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                visible: isVisible(),
+                child: const MenuCard(
+                  source: 'images/notereglement.png',
+                  title: 'Note de Règlement',
+                  child: NoteReglementInfo(),
+                )),
             const SizedBox(height: 60),
           ],
         ),
@@ -487,5 +153,50 @@ class _HomePageState extends State<HomePage> {
 
   bool isVisible() {
     return role == "admin";
+  }
+}
+
+class MenuCard extends StatelessWidget {
+  final String source;
+  final Widget child;
+  final String title;
+  const MenuCard(
+      {super.key,
+      required this.child,
+      required this.source,
+      required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => child),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(80.0),
+        ),
+        child: Column(
+          children: [
+            Image.asset(
+              source,
+              height: 150,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                title,
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

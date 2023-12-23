@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,8 @@ class DemandePrixInfo extends StatefulWidget {
 class _DemandePrixInfoState extends State<DemandePrixInfo> {
   final TextEditingController _nnn4 = TextEditingController();
   TextEditingController get controller => _nnn4;
-  DateTime? _dateprix;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  DateTime? _dateprix = DateTime.now();
   final TextEditingController _nomdesociete4 = TextEditingController();
   final TextEditingController _quantiteprix = TextEditingController();
   final TextEditingController _descriprixadmin = TextEditingController();
@@ -90,26 +92,9 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
               width: 350,
               child: Column(
                 children: [
-                  DateFormatField(
-                    type: DateFormatType.type2,
-                    decoration: const InputDecoration(
-                      labelStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      border: InputBorder.none,
-                      label: Text("Date de Demande"),
-                    ),
-                    onComplete: (date) {
-                      setState(() {
-                        if (date != null) {
-                          _dateprix = date;
-                        }
-                      });
-                    },
-                  ),
                   TextField(
                     controller: _nomdesociete4,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Nom de la société',
                       labelStyle: TextStyle(fontSize: 20),
@@ -117,9 +102,10 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _descriprixadmin,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Description de Demande',
                       labelStyle: TextStyle(fontSize: 20),
@@ -127,9 +113,10 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _quantiteprix,
+                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Quantité',
@@ -138,7 +125,16 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  CalendarDatePicker(
+                    initialDate: _dateprix,
+                    firstDate:
+                        DateTime.now().subtract(const Duration(days: 366)),
+                    lastDate: DateTime.now().add(const Duration(days: 366)),
+                    onDateChanged: (DateTime value) {
+                      _dateprix = value;
+                    },
+                    currentDate: DateTime.now(),
+                  ),
                 ],
               ),
             ),
@@ -151,12 +147,35 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                saveOffreData();
+                Navigator.pop(context);
+              },
               child: const Text('Enregistrer'),
             ),
           ],
         );
       },
     );
+  }
+
+  Future<void> saveOffreData() async {
+    try {
+      String nomsociete4 = _nomdesociete4.text;
+      String decripprix = _descriprixadmin.text;
+      String quantiteprix = _quantiteprix.text;
+
+      await _firestore.collection('demandeprix').doc().set({
+        'nomsociete': nomsociete4,
+        'description': decripprix,
+        'quantiteprix': quantiteprix,
+        'dateprix': _dateprix.toString(),
+      }, SetOptions(merge: true));
+      setState(() {});
+
+      print('Offre data saved to Firestore');
+    } catch (e) {
+      print('Error saving Offre data: $e');
+    }
   }
 }

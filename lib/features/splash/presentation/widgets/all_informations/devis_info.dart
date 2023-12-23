@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_format_field/date_format_field.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,8 @@ class DevisInfo extends StatefulWidget {
 class _DevisInfoState extends State<DevisInfo> {
   final TextEditingController _nnn3 = TextEditingController();
   TextEditingController get controller => _nnn3;
-  DateTime? _datedeviss;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  DateTime? _datedeviss = DateTime.now();
   final TextEditingController _nomdesociete3 = TextEditingController();
   final TextEditingController _numdevisadmin = TextEditingController();
   final TextEditingController _descridevisadmin = TextEditingController();
@@ -92,26 +94,9 @@ class _DevisInfoState extends State<DevisInfo> {
               width: 350,
               child: Column(
                 children: [
-                  DateFormatField(
-                    type: DateFormatType.type2,
-                    decoration: const InputDecoration(
-                      labelStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      border: InputBorder.none,
-                      label: Text("Date de Devis"),
-                    ),
-                    onComplete: (date) {
-                      setState(() {
-                        if (date != null) {
-                          _datedeviss = date;
-                        }
-                      });
-                    },
-                  ),
                   TextField(
                     controller: _nomdesociete3,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Nom de la société',
                       labelStyle: TextStyle(fontSize: 20),
@@ -119,9 +104,10 @@ class _DevisInfoState extends State<DevisInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 7),
                   TextField(
                     controller: _numdevisadmin,
+                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'N° Devis',
@@ -130,9 +116,10 @@ class _DevisInfoState extends State<DevisInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 7),
                   TextField(
                     controller: _descridevisadmin,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Description de Devis',
                       labelStyle: TextStyle(fontSize: 20),
@@ -140,9 +127,10 @@ class _DevisInfoState extends State<DevisInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 7),
                   TextField(
                     controller: _totaldevisadmin,
+                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Montant Total',
@@ -152,7 +140,17 @@ class _DevisInfoState extends State<DevisInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 5),
+                  CalendarDatePicker(
+                    initialDate: _datedeviss,
+                    firstDate:
+                        DateTime.now().subtract(const Duration(days: 366)),
+                    lastDate: DateTime.now().add(const Duration(days: 366)),
+                    onDateChanged: (DateTime value) {
+                      _datedeviss = value;
+                    },
+                    currentDate: DateTime.now(),
+                  ),
                 ],
               ),
             ),
@@ -165,12 +163,37 @@ class _DevisInfoState extends State<DevisInfo> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                saveDevisData();
+                Navigator.pop(context);
+              },
               child: const Text('Enregistrer'),
             ),
           ],
         );
       },
     );
+  }
+
+  Future<void> saveDevisData() async {
+    try {
+      String nomsociete3 = _nomdesociete3.text;
+      String numdevis = _numdevisadmin.text;
+      String descridevisadmin = _descridevisadmin.text;
+      String totaldevis = _totaldevisadmin.text;
+
+      await _firestore.collection('devis').doc().set({
+        'nomsocietedevis': nomsociete3,
+        'numdevis': numdevis,
+        'descridevis': descridevisadmin,
+        'totaldevis': totaldevis,
+        'datedevis': _datedeviss.toString(),
+      }, SetOptions(merge: true));
+      setState(() {});
+
+      print('Offre data saved to Firestore');
+    } catch (e) {
+      print('Error saving Offre data: $e');
+    }
   }
 }

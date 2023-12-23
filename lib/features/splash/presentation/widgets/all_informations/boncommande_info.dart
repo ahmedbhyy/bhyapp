@@ -62,7 +62,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                labelText: "chercher un Bon Commande par (Date)",
+                labelText: "chercher un Bon par (Nom de Société)",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -112,6 +112,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                   const SizedBox(height: 10),
                   TextField(
                     controller: _nomdesociete,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Nom de la société',
                       labelStyle: TextStyle(fontSize: 20),
@@ -128,6 +129,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                             Expanded(
                               child: TextField(
                                 controller: _designation2,
+                                textInputAction: TextInputAction.next,
                                 decoration: const InputDecoration(
                                   labelText: 'Désignation',
                                   labelStyle: TextStyle(fontSize: 20),

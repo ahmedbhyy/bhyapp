@@ -1,4 +1,4 @@
-import 'package:date_format_field/date_format_field.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class NoteReglementInfo extends StatefulWidget {
@@ -15,7 +15,8 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
   final TextEditingController _numfacture = TextEditingController();
   final TextEditingController _montantfac = TextEditingController();
   final TextEditingController _modepaiment = TextEditingController();
-  DateTime? _datedecheance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  DateTime? _datedenote = DateTime.now();
 
   @override
   void dispose() {
@@ -94,6 +95,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                 children: [
                   TextField(
                     controller: _nomfournisseur,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Nom du Fournisseur',
                       labelStyle: TextStyle(fontSize: 20),
@@ -101,9 +103,10 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _numfacture,
+                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'N° Facture',
@@ -112,9 +115,10 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _montantfac,
+                    textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Montant de la Facture',
@@ -124,9 +128,10 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _modepaiment,
+                    textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Mode de Paiment',
                       labelStyle: TextStyle(fontSize: 20),
@@ -134,24 +139,16 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     ),
                     maxLines: null,
                   ),
-                  const SizedBox(height: 20),
-                  DateFormatField(
-                    type: DateFormatType.type2,
-                    decoration: const InputDecoration(
-                      labelStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      border: InputBorder.none,
-                      label: Text("Date d'échéance"),
-                    ),
-                    onComplete: (date) {
-                      setState(() {
-                        if (date != null) {
-                          _datedecheance = date;
-                        }
-                      });
+                  const SizedBox(height: 10),
+                  CalendarDatePicker(
+                    initialDate: _datedenote,
+                    firstDate:
+                        DateTime.now().subtract(const Duration(days: 366)),
+                    lastDate: DateTime.now().add(const Duration(days: 366)),
+                    onDateChanged: (DateTime value) {
+                      _datedenote = value;
                     },
+                    currentDate: DateTime.now(),
                   ),
                 ],
               ),
@@ -165,12 +162,37 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                saveNoteData();
+                Navigator.pop(context);
+              },
               child: const Text('Enregistrer'),
             ),
           ],
         );
       },
     );
+  }
+
+  Future<void> saveNoteData() async {
+    try {
+      String nomfournisseur = _nomfournisseur.text;
+      String numfacture = _numfacture.text;
+      String montantfac = _montantfac.text;
+      String modepaiment = _modepaiment.text;
+
+      await _firestore.collection('noteregle').doc().set({
+        'nomfournisseur': nomfournisseur,
+        'numfacture': numfacture,
+        'montantfacture': montantfac,
+        'modepaiment': modepaiment,
+        'datenote': _datedenote.toString(),
+      }, SetOptions(merge: true));
+      setState(() {});
+
+      print('Note data saved to Firestore');
+    } catch (e) {
+      print('Error saving Note data: $e');
+    }
   }
 }
