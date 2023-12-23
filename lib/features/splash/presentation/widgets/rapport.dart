@@ -303,7 +303,7 @@ class _RapportJournalier extends State<RapportJournalier> {
   Future<void> _refreshmenusdata({required DateTime to}) async {
     final db = FirebaseFirestore.instance;
     final rapjournalier = db.collection('rapport_journalier');
-    final documentname = DateFormat.yMMMd().format(date) + widget.user!.firm;
+    final documentname = DateFormat.yMMMd().format(to) + widget.user!.firm;
     final today = rapjournalier.doc(documentname);
     final doc = await today.get();
     final data = doc.data();
