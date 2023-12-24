@@ -56,7 +56,7 @@ class _RapportAdminState extends State<RapportAdmin> {
                   title: Text(firme,
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
-                  subtitle: Text(""),
+                  subtitle: const Text(""),
                   onTap: () {
                     Navigator.push(
                         context,

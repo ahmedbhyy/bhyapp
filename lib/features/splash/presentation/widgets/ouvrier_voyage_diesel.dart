@@ -105,9 +105,9 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
                     "${DateFormat('yyyy-MM-dd').format(voyage.date)} | ${voyage.diesel}L",
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text("${voyage.description}",
+                  title: Text(voyage.description,
                       style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
                 );
               },

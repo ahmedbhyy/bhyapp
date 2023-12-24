@@ -44,14 +44,15 @@ class LoginPageState extends State<LoginPage> {
 
       if (await checkCredentials(enteredUsername, enteredPassword)) {
         TextInput.finishAutofillContext();
-        // ignore: use_build_context_synchronously
         if (FirebaseAuth.instance.currentUser!.displayName == null) {
+          if (!context.mounted) return;
           final go = await Navigator.push<bool>(
               context,
               MaterialPageRoute(
                 builder: (context) => const Settings(),
               ));
           if (go != null && go) {
+            if (!context.mounted) return;
             await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -59,6 +60,7 @@ class LoginPageState extends State<LoginPage> {
                 ));
           }
         } else {
+          if (!context.mounted) return;
           await Navigator.push(
               context,
               MaterialPageRoute(
@@ -66,7 +68,7 @@ class LoginPageState extends State<LoginPage> {
               ));
         }
       } else {
-        // ignore: use_build_context_synchronously
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('email ou mot de passe invalide !'),

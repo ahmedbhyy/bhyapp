@@ -127,7 +127,7 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                   itemBuilder: (context, index) => ListTile(
                     contentPadding: const EdgeInsets.all(8.0),
                     title: Text(
-                      displayList[index].name ?? "No Name",
+                      displayList[index].name,
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -211,9 +211,8 @@ class _OuvrierHomeState extends State<OuvrierHome> {
 
       await ouvrierRef.delete();
 
-      print('Ouvrier deleted successfully');
     } catch (e) {
-      print('Error deleting ouvrier: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Hello There")));
     }
   }
 
@@ -267,8 +266,6 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                       Navigator.of(context).pop();
                     }
                   });
-                } else {
-                  print('Name cannot be empty');
                 }
               },
               child: const Text('Enregistrer'),

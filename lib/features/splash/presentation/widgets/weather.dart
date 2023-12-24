@@ -47,8 +47,8 @@ class WeatherPageState extends State<WeatherPage> {
       ),
       child: Padding(
         padding: Platform.isAndroid
-            ? EdgeInsets.all(0)
-            : EdgeInsets.fromLTRB(350, 100, 350, 0),
+            ? const EdgeInsets.all(0)
+            : const EdgeInsets.fromLTRB(350, 100, 350, 0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

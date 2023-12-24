@@ -185,9 +185,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
 
       await livRef.delete();
 
-      print('bon liv deleted successfully');
     } catch (e) {
-      print('Error deleting bon liv: $e');
     }
   }
 
@@ -279,8 +277,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                 String des = _descrip.text;
                 String tot = _total.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
-                  return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
 
                 final tmp = Bon(
                   dateliv: _datebonliv,
@@ -316,9 +313,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
         }
       });
 
-      print('data saved to Firestore');
     } catch (e) {
-      print('Error saving data: $e');
     }
   }
 

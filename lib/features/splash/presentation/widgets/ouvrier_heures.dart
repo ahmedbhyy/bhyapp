@@ -100,7 +100,7 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
                   ),
                   title: Text(hsup.num.toString(),
                       style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
                 );
               },

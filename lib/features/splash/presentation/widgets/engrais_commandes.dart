@@ -14,9 +14,9 @@ class Commandes extends StatefulWidget {
 
 class _Commandes extends State<Commandes> {
   List<String> descriptionFields3 = [];
-  TextEditingController _prixcontroller = TextEditingController();
-  TextEditingController _quantcontroller = TextEditingController();
-  TextEditingController _desccontroller = TextEditingController();
+  final TextEditingController _prixcontroller = TextEditingController();
+  final TextEditingController _quantcontroller = TextEditingController();
+  final TextEditingController _desccontroller = TextEditingController();
 
   @override
   void initState() {

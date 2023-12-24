@@ -43,212 +43,96 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    /*return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const MenuCard(
-              source: 'images/engrais.png',
-              title: 'Les Engrais',
-              child: EngraisHome(),
-            ),
-            const SizedBox(height: 20),
-            const MenuCard(
-              source: 'images/ImageOuvrier.png',
-              title: 'Les Ouvriers',
-              child: OuvrierHome(),
-            ),
-            const SizedBox(height: 20),
-            user != null && user!.role != "admin"
-                ? MenuCard(
-                    source: 'images/rapport2.png',
-                    title: 'Rapport Journalier',
-                    child: RapportJournalier(user: user),
-                  )
-                : MenuCard(
-                    source: 'images/rapport2.png',
-                    title: 'Les Rapports Journaliers (Admin)',
-                    child: RapportAdmin(user: user),
-                  ),
-            const SizedBox(height: 20),
-            const MenuCard(
-              source: 'images/bondesortie2.png',
-              title: 'Bon de sortie interne',
-              child: BonSortieInfo(),
-            ),
-            const SizedBox(height: 20),
-            const MenuCard(
-              source: 'images/facture.png',
-              title: 'Factures',
-              child: FactureInfo(),
-            ),
-            const SizedBox(height: 20),
-            const MenuCard(
-              source: 'images/requetes.png',
-              title: 'Requêtes',
-              child: RequeteInfo(),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const MenuCard(
-                source: 'images/boncommande3.png',
-                title: 'Bon de Commande',
-                child: BonCommandeInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const MenuCard(
-                source: 'images/bondelivraison3.png',
-                title: 'Bon de Livraison',
-                child: BonLivraisonInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const MenuCard(
-                source: 'images/facture.png',
-                title: 'Facture Administrative',
-                child: FactureAdminInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const MenuCard(
-                source: 'images/devis.png',
-                title: 'Devis',
-                child: DevisInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const MenuCard(
-                source: 'images/demandeprix.png',
-                title: "Demande d'offre de Prix",
-                child: DemandePrixInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-                visible: isVisible(),
-                child: const MenuCard(
-                  source: 'images/notereglement.png',
-                  title: 'Note de Règlement',
-                  child: NoteReglementInfo(),
-                )),
-            const SizedBox(height: 60),
-          ],
-        ),
-      ),
-    );*/
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 10, 10, 80),
-        child: Center(
-          child: Wrap(spacing: 20, runSpacing: 20, children: [
-            const CustomCard(
-              source: 'images/engrais3.jpg',
-              title: 'Les Engrais',
-              child: EngraisHome(),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom+30),
+      child: Align(
+        alignment: Alignment.center,
+        child: Wrap(crossAxisAlignment: WrapCrossAlignment.center,runAlignment: WrapAlignment.center,alignment: WrapAlignment.center,spacing: 20, runSpacing: 20, children: [
+          const CustomCard(
+            source: 'images/engrais3.jpg',
+            title: 'Les Engrais',
+            child: EngraisHome(),
+          ),
+          const CustomCard(
+            source: 'images/ImageOuvrier.png',
+            title: 'Les Ouvriers',
+            child: OuvrierHome(),
+          ),
+          user != null && user!.role != "admin"
+              ? CustomCard(
+                  source: 'images/rapport.jpg',
+                  title: 'Rapport Journalier',
+                  child: RapportJournalier(user: user),
+                )
+              : CustomCard(
+                  source: 'images/rapport.jpg',
+                  title: 'Les Rapports Journaliers',
+                  child: RapportAdmin(user: user),
+                ),
+          const CustomCard(
+            source: 'images/bonsortie.jpg',
+            title: 'Bon de sortie interne',
+            child: BonSortieInfo(),
+          ),
+          const CustomCard(
+            source: 'images/factureuser.jpg',
+            title: 'Factures',
+            child: FactureInfo(),
+          ),
+          CustomCard(
+            source: 'images/pic2.png',
+            title: 'Requêtes',
+            child: RequeteInfo(user: user),
+          ),
+          Visibility(
+            visible: isVisible(),
+            child: const CustomCard(
+              source: 'images/boncommande.jpg',
+              title: 'Bon de Commande',
+              child: BonCommandeInfo(),
             ),
-            const SizedBox(height: 20),
-            const CustomCard(
-              source: 'images/ImageOuvrier.png',
-              title: 'Les Ouvriers',
-              child: OuvrierHome(),
+          ),
+          Visibility(
+            visible: isVisible(),
+            child: const CustomCard(
+              source: 'images/bonlivraison.jpg',
+              title: 'Bon de Livraison',
+              child: BonLivraisonInfo(),
             ),
-            const SizedBox(height: 20),
-            user != null && user!.role != "admin"
-                ? CustomCard(
-                    source: 'images/rapport.jpg',
-                    title: 'Rapport Journalier',
-                    child: RapportJournalier(user: user),
-                  )
-                : CustomCard(
-                    source: 'images/rapport.jpg',
-                    title: 'Les Rapports Journaliers',
-                    child: RapportAdmin(user: user),
-                  ),
-            const SizedBox(height: 20),
-            const CustomCard(
-              source: 'images/bonsortie.jpg',
-              title: 'Bon de sortie interne',
-              child: BonSortieInfo(),
+          ),
+          Visibility(
+            visible: isVisible(),
+            child: const CustomCard(
+              source: 'images/factureadmin.jpg',
+              title: 'Facture Administrative',
+              child: FactureAdminInfo(),
             ),
-            const SizedBox(height: 20),
-            const CustomCard(
-              source: 'images/factureuser.jpg',
-              title: 'Factures',
-              child: FactureInfo(),
+          ),
+          Visibility(
+            visible: isVisible(),
+            child: const CustomCard(
+              source: 'images/devis.webp',
+              title: 'Devis',
+              child: DevisInfo(),
             ),
-            const SizedBox(height: 20),
-            const CustomCard(
-              source: 'images/pic2.png',
-              title: 'Requêtes',
-              child: RequeteInfo(),
+          ),
+          Visibility(
+            visible: isVisible(),
+            child: const CustomCard(
+              source: 'images/bourse.png',
+              title: "Demande d'offre de Prix",
+              child: DemandePrixInfo(),
             ),
-            const SizedBox(height: 20),
-            Visibility(
+          ),
+          Visibility(
               visible: isVisible(),
               child: const CustomCard(
-                source: 'images/boncommande.jpg',
-                title: 'Bon de Commande',
-                child: BonCommandeInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const CustomCard(
-                source: 'images/bonlivraison.jpg',
-                title: 'Bon de Livraison',
-                child: BonLivraisonInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const CustomCard(
-                source: 'images/factureadmin.jpg',
-                title: 'Facture Administrative',
-                child: FactureAdminInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const CustomCard(
-                source: 'images/devis.webp',
-                title: 'Devis',
-                child: DevisInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-              visible: isVisible(),
-              child: const CustomCard(
-                source: 'images/bourse.png',
-                title: "Demande d'offre de Prix",
-                child: DemandePrixInfo(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Visibility(
-                visible: isVisible(),
-                child: const CustomCard(
-                  source: 'images/pic.png',
-                  title: 'Note de Règlement',
-                  child: NoteReglementInfo(),
-                )),
-            const SizedBox(height: 60),
-          ]),
-        ),
+                source: 'images/pic.png',
+                title: 'Note de Règlement',
+                child: NoteReglementInfo(),
+              )
+          ),
+        ]),
       ),
     );
   }

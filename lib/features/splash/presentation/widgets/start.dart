@@ -82,8 +82,8 @@ class _StartPageState extends State<StartPage> {
   }
 
   _generateWindow(int selectedIndex) {
-    if (_selectedIndex == 0) return HomePage();
-    if (_selectedIndex == 1) return WeatherPage();
+    if (_selectedIndex == 0) return const HomePage();
+    if (_selectedIndex == 1) return const WeatherPage();
     if (_selectedIndex == 2) return const ProfileScreen();
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -184,9 +183,7 @@ class _DevisInfoState extends State<DevisInfo> {
 
       await devisRef.delete();
 
-      print('devis deleted successfully');
     } catch (e) {
-      print('Error deleting devis admin: $e');
     }
   }
 
@@ -278,8 +275,7 @@ class _DevisInfoState extends State<DevisInfo> {
                 String des = _descridevisadmin.text;
                 String tot = _totaldevisadmin.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
-                  return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
 
                 final tmp = Devi(
                     datedevis: _datedeviss,
@@ -314,9 +310,7 @@ class _DevisInfoState extends State<DevisInfo> {
         }
       });
 
-      print('data saved to Firestore');
     } catch (e) {
-      print('Error saving data: $e');
     }
   }
 

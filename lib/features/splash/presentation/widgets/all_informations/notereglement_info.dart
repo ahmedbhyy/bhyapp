@@ -198,9 +198,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
 
       await noteRef.delete();
 
-      print('note deleted successfully');
     } catch (e) {
-      print('Error deleting note : $e');
     }
   }
 
@@ -330,9 +328,8 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
         }
       });
 
-      print('Note data saved to Firestore');
     } catch (e) {
-      print('Error saving Note data: $e');
+
     }
   }
 

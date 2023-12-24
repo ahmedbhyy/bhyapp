@@ -1,4 +1,3 @@
-import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info.dart';
 import 'package:flutter/material.dart';
 
 class BonSortie extends StatefulWidget {

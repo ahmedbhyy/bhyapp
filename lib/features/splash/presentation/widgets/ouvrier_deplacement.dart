@@ -101,7 +101,7 @@ class _OuvrierDeplacementState extends State<OuvrierDeplacement> {
                   ),
                   title: Text(cong.description,
                       style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
                 );
               },

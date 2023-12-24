@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class BonCommandeInfo extends StatefulWidget {
@@ -195,9 +194,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
 
       await bonRef.delete();
 
-      print('Ouvrier deleted successfully');
     } catch (e) {
-      print('Error deleting ouvrier: $e');
     }
   }
 }
@@ -371,7 +368,7 @@ class _AjoutBonState extends State<AjoutBon> {
                         setState(() {
                           items.add(res);
                         });
-                        print(res);
+
                       }
                     },
                     icon: const Icon(Icons.add_outlined),

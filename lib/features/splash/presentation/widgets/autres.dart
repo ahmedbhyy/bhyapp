@@ -51,13 +51,16 @@ class _AutresState extends State<Autres> {
                 hintText: "Détails",
                 controller: _autredetaile,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 50, left: 8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    widget.updatestate(_autredetaile.text);
-                  },
-                  child: const Text('Enregistrer'),
+              Visibility(
+                visible: widget.user!.role != "admin",
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 50, left: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      widget.updatestate(_autredetaile.text);
+                    },
+                    child: const Text('Enregistrer'),
+                  ),
                 ),
               ),
             ],

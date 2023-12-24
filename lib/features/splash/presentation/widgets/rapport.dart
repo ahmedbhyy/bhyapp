@@ -21,7 +21,7 @@ class RapportJournalier extends StatefulWidget {
 
 class _RapportJournalier extends State<RapportJournalier> {
   DateTime date = DateTime.now();
-  Oeuvre main_oeuvre = Oeuvre.nil;
+  Oeuvre mainOeuvre = Oeuvre.nil;
   String autres = '';
   Voyage transport = Voyage.nil;
   List<Job> jobs = [];
@@ -61,9 +61,9 @@ class _RapportJournalier extends State<RapportJournalier> {
               children: [
                 CustomCard(
                   source: 'images/maindouvre.jpeg',
-                  title: 'Main D\'oeuvre',
+                  title: "Main D'oeuvre",
                   child: Maindoeuvre(
-                      oeuvre: main_oeuvre,
+                      oeuvre: mainOeuvre,
                       updateremotestate: updateremoteoeuvre,
                       user: widget.user),
                 ),
@@ -135,19 +135,19 @@ class _RapportJournalier extends State<RapportJournalier> {
     final today = rapjournalier.doc(documentname);
     today.set({
       'main': {
-        'matin_charge_homme': tmp.matin_charge_homme,
-        'matin_femme': tmp.matin_femme,
-        'matin_homme': tmp.matin_homme,
-        'matin_charge_femme': tmp.matin_charge_femme,
-        'midi_charge_homme': tmp.midi_charge_homme,
-        'midi_femme': tmp.midi_femme,
-        'midi_homme': tmp.midi_homme,
-        'midi_charge_femme': tmp.midi_charge_femme,
+        'matin_charge_homme': tmp.matinChargeHomme,
+        'matin_femme': tmp.matinFemme,
+        'matin_homme': tmp.matinHomme,
+        'matin_charge_femme': tmp.matinChargeFemme,
+        'midi_charge_homme': tmp.midiChargeHomme,
+        'midi_femme': tmp.midiFemme,
+        'midi_homme': tmp.midiHomme,
+        'midi_charge_femme': tmp.midiChargeFemme,
       }
     }, SetOptions(merge: true));
 
     setState(() {
-      main_oeuvre = tmp;
+      mainOeuvre = tmp;
     });
   }
 
@@ -210,20 +210,20 @@ class _RapportJournalier extends State<RapportJournalier> {
     final doc = await today.get();
     final data = doc.data();
     setState(() {
-      final main_map =
-          ((data?['main'] ?? Oeuvre.nil_map) as Map<String, dynamic>);
-      final transport_map =
-          ((data?['transport'] ?? Voyage.nil_map) as Map<String, dynamic>);
-      final jobs_map_list =
+      final mainMap =
+          ((data?['main'] ?? Oeuvre.nilMap) as Map<String, dynamic>);
+      final transportMap =
+          ((data?['transport'] ?? Voyage.nilMap) as Map<String, dynamic>);
+      final jobsMapList =
           List<Map<String, dynamic>>.from((data?['jobs'] ?? []) as List);
-      jobs = jobs_map_list.map((e) => Job.fromMap(e)).toList();
-      final items_map_list =
+      jobs = jobsMapList.map((e) => Job.fromMap(e)).toList();
+      final itemsMapList =
           List<Map<String, dynamic>>.from((data?['items'] ?? []) as List);
-      items = items_map_list.map((e) => Item.fromMap(e)).toList();
+      items = itemsMapList.map((e) => Item.fromMap(e)).toList();
 
-      main_oeuvre = Oeuvre.fromMap(main_map);
+      mainOeuvre = Oeuvre.fromMap(mainMap);
       autres = (data?['autres'] ?? '');
-      transport = Voyage.fromMap(transport_map);
+      transport = Voyage.fromMap(transportMap);
     });
   }
 }
@@ -290,25 +290,25 @@ class CustomCard extends StatelessWidget {
 }
 
 class Oeuvre {
-  final int matin_femme;
-  final int matin_homme;
-  final double matin_charge_homme;
-  final double matin_charge_femme;
-  final int midi_femme;
-  final int midi_homme;
-  final double midi_charge_homme;
-  final double midi_charge_femme;
+  final int matinFemme;
+  final int matinHomme;
+  final double matinChargeHomme;
+  final double matinChargeFemme;
+  final int midiFemme;
+  final int midiHomme;
+  final double midiChargeHomme;
+  final double midiChargeFemme;
 
   static final nil = Oeuvre(
-      matin_homme: 0,
-      matin_charge_homme: 0.0,
-      matin_charge_femme: .0,
-      midi_femme: 0,
-      midi_homme: 0,
-      midi_charge_homme: .0,
-      midi_charge_femme: .0,
-      matin_femme: 0);
-  static final nil_map = {
+      matinHomme: 0,
+      matinChargeHomme: 0.0,
+      matinChargeFemme: .0,
+      midiFemme: 0,
+      midiHomme: 0,
+      midiChargeHomme: .0,
+      midiChargeFemme: .0,
+      matinFemme: 0);
+  static final nilMap = {
     'matin_charge_homme': .0,
     'matin_femme': 0,
     'matin_homme': 0,
@@ -321,26 +321,26 @@ class Oeuvre {
 
   static Oeuvre fromMap(Map<String, dynamic> e) {
     return Oeuvre(
-      matin_charge_homme: e['matin_charge_homme'],
-      matin_femme: e['matin_femme'],
-      matin_homme: e['matin_homme'],
-      matin_charge_femme: e['matin_charge_femme'],
-      midi_charge_homme: e['midi_charge_homme'],
-      midi_femme: e['midi_femme'],
-      midi_homme: e['midi_homme'],
-      midi_charge_femme: e['midi_charge_femme'],
+      matinChargeHomme: e['matin_charge_homme'],
+      matinFemme: e['matin_femme'],
+      matinHomme: e['matin_homme'],
+      matinChargeFemme: e['matin_charge_femme'],
+      midiChargeHomme: e['midi_charge_homme'],
+      midiFemme: e['midi_femme'],
+      midiHomme: e['midi_homme'],
+      midiChargeFemme: e['midi_charge_femme'],
     );
   }
 
   Oeuvre(
-      {required this.matin_homme,
-      required this.matin_charge_femme,
-      required this.matin_charge_homme,
-      required this.midi_femme,
-      required this.midi_homme,
-      required this.midi_charge_femme,
-      required this.midi_charge_homme,
-      required this.matin_femme});
+      {required this.matinHomme,
+      required this.matinChargeFemme,
+      required this.matinChargeHomme,
+      required this.midiFemme,
+      required this.midiHomme,
+      required this.midiChargeFemme,
+      required this.midiChargeHomme,
+      required this.matinFemme});
 }
 
 class Voyage {
@@ -348,7 +348,7 @@ class Voyage {
   final double cout;
 
   static final nil = Voyage(nombres: 0, cout: 0);
-  static final nil_map = {
+  static final nilMap = {
     'nombres': 0,
     'cout': .0,
   };
@@ -369,7 +369,7 @@ class Item {
   final int qte;
 
   static final nil = Item(type: '', nom: '', qte: 0);
-  static final nil_map = {
+  static final nilMap = {
     'type': '',
     'nom': '',
     'qte': 0,
@@ -392,7 +392,7 @@ class Job {
   final int qte;
 
   static final nil = Job(type: '', desc: '', qte: 0);
-  static final nil_map = {
+  static final nilMap = {
     'type': '',
     'desc': '',
     'qte': 0,

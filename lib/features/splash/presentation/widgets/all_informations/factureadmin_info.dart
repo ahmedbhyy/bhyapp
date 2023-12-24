@@ -184,9 +184,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
 
       await facadminRef.delete();
 
-      print('facture admin deleted successfully');
     } catch (e) {
-      print('Error deleting facture admin: $e');
     }
   }
 
@@ -275,8 +273,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                 String des = _desc.text;
                 String tot = _total.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
-                  return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
 
                 final tmp = Facture(
                     date: _date,
@@ -312,9 +309,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
         }
       });
 
-      print('data saved to Firestore');
     } catch (e) {
-      print('Error saving data: $e');
     }
   }
 

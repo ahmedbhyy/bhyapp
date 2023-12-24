@@ -179,9 +179,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
 
       await prixRef.delete();
 
-      print('prix deleted successfully');
     } catch (e) {
-      print('Error deleting prix : $e');
     }
   }
 
@@ -300,9 +298,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
         }
       });
 
-      print('Offre data saved to Firestore');
     } catch (e) {
-      print('Error saving Offre data: $e');
     }
   }
 

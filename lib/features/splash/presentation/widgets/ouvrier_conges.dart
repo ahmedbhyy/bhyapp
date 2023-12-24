@@ -101,7 +101,7 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
                   ),
                   title: Text(cong.cause,
                       style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
                 );
               },

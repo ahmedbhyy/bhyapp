@@ -147,7 +147,6 @@ class _SettingsState extends State<Settings> {
         _role.text = userData['role'] ?? '';
       }
     } catch (e) {
-      print('Error fetching user data: $e');
     }
   }
 
@@ -174,12 +173,11 @@ class _SettingsState extends State<Settings> {
             .collection('users')
             .doc(_user.uid)
             .set({"role": "user"}, SetOptions(merge: true));
+        if (!context.mounted) return;
         Navigator.pop(context, true);
       }
 
-      print('User data saved to Firestore');
     } catch (e) {
-      print('Error saving user data: $e');
     }
   }
 }

@@ -117,7 +117,7 @@ class _FactureInfoState extends State<FactureInfo> {
                     return ListTile(
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Nom de la Societé : ${facture.nom_soc} \nTotal : ${facture.total} DT\nFirme: ${facture.firm}",
+                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFirme: ${facture.firm}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -200,9 +200,7 @@ class _FactureInfoState extends State<FactureInfo> {
 
       await facRef.delete();
 
-      print('Ouvrier deleted successfully');
     } catch (e) {
-      print('Error deleting ouvrier: $e');
     }
   }
 }
@@ -229,7 +227,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
       final facture = widget.facture!;
       _numerodufact.text = facture.num.toString();
       _totalfact.text = facture.total.toString();
-      _nomsoc.text = facture.nom_soc;
+      _nomsoc.text = facture.nomsoc;
       items = facture.items;
       _datefact = facture.date;
       _title = "modifier la facture";
@@ -381,7 +379,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                     final bon = Facture(
                       items: items,
                       total: double.parse(_totalfact.text),
-                      nom_soc: _nomsoc.text,
+                      nomsoc: _nomsoc.text,
                       firm: firm,
                       num: _numerodufact.text,
                       date: _datefact,
@@ -399,7 +397,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                           await showModalBottomSheet<Map<String, dynamic>>(
                               context: context,
                               builder: (context) {
-                                return ItemAdder();
+                                return const ItemAdder();
                               });
                       if (res != null) {
                         setState(() {
@@ -412,7 +410,6 @@ class _AjoutFactureState extends State<AjoutFacture> {
                                       element['montant'] * element['quantite'])
                               .toString();
                         });
-                        print(res);
                       }
                     },
                     icon: const Icon(Icons.add_outlined),
@@ -518,13 +515,13 @@ class _ItemAdderState extends State<ItemAdder> {
 
 class Facture {
   final String num;
-  final String nom_soc;
+  final String nomsoc;
   final double total;
   final String firm;
   final DateTime date;
   final List<Map<String, dynamic>> items;
   Facture(
-      {required this.nom_soc,
+      {required this.nomsoc,
       required this.total,
       required this.date,
       required this.num,
@@ -533,7 +530,7 @@ class Facture {
 
   Map<String, dynamic> toMap() {
     return {
-      "nom_soc": nom_soc,
+      "nom_soc": nomsoc,
       "firm": firm,
       "total": total,
       "items": items,
@@ -545,7 +542,7 @@ class Facture {
     return Facture(
       num: e.id,
       firm: e['firm'],
-      nom_soc: e['nom_soc'],
+      nomsoc: e['nom_soc'],
       total: e['total'],
       items: List<Map<String, dynamic>>.from(e["items"]! as List),
       date: DateTime.parse(e["date"]),
