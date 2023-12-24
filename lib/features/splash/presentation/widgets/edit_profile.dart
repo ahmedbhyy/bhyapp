@@ -2,26 +2,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class ProfileSettings extends StatefulWidget {
+  const ProfileSettings({super.key});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<ProfileSettings> createState() => _ProfileSettingsState();
 }
 
-class _SettingsState extends State<Settings> {
+class _ProfileSettingsState extends State<ProfileSettings> {
   bool _isLoading = true;
   final TextEditingController _nomuser = TextEditingController();
   final TextEditingController _profession = TextEditingController();
-  final TextEditingController _firme = TextEditingController();
   final TextEditingController _role = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? selectedFirm;
+  List<String> firmes = [];
   late User _user;
   @override
   void initState() {
     super.initState();
     _user = _auth.currentUser!;
+    final db = FirebaseFirestore.instance;
+    db.collection("firmes").get().then((val) {
+      setState(() {
+        firmes = val.docs.map((e) => e.id).toList();
+      });
+    });
     fetchUserData();
     _isLoading = false;
   }
@@ -31,7 +38,6 @@ class _SettingsState extends State<Settings> {
     super.dispose();
     _nomuser.dispose();
     _profession.dispose();
-    _firme.dispose();
   }
 
   @override
@@ -65,16 +71,29 @@ class _SettingsState extends State<Settings> {
             ),
             const SizedBox(height: 30),
             buildTextFieldWithEditIcon(
-              hintText: "Firme",
-              iconData: Icons.place,
-              controller: _firme,
-            ),
-            const SizedBox(height: 30),
-            buildTextFieldWithEditIcon(
               hintText: "Rôle",
               iconData: Icons.work,
               controller: _role,
               enabled: false,
+            ),
+            const SizedBox(height: 30),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: DropdownButton<String>(
+                value: selectedFirm,
+                hint: const Text('Lieu de Travail'),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedFirm = newValue;
+                  });
+                },
+                items: firmes.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 35, left: 8),
@@ -143,10 +162,12 @@ class _SettingsState extends State<Settings> {
             (docSnapshot.data() as Map<String, dynamic>);
         _nomuser.text = userData['nom et prenom'] ?? '';
         _profession.text = userData['profession'] ?? '';
-        _firme.text = userData['lieu de travail'] ?? '';
+        selectedFirm = userData['lieu de travail'];
         _role.text = userData['role'] ?? '';
       }
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -154,19 +175,18 @@ class _SettingsState extends State<Settings> {
     try {
       String nomuser = _nomuser.text;
       String profession = _profession.text;
-      String firme = _firme.text;
 
       await _firestore.collection('users').doc(_user.uid).set({
         'nom et prenom': nomuser,
         'profession': profession,
-        'lieu de travail': firme,
+        'lieu de travail': selectedFirm,
       }, SetOptions(merge: true));
       setState(() {});
 
       final firsttime = FirebaseAuth.instance.currentUser!.displayName == null;
       if (nomuser.isNotEmpty &&
           profession.isNotEmpty &&
-          firme.isNotEmpty &&
+          selectedFirm != null &&
           firsttime) {
         FirebaseAuth.instance.currentUser!.updateDisplayName("done");
         _firestore
@@ -178,6 +198,8 @@ class _SettingsState extends State<Settings> {
       }
 
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 }

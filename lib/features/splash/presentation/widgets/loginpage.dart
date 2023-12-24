@@ -49,7 +49,7 @@ class LoginPageState extends State<LoginPage> {
           final go = await Navigator.push<bool>(
               context,
               MaterialPageRoute(
-                builder: (context) => const Settings(),
+                builder: (context) => const ProfileSettings(),
               ));
           if (go != null && go) {
             if (!context.mounted) return;

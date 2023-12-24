@@ -1,11 +1,12 @@
 import 'dart:io';
 
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FactureInfo extends StatefulWidget {
-  const FactureInfo({super.key});
+  final UserLocal? user;
+  const FactureInfo({super.key, this.user});
 
   @override
   State<FactureInfo> createState() => _FactureInfoState();
@@ -19,8 +20,7 @@ class _FactureInfoState extends State<FactureInfo> {
   void initState() {
     final db = FirebaseFirestore.instance;
     final factures = db.collection("factures");
-    final firm =
-        FirebaseAuth.instance.currentUser!.email!.split("@")[1].split('.')[0];
+    final firm = widget.user!.firm;
     factures.where("firm", isEqualTo: firm).get().then((qsnap) {
       setState(() {
         displayList = qsnap.docs.map((e) => Facture.fromMap(e)).toList();
@@ -54,7 +54,7 @@ class _FactureInfoState extends State<FactureInfo> {
               final res = await Navigator.push<Facture>(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const AjoutFacture()));
+                      builder: (context) => AjoutFacture(user: widget.user!,)));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final factures = db.collection("factures");
@@ -172,6 +172,7 @@ class _FactureInfoState extends State<FactureInfo> {
                             MaterialPageRoute(builder: (context) {
                           return AjoutFacture(
                             facture: facture,
+                            user: widget.user!,
                           );
                         }));
                         final db = FirebaseFirestore.instance;
@@ -201,13 +202,16 @@ class _FactureInfoState extends State<FactureInfo> {
       await facRef.delete();
 
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 }
 
 class AjoutFacture extends StatefulWidget {
   final Facture? facture;
-  const AjoutFacture({super.key, this.facture});
+  final UserLocal user;
+  const AjoutFacture({super.key, this.facture, required this.user});
 
   @override
   State<AjoutFacture> createState() => _AjoutFactureState();
@@ -373,9 +377,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                         _numerodufact.text.isEmpty) {
                       return;
                     }
-                    final firm = FirebaseAuth.instance.currentUser!.email!
-                        .split("@")[1]
-                        .split('.')[0];
+                    final firm = widget.user.firm;
                     final bon = Facture(
                       items: items,
                       total: double.parse(_totalfact.text),

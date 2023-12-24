@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/splash_body.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/about_us.dart';
@@ -15,14 +17,23 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  UserLocal? user;
   String _imageFile = '';
   final ImagePicker _picker = ImagePicker();
-  String? username;
-  String? extractedUsername;
   @override
   void initState() {
-    username = FirebaseAuth.instance.currentUser?.email;
+    final db = FirebaseFirestore.instance;
     final newprofilpic = FirebaseAuth.instance.currentUser!.uid;
+    db.collection("users").doc(newprofilpic).get().then((value) {
+      setState(() {
+        user = UserLocal(
+          role: value.data()!["role"],
+          firm: value.data()!["lieu de travail"],
+          name: value.data()!["nom et prenom"],
+          uid: newprofilpic,
+        );
+      });
+    });
     final store = FirebaseStorage.instance.ref();
     final pdpref = store.child("profil/$newprofilpic.jpg");
     try {
@@ -31,18 +42,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _imageFile = value;
         });
       }, onError: (val) {});
-    } catch (e) {}
+    } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+    }
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (username != null) {
-      int atIndex = username!.indexOf('@');
-      extractedUsername =
-          atIndex != -1 ? username!.substring(0, atIndex) : null;
-    }
     return Stack(
       children: [
         Image.asset(
@@ -73,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             imageProfile(),
             const SizedBox(height: 30),
             Text(
-              extractedUsername as String,
+              user != null ? user!.name : "",
               style: const TextStyle(
                 fontFamily: 'Michroma',
                 fontSize: 28,
@@ -131,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const Settings(),
+                    builder: (context) => const ProfileSettings(),
                   ),
                 );
               },
