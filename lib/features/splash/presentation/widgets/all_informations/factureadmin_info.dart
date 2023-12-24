@@ -19,11 +19,23 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
   final TextEditingController _desc = TextEditingController();
   final TextEditingController _total = TextEditingController();
   List<Facture> factures = [];
+  List<Facture> displayfactureslList = [];
 
   @override
   void initState() {
     fetchData();
     super.initState();
+  }
+
+  void updateList(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        displayfactureslList = List.from(factures);
+      } else {
+        displayfactureslList =
+            factures.where((element) => element.num.contains(value)).toList();
+      }
+    });
   }
 
   @override
@@ -71,6 +83,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              onChanged: (value) => updateList(value),
               style: const TextStyle(fontSize: 17.0),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
@@ -89,10 +102,10 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
           ),
           Expanded(
             child: ListView.separated(
-              itemCount: factures.length,
+              itemCount: displayfactureslList.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                final facture = factures[index];
+                final facture = displayfactureslList[index];
                 return ListTile(
                   leading: Icon(
                     Icons.payments,
@@ -183,10 +196,11 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
       final facadminRef = db.collection('adminfacture').doc(facadminId);
 
       await facadminRef.delete();
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -275,7 +289,8 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                 String des = _desc.text;
                 String tot = _total.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
 
                 final tmp = Facture(
                     date: _date,
@@ -310,10 +325,11 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
           }
         }
       });
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -322,6 +338,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
     setState(() {
       factures =
           List<Facture>.from(docs.docs.map((e) => Facture.fromMap(e)).toList());
+      updateList('');
     });
   }
 }

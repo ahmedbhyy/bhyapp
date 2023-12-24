@@ -19,11 +19,25 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
   final TextEditingController _quantite = TextEditingController();
   final TextEditingController _desc = TextEditingController();
   List<Demande> demandes = [];
+  List<Demande> displaydemandeslList = [];
 
   @override
   void initState() {
     fetchOffreData();
     super.initState();
+  }
+
+  void updateList(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        displaydemandeslList = List.from(demandes);
+      } else {
+        displaydemandeslList = demandes
+            .where((element) =>
+                element.nomsociete.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+      }
+    });
   }
 
   @override
@@ -69,11 +83,12 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              onChanged: (value) => updateList(value),
               style: const TextStyle(fontSize: 17.0),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                labelText: "chercher une Demande par (Nom Société)",
+                labelText: "chercher une Demande par (Société)",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -87,10 +102,10 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
           ),
           Expanded(
             child: ListView.separated(
-              itemCount: demandes.length,
+              itemCount: displaydemandeslList.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                final demande = demandes[index];
+                final demande = displaydemandeslList[index];
                 return ListTile(
                   leading: Icon(
                     Icons.payments,
@@ -178,10 +193,11 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
       final prixRef = db.collection('demandeprix').doc(prixId);
 
       await prixRef.delete();
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -299,10 +315,11 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
           }
         }
       });
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 

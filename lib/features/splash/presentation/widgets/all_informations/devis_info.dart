@@ -19,11 +19,23 @@ class _DevisInfoState extends State<DevisInfo> {
   final TextEditingController _descridevisadmin = TextEditingController();
   final TextEditingController _totaldevisadmin = TextEditingController();
   List<Devi> devis = [];
+  List<Devi> displaydevislList = [];
 
   @override
   void initState() {
     fetchData();
     super.initState();
+  }
+
+  void updateList(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        displaydevislList = List.from(devis);
+      } else {
+        displaydevislList =
+            devis.where((element) => element.numdevis.contains(value)).toList();
+      }
+    });
   }
 
   @override
@@ -70,6 +82,7 @@ class _DevisInfoState extends State<DevisInfo> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              onChanged: (value) => updateList(value),
               style: const TextStyle(fontSize: 17.0),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
@@ -88,13 +101,13 @@ class _DevisInfoState extends State<DevisInfo> {
           ),
           Expanded(
             child: ListView.separated(
-              itemCount: devis.length,
+              itemCount: displaydevislList.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                final devi = devis[index];
+                final devi = displaydevislList[index];
                 return ListTile(
                   leading: Icon(
-                    Icons.payments,
+                    Icons.description,
                     color: Colors.green.shade600,
                   ),
                   contentPadding: const EdgeInsets.all(8.0),
@@ -182,10 +195,11 @@ class _DevisInfoState extends State<DevisInfo> {
       final devisRef = db.collection('devis').doc(devisId);
 
       await devisRef.delete();
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -277,7 +291,8 @@ class _DevisInfoState extends State<DevisInfo> {
                 String des = _descridevisadmin.text;
                 String tot = _totaldevisadmin.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
 
                 final tmp = Devi(
                     datedevis: _datedeviss,
@@ -311,10 +326,11 @@ class _DevisInfoState extends State<DevisInfo> {
           }
         }
       });
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -322,6 +338,7 @@ class _DevisInfoState extends State<DevisInfo> {
     final docs = await db.collection('devis').get();
     setState(() {
       devis = List<Devi>.from(docs.docs.map((e) => Devi.fromMap(e)).toList());
+      updateList('');
     });
   }
 }
