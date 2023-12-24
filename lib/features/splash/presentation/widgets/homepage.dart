@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
         user = UserLocal(
           role: value.data()!["role"],
           firm: value.data()!["lieu de travail"],
+          name: value.data()!["nom et prenom"],
           uid: id,
         );
       });
@@ -48,10 +49,10 @@ class _HomePageState extends State<HomePage> {
       child: Align(
         alignment: Alignment.center,
         child: Wrap(crossAxisAlignment: WrapCrossAlignment.center,runAlignment: WrapAlignment.center,alignment: WrapAlignment.center,spacing: 20, runSpacing: 20, children: [
-          const CustomCard(
+          CustomCard(
             source: 'images/engrais3.jpg',
             title: 'Les Engrais',
-            child: EngraisHome(),
+            child: EngraisHome(user:user),
           ),
           const CustomCard(
             source: 'images/ImageOuvrier.png',
@@ -69,15 +70,15 @@ class _HomePageState extends State<HomePage> {
                   title: 'Les Rapports Journaliers',
                   child: RapportAdmin(user: user),
                 ),
-          const CustomCard(
+          CustomCard(
             source: 'images/bonsortie.jpg',
             title: 'Bon de sortie interne',
-            child: BonSortieInfo(),
+            child: BonSortieInfo(user: user),
           ),
-          const CustomCard(
+          CustomCard(
             source: 'images/factureuser.jpg',
             title: 'Factures',
-            child: FactureInfo(),
+            child: FactureInfo(user: user),
           ),
           CustomCard(
             source: 'images/pic2.png',
@@ -146,8 +147,9 @@ class UserLocal {
   final String uid;
   final String role;
   final String firm;
+  final String name;
 
-  UserLocal({required this.uid, required this.role, required this.firm});
+  UserLocal({required this.uid, required this.role, required this.firm, required this.name});
 }
 
 class CustomCard extends StatelessWidget {

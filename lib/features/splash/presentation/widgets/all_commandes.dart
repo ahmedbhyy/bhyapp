@@ -1,12 +1,13 @@
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/engrais_commandes2.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/les%20engrais/engrais_name.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AllCommandes extends StatefulWidget {
-  const AllCommandes({super.key});
+  final UserLocal user;
+  const AllCommandes({super.key, required this.user});
 
   @override
   State<AllCommandes> createState() => _AllCommandesState();
@@ -18,25 +19,25 @@ class _AllCommandesState extends State<AllCommandes> {
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-    db
-        .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) async {
-      final firm = value.data()!["lieu de travail"];
-      final docs =
-          await db.collection("commandes").where("firm", isEqualTo: firm).get();
-      setState(() {
-        commandes = docs.docs
-            .map((e) => {
-                  "date": DateTime.parse(e["date"]),
-                  "panier": List<Map<String, dynamic>>.from(e["panier"])
-                      .map((e) => Engrai.fromMap2(e))
-                      .toList(),
-                })
-            .toList();
+      final firm = widget.user.firm;
+      Query docs = db.collection("commandes");
+      if(widget.user.role != "admin") {
+        docs = docs.where("firm", isEqualTo: firm);
+      }
+      docs.get().then((dd) {
+        setState(() {
+          commandes = dd.docs
+              .map((e) => {
+            "date": DateTime.parse(e["date"]),
+            "panier": List<Map<String, dynamic>>.from(e["panier"])
+                .map((e) => Engrai.fromMap2(e))
+                .toList(),
+            "firm": e["firm"]
+          })
+              .toList();
+        });
       });
-    });
+
     super.initState();
   }
 
@@ -81,7 +82,7 @@ class _AllCommandesState extends State<AllCommandes> {
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
                   subtitle: Text(
-                    "total de la commande: ${panier.fold(.0, (previousValue, element) => previousValue + element.priv * element.quantity)}",
+                    "total de la commande: ${panier.fold(.0, (previousValue, element) => previousValue + element.priv * element.quantity)}\nfirme: ${com["firm"]}",
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(DateFormat('yyyy-MM-dd').format(com["date"]),

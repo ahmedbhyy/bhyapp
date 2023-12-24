@@ -185,6 +185,8 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
       await facadminRef.delete();
 
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -310,6 +312,8 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
       });
 
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 

@@ -1,11 +1,12 @@
 import 'dart:io';
 
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class BonSortieInfo extends StatefulWidget {
-  const BonSortieInfo({super.key});
+  final UserLocal? user;
+  const BonSortieInfo({super.key, this.user});
 
   @override
   State<BonSortieInfo> createState() => _BonSortieInfoState();
@@ -19,8 +20,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
   void initState() {
     final db = FirebaseFirestore.instance;
     final bons = db.collection("bons");
-    final firm =
-        FirebaseAuth.instance.currentUser!.email!.split("@")[1].split('.')[0];
+    final firm = widget.user!.firm;
     bons.where("firm", isEqualTo: firm).get().then((qsnap) {
       setState(() {
         displayList = qsnap.docs.map((e) => Bon.fromMap(e)).toList();
@@ -52,7 +52,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
             ),
             onPressed: () async {
               final res = await Navigator.push<Bon>(context,
-                  MaterialPageRoute(builder: (context) => const AjoutBon()));
+                  MaterialPageRoute(builder: (context) => AjoutBon(user: widget.user!,)));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final bons = db.collection("bons");
@@ -168,7 +168,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                       onTap: () async {
                         final bn = await Navigator.push<Bon>(context,
                             MaterialPageRoute(builder: (context) {
-                          return AjoutBon(bon: bon);
+                          return AjoutBon(bon: bon, user: widget.user!,);
                         }));
                         final db = FirebaseFirestore.instance;
                         if (bn == null) return;
@@ -197,13 +197,16 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
       await bonRef.delete();
 
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 }
 
 class AjoutBon extends StatefulWidget {
   final Bon? bon;
-  const AjoutBon({super.key, this.bon});
+  final UserLocal user;
+  const AjoutBon({super.key, this.bon, required this.user});
 
   @override
   State<AjoutBon> createState() => _AjoutBonState();
@@ -360,9 +363,7 @@ class _AjoutBonState extends State<AjoutBon> {
                         _numerodubon.text.isEmpty) {
                       return;
                     }
-                    final firm = FirebaseAuth.instance.currentUser!.email!
-                        .split("@")[1]
-                        .split('.')[0];
+                    final firm = widget.user.firm;
                     final bon = Bon(
                       items: items,
                       beneficiaire: _beneficiaire.text,

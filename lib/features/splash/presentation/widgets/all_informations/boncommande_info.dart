@@ -195,6 +195,8 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
       await bonRef.delete();
 
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 }

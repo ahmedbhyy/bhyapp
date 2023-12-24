@@ -199,6 +199,8 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
       await noteRef.delete();
 
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -329,7 +331,8 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
       });
 
     } catch (e) {
-
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 

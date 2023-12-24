@@ -350,12 +350,13 @@ class _CustomTileState extends State<CustomTile> {
                 child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: Text(
-                    widget.request.desc,
+                    "${widget.request.desc}\n\n\n${widget.request.state == Request.finished ? 'Réponse:\n${widget.request.response}' : ''}",
                     style: const TextStyle(
                         fontWeight: FontWeight.w400, fontSize: 19),
                   ),
                 ),
-              )),
+              )
+          ),
         ],
       ),
     );

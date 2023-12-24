@@ -3,16 +3,17 @@ import 'dart:math';
 import 'package:bhyapp/features/splash/presentation/widgets/all_commandes.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/engrais_commandes2.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/engrais_details.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/les%20engrais/engrais_name.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EngraisHome extends StatefulWidget {
-  const EngraisHome({super.key});
+  final UserLocal? user;
+  const EngraisHome({super.key, this.user});
   @override
   State<EngraisHome> createState() => _EngraisHomeState();
 }
@@ -82,7 +83,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const AllCommandes()));
+                        builder: (context) => AllCommandes(user: widget.user!)));
               }),
           IconButton(
             icon: Badge(
@@ -109,11 +110,7 @@ class _EngraisHomeState extends State<EngraisHome> {
               if (res != null && res) {
                 final db = FirebaseFirestore.instance;
                 final comms = db.collection('commandes');
-                final firm = (await db
-                        .collection('users')
-                        .doc(FirebaseAuth.instance.currentUser!.uid)
-                        .get())
-                    .data()!["lieu de travail"];
+                final firm = widget.user!.firm;
                 comms.add({
                   "firm": firm,
                   "panier": panier.map((e) => e.toMap()),

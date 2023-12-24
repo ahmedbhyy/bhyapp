@@ -180,6 +180,8 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
       await prixRef.delete();
 
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -299,6 +301,8 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
       });
 
     } catch (e) {
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 

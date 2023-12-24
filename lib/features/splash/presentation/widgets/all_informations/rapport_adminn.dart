@@ -65,7 +65,9 @@ class _RapportAdminState extends State<RapportAdmin> {
                                   user: UserLocal(
                                       firm: firme,
                                       role: widget.user!.role,
-                                      uid: widget.user!.uid),
+                                      uid: widget.user!.uid,
+                                      name: widget.user!.name,
+                                  ),
                                 )));
                   },
                 );

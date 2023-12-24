@@ -16,19 +16,17 @@ class _OuvrierHomeState extends State<OuvrierHome> {
   bool _isLoading = true;
   final TextEditingController _nomdeouvrier = TextEditingController();
   TextEditingController get controller => _nomdeouvrier;
-  final TextEditingController _lieudeouvrier = TextEditingController();
 
-  TextEditingController get controller2 => _lieudeouvrier;
   @override
   void dispose() {
     _nomdeouvrier.dispose();
-    _lieudeouvrier.dispose();
     super.dispose();
   }
 
-  // ignore: non_constant_identifier_names
+
   List<Ouvriername> displayList = [];
   List<Ouvriername> originalList = [];
+  List<String> firmes = [];
 
   @override
   void initState() {
@@ -43,6 +41,11 @@ class _OuvrierHomeState extends State<OuvrierHome> {
             .toList();
         displayList = List.from(originalList);
         _isLoading = false;
+      });
+    });
+    db.collection("firmes").get().then((val) {
+      setState(() {
+        firmes = val.docs.map((e) => e.id).toList();
       });
     });
     super.initState();
@@ -212,65 +215,83 @@ class _OuvrierHomeState extends State<OuvrierHome> {
       await ouvrierRef.delete();
 
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Hello There")));
+      if(!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
+  String? selectedFirm;
   Future<void> showEditDialog(BuildContext context, String hintText,
       TextEditingController controller) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(hintText),
-          content: SizedBox(
-            height: 150,
-            child: Column(
-              children: [
-                TextField(
-                  controller: controller,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'Nom et Prénom',
+        return StatefulBuilder(
+          builder: (context, ss) => AlertDialog(
+            title: Text(hintText),
+            content: SizedBox(
+              height: 150,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: controller,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      labelText: 'Nom et Prénom',
+                    ),
                   ),
-                ),
-                TextField(
-                  controller: controller2,
-                  decoration: const InputDecoration(
-                    labelText: 'Lieu de Travail',
-                    suffixIcon: Icon(Icons.place),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                String newName = controller.text;
-                String newlieu = controller2.text;
-                if (newName.isNotEmpty) {
-                  setState(() {
-                    if (newName.isNotEmpty) {
-                      final db = FirebaseFirestore.instance;
-                      final ouvrier = db.collection("ouvrier");
-                      ouvrier
-                          .add({'nom': newName, 'lieu': newlieu}).then((value) {
-                        Ouvriername newOuvrier = Ouvriername(
-                            name: newName, lieu: newlieu, id: value.id);
+                  const SizedBox(height: 20,),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: DropdownButton<String>(
+                      value: selectedFirm,
+                      hint: const Text('Lieu de Travail'),
+                      onChanged: (String? newValue) {
                         setState(() {
-                          displayList.add(newOuvrier);
+                          selectedFirm = newValue;
+                          ss(() {});
                         });
-                      });
-                      controller.clear();
-                      Navigator.of(context).pop();
-                    }
-                  });
-                }
-              },
-              child: const Text('Enregistrer'),
+                      },
+                      items: firmes.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                ],
+              ),
             ),
-          ],
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  String newName = controller.text;
+                  String newlieu = selectedFirm ?? "tunis";
+                  if (newName.isNotEmpty) {
+                    setState(() {
+                      if (newName.isNotEmpty) {
+                        final db = FirebaseFirestore.instance;
+                        final ouvrier = db.collection("ouvrier");
+                        ouvrier
+                            .add({'nom': newName, 'lieu': newlieu}).then((value) {
+                          Ouvriername newOuvrier = Ouvriername(
+                              name: newName, lieu: newlieu, id: value.id);
+                          setState(() {
+                            displayList.add(newOuvrier);
+                          });
+                        });
+                        controller.clear();
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  }
+                },
+                child: const Text('Enregistrer'),
+              ),
+            ],
+          ),
         );
       },
     );
