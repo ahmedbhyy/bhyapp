@@ -173,6 +173,7 @@ class LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(9),
                     ),
                     child: TextFormField(
+                      onFieldSubmitted: (_) => handleLogin(),
                       controller: passwordController,
                       autofillHints: const [AutofillHints.password],
                       obscureText: isPasswordHidden,

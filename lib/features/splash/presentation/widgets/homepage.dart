@@ -45,95 +45,101 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom+30),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 30),
       child: Align(
         alignment: Alignment.center,
-        child: Wrap(crossAxisAlignment: WrapCrossAlignment.center,runAlignment: WrapAlignment.center,alignment: WrapAlignment.center,spacing: 20, runSpacing: 20, children: [
-          CustomCard(
-            source: 'images/engrais3.jpg',
-            title: 'Les Engrais',
-            child: EngraisHome(user:user),
-          ),
-          const CustomCard(
-            source: 'images/ImageOuvrier.png',
-            title: 'Les Ouvriers',
-            child: OuvrierHome(),
-          ),
-          user != null && user!.role != "admin"
-              ? CustomCard(
-                  source: 'images/rapport.jpg',
-                  title: 'Rapport Journalier',
-                  child: RapportJournalier(user: user),
-                )
-              : CustomCard(
-                  source: 'images/rapport.jpg',
-                  title: 'Les Rapports Journaliers',
-                  child: RapportAdmin(user: user),
+        child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            runAlignment: WrapAlignment.center,
+            alignment: WrapAlignment.center,
+            spacing: 20,
+            runSpacing: 20,
+            children: [
+              CustomCard(
+                source: 'images/engrais3.jpg',
+                title: 'Les Engrais',
+                child: EngraisHome(user: user),
+              ),
+              const CustomCard(
+                source: 'images/ImageOuvrier.png',
+                title: 'Les Ouvriers',
+                child: OuvrierHome(),
+              ),
+              user != null && user!.role != "admin"
+                  ? CustomCard(
+                      source: 'images/rapport.jpg',
+                      title: 'Rapport Journalier',
+                      child: RapportJournalier(user: user),
+                    )
+                  : CustomCard(
+                      source: 'images/rapport.jpg',
+                      title: 'Les Rapports Journaliers',
+                      child: RapportAdmin(user: user),
+                    ),
+              CustomCard(
+                source: 'images/bonsortie.jpg',
+                title: 'Bon de sortie interne',
+                child: BonSortieInfo(user: user),
+              ),
+              CustomCard(
+                source: 'images/factureuser.jpg',
+                title: 'Factures',
+                child: FactureInfo(user: user),
+              ),
+              CustomCard(
+                source: 'images/pic2.png',
+                title: 'Requêtes',
+                child: RequeteInfo(user: user),
+              ),
+              Visibility(
+                visible: isVisible(),
+                child: const CustomCard(
+                  source: 'images/boncommande.jpg',
+                  title: 'Bon de Commande',
+                  child: BonCommandeInfo(),
                 ),
-          CustomCard(
-            source: 'images/bonsortie.jpg',
-            title: 'Bon de sortie interne',
-            child: BonSortieInfo(user: user),
-          ),
-          CustomCard(
-            source: 'images/factureuser.jpg',
-            title: 'Factures',
-            child: FactureInfo(user: user),
-          ),
-          CustomCard(
-            source: 'images/pic2.png',
-            title: 'Requêtes',
-            child: RequeteInfo(user: user),
-          ),
-          Visibility(
-            visible: isVisible(),
-            child: const CustomCard(
-              source: 'images/boncommande.jpg',
-              title: 'Bon de Commande',
-              child: BonCommandeInfo(),
-            ),
-          ),
-          Visibility(
-            visible: isVisible(),
-            child: const CustomCard(
-              source: 'images/bonlivraison.jpg',
-              title: 'Bon de Livraison',
-              child: BonLivraisonInfo(),
-            ),
-          ),
-          Visibility(
-            visible: isVisible(),
-            child: const CustomCard(
-              source: 'images/factureadmin.jpg',
-              title: 'Facture Administrative',
-              child: FactureAdminInfo(),
-            ),
-          ),
-          Visibility(
-            visible: isVisible(),
-            child: const CustomCard(
-              source: 'images/devis.webp',
-              title: 'Devis',
-              child: DevisInfo(),
-            ),
-          ),
-          Visibility(
-            visible: isVisible(),
-            child: const CustomCard(
-              source: 'images/bourse.png',
-              title: "Demande d'offre de Prix",
-              child: DemandePrixInfo(),
-            ),
-          ),
-          Visibility(
-              visible: isVisible(),
-              child: const CustomCard(
-                source: 'images/pic.png',
-                title: 'Note de Règlement',
-                child: NoteReglementInfo(),
-              )
-          ),
-        ]),
+              ),
+              Visibility(
+                visible: isVisible(),
+                child: const CustomCard(
+                  source: 'images/bonlivraison.jpg',
+                  title: 'Bon de Livraison',
+                  child: BonLivraisonInfo(),
+                ),
+              ),
+              Visibility(
+                visible: isVisible(),
+                child: const CustomCard(
+                  source: 'images/factureadmin.jpg',
+                  title: 'Facture Administrative',
+                  child: FactureAdminInfo(),
+                ),
+              ),
+              Visibility(
+                visible: isVisible(),
+                child: const CustomCard(
+                  source: 'images/devis.webp',
+                  title: 'Devis',
+                  child: DevisInfo(),
+                ),
+              ),
+              Visibility(
+                visible: isVisible(),
+                child: const CustomCard(
+                  source: 'images/bourse.png',
+                  title: "Demande d'offre de Prix",
+                  child: DemandePrixInfo(),
+                ),
+              ),
+              Visibility(
+                  visible: isVisible(),
+                  child: const CustomCard(
+                    source: 'images/pic.png',
+                    title: 'Note de Règlement',
+                    child: NoteReglementInfo(),
+                  )),
+            ]),
       ),
     );
   }
@@ -149,7 +155,11 @@ class UserLocal {
   final String firm;
   final String name;
 
-  UserLocal({required this.uid, required this.role, required this.firm, required this.name});
+  UserLocal(
+      {required this.uid,
+      required this.role,
+      required this.firm,
+      required this.name});
 }
 
 class CustomCard extends StatelessWidget {

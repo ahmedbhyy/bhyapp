@@ -23,15 +23,13 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
   List<Bon> bons = [];
   List<Bon> displaynoteslList = [];
 
-
   void updateList(String value) {
     setState(() {
       if (value.isEmpty) {
         displaynoteslList = List.from(bons);
       } else {
-        displaynoteslList = bons
-            .where((element) => element.numbonliv.contains(value))
-            .toList();
+        displaynoteslList =
+            bons.where((element) => element.numbonliv.contains(value)).toList();
       }
     });
   }
@@ -200,11 +198,14 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
 
       await livRef.delete();
 
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("")));
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -296,7 +297,8 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                 String des = _descrip.text;
                 String tot = _total.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty) return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
 
                 final tmp = Bon(
                   dateliv: _datebonliv,
@@ -330,11 +332,13 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
             bons[index] = tmp;
           }
         }
+        updateList('');
       });
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
