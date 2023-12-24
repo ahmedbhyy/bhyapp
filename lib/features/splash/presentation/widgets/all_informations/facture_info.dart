@@ -32,6 +32,9 @@ class _FactureInfoState extends State<FactureInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final display = displayList
+        .where((element) => element.num.toString().contains(search.text))
+        .toList();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -54,7 +57,9 @@ class _FactureInfoState extends State<FactureInfo> {
               final res = await Navigator.push<Facture>(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AjoutFacture(user: widget.user!,)));
+                      builder: (context) => AjoutFacture(
+                            user: widget.user!,
+                          )));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final factures = db.collection("factures");
@@ -81,7 +86,7 @@ class _FactureInfoState extends State<FactureInfo> {
               decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
-                  labelText: "chercher une facture Par (N°)",
+                  labelText: "chercher une facture Par (N°(${display.length}))",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -102,19 +107,15 @@ class _FactureInfoState extends State<FactureInfo> {
             child: Padding(
               padding: const EdgeInsets.all(7.0),
               child: ListView.separated(
-                  itemCount: displayList
-                      .where((element) =>
-                          element.num.toString().contains(search.text))
-                      .toList()
-                      .length,
+                  itemCount: display.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
-                    final list = displayList
-                        .where((element) =>
-                            element.num.toString().contains(search.text))
-                        .toList();
-                    final facture = list[index];
+                    final facture = display[index];
                     return ListTile(
+                      leading: Icon(
+                        Icons.description,
+                        color: Colors.green.shade600,
+                      ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
                         "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFirme: ${facture.firm}",
@@ -200,10 +201,16 @@ class _FactureInfoState extends State<FactureInfo> {
       final facRef = db.collection('factures').doc(facId);
 
       await facRef.delete();
-
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 }

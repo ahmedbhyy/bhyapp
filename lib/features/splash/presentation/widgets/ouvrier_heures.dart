@@ -98,9 +98,9 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
                     DateFormat('yyyy-MM-dd').format(hsup.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(hsup.num.toString(),
-                      style:
-                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  title: Text('${hsup.num.toString()} H',
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
                   trailing: IconButton(
                     icon: const Icon(
@@ -159,10 +159,10 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
         supp.removeAt(index);
         ref.update({
           "heures_sup":
-          supp.map((e) => {"num": e.num, "date": e.date.toString()})
+              supp.map((e) => {"num": e.num, "date": e.date.toString()})
         });
       });
-    } catch(e) {}
+    } catch (e) {}
   }
 
   Widget _generateBottomSheet(BuildContext context) {

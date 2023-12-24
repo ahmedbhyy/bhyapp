@@ -32,6 +32,9 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final display = displayList
+        .where((element) => element.num.toString().contains(search.text))
+        .toList();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -51,8 +54,12 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
               size: Platform.isAndroid ? 24 : 45,
             ),
             onPressed: () async {
-              final res = await Navigator.push<Bon>(context,
-                  MaterialPageRoute(builder: (context) => AjoutBon(user: widget.user!,)));
+              final res = await Navigator.push<Bon>(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AjoutBon(
+                            user: widget.user!,
+                          )));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final bons = db.collection("bons");
@@ -79,7 +86,8 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
               decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
-                  labelText: "chercher un Bon de sortie interne",
+                  labelText:
+                      "chercher un Bon de sortie interne (${display.length})",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -100,19 +108,15 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
             child: Padding(
               padding: const EdgeInsets.all(7.0),
               child: ListView.separated(
-                  itemCount: displayList
-                      .where((element) =>
-                          element.num.toString().contains(search.text))
-                      .toList()
-                      .length,
+                  itemCount: display.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
-                    final list = displayList
-                        .where((element) =>
-                            element.num.toString().contains(search.text))
-                        .toList();
-                    final bon = list[index];
+                    final bon = display[index];
                     return ListTile(
+                      leading: Icon(
+                        Icons.description,
+                        color: Colors.green.shade600,
+                      ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
                         "Destination: ${bon.destination} \nBénéficiaire : ${bon.beneficiaire}\nFirme: ${bon.firm}",
@@ -168,7 +172,10 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                       onTap: () async {
                         final bn = await Navigator.push<Bon>(context,
                             MaterialPageRoute(builder: (context) {
-                          return AjoutBon(bon: bon, user: widget.user!,);
+                          return AjoutBon(
+                            bon: bon,
+                            user: widget.user!,
+                          );
                         }));
                         final db = FirebaseFirestore.instance;
                         if (bn == null) return;
@@ -195,10 +202,11 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
       final bonRef = db.collection('bons').doc(bonId);
 
       await bonRef.delete();
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 }

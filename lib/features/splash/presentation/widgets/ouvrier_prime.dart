@@ -69,7 +69,7 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
         title: const Text(
-          "primes",
+          "Primes",
           style: TextStyle(
             fontSize: 20,
             fontFamily: 'Michroma',
@@ -99,7 +99,7 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
                     DateFormat('yyyy-MM-dd').format(prime.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(prime.montant.toString(),
+                  title: Text('${prime.montant.toString()} DT',
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
@@ -159,11 +159,11 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
       setState(() {
         primes.removeAt(index);
         ref.update({
-          "primes": primes.map(
-                  (e) => {"montant": e.montant, "date": e.date.toString()})
+          "primes": primes
+              .map((e) => {"montant": e.montant, "date": e.date.toString()})
         });
       });
-    } catch(e) {}
+    } catch (e) {}
   }
 
   Widget _generateBottomSheet(BuildContext context) {

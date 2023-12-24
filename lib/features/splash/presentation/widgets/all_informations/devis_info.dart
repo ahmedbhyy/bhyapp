@@ -155,6 +155,7 @@ class _DevisInfoState extends State<DevisInfo> {
                                 await deletedevis(devis[index].numdevis);
                                 setState(() {
                                   devis.removeAt(index);
+                                  updateList('');
                                 });
                               },
                               child: const Text('Delete'),

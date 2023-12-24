@@ -19,24 +19,24 @@ class _AllCommandesState extends State<AllCommandes> {
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-      final firm = widget.user.firm;
-      Query docs = db.collection("commandes");
-      if(widget.user.role != "admin") {
-        docs = docs.where("firm", isEqualTo: firm);
-      }
-      docs.get().then((dd) {
-        setState(() {
-          commandes = dd.docs
-              .map((e) => {
-            "date": DateTime.parse(e["date"]),
-            "panier": List<Map<String, dynamic>>.from(e["panier"])
-                .map((e) => Engrai.fromMap2(e))
-                .toList(),
-            "firm": e["firm"]
-          })
-              .toList();
-        });
+    final firm = widget.user.firm;
+    Query docs = db.collection("commandes");
+    if (widget.user.role != "admin") {
+      docs = docs.where("firm", isEqualTo: firm);
+    }
+    docs.get().then((dd) {
+      setState(() {
+        commandes = dd.docs
+            .map((e) => {
+                  "date": DateTime.parse(e["date"]),
+                  "panier": List<Map<String, dynamic>>.from(e["panier"])
+                      .map((e) => Engrai.fromMap2(e))
+                      .toList(),
+                  "firm": e["firm"]
+                })
+            .toList();
       });
+    });
 
     super.initState();
   }
@@ -82,7 +82,7 @@ class _AllCommandesState extends State<AllCommandes> {
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
                   subtitle: Text(
-                    "total de la commande: ${panier.fold(.0, (previousValue, element) => previousValue + element.priv * element.quantity)}\nfirme: ${com["firm"]}",
+                    "total de la commande: ${panier.fold(.0, (previousValue, element) => previousValue + element.priv * element.quantity)} DT\nfirme: ${com["firm"]}",
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(DateFormat('yyyy-MM-dd').format(com["date"]),

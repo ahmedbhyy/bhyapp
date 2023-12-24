@@ -89,7 +89,8 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                labelText: "chercher un Bon Livraison par (N°)",
+                labelText:
+                    "chercher un Bon Livraison par (N° (${displaynoteslList.length}))",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -109,7 +110,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                 final bon = displaynoteslList[index];
                 return ListTile(
                   leading: Icon(
-                    Icons.payments,
+                    Icons.local_shipping,
                     color: Colors.green.shade600,
                   ),
                   contentPadding: const EdgeInsets.all(8.0),
@@ -156,6 +157,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                                 await deletebonliv(bons[index].numbonliv);
                                 setState(() {
                                   bons.removeAt(index);
+                                  updateList('');
                                 });
                               },
                               child: const Text('Delete'),
@@ -199,8 +201,10 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
       await livRef.delete();
 
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

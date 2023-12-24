@@ -63,10 +63,10 @@ class _RapportAdminState extends State<RapportAdmin> {
                         MaterialPageRoute(
                             builder: (context) => RapportJournalier(
                                   user: UserLocal(
-                                      firm: firme,
-                                      role: widget.user!.role,
-                                      uid: widget.user!.uid,
-                                      name: widget.user!.name,
+                                    firm: firme,
+                                    role: widget.user!.role,
+                                    uid: widget.user!.uid,
+                                    name: widget.user!.name,
                                   ),
                                 )));
                   },

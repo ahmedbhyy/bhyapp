@@ -111,6 +111,10 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                         .toList();
                     final bon = list[index];
                     return ListTile(
+                      leading: Icon(
+                        Icons.description,
+                        color: Colors.green.shade600,
+                      ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
                         "Sociétè: ${bon.beneficiaire}",
@@ -193,10 +197,11 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
       final bonRef = db.collection('bons_commandes').doc(bonId);
 
       await bonRef.delete();
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 }
@@ -370,7 +375,6 @@ class _AjoutBonState extends State<AjoutBon> {
                         setState(() {
                           items.add(res);
                         });
-
                       }
                     },
                     icon: const Icon(Icons.add_outlined),

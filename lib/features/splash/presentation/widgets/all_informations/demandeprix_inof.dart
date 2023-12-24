@@ -155,6 +155,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                                 await deletedemandeprix(demandes[index].id);
                                 setState(() {
                                   demandes.removeAt(index);
+                                  updateList('');
                                 });
                               },
                               child: const Text('Delete'),

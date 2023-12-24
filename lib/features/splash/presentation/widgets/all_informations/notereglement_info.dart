@@ -109,7 +109,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                 final note = displaynoteslList[index];
                 return ListTile(
                   leading: Icon(
-                    Icons.payments,
+                    Icons.description,
                     color: Colors.green.shade600,
                   ),
                   contentPadding: const EdgeInsets.all(8.0),
@@ -156,6 +156,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                                 await deletenoteregle(notes[index].numfacture);
                                 setState(() {
                                   notes.removeAt(index);
+                                  updateList('');
                                 });
                               },
                               child: const Text('Delete'),

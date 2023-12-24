@@ -109,7 +109,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                 final facture = displayfactureslList[index];
                 return ListTile(
                   leading: Icon(
-                    Icons.payments,
+                    Icons.description,
                     color: Colors.green.shade600,
                   ),
                   contentPadding: const EdgeInsets.all(8.0),
@@ -156,6 +156,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                                 await deletefacadmin(factures[index].num);
                                 setState(() {
                                   factures.removeAt(index);
+                                  updateList('');
                                 });
                               },
                               child: const Text('Delete'),

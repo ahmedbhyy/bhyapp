@@ -69,7 +69,7 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
         title: const Text(
-          "congés",
+          "Congés",
           style: TextStyle(
             fontSize: 20,
             fontFamily: 'Michroma',
@@ -100,8 +100,8 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(cong.cause,
-                      style:
-                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
                   trailing: IconButton(
                     icon: const Icon(
@@ -159,11 +159,11 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
       setState(() {
         conges.removeAt(index);
         ref.update({
-          "conges": conges
-              .map((e) => {"cause": e.cause, "date": e.date.toString()})
+          "conges":
+              conges.map((e) => {"cause": e.cause, "date": e.date.toString()})
         });
       });
-    } catch(e) {}
+    } catch (e) {}
   }
 
   Widget _generateBottomSheet(BuildContext context) {
