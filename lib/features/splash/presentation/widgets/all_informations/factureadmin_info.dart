@@ -88,7 +88,8 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                labelText: "chercher une Facture par (N°)",
+                labelText:
+                    "chercher une Facture par (N°(${displayfactureslList.length}))",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -324,6 +325,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
             factures[index] = tmp;
           }
         }
+        updateList('');
       });
     } catch (e) {
       if (!context.mounted) return;

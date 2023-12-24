@@ -87,7 +87,8 @@ class _DevisInfoState extends State<DevisInfo> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                labelText: "chercher un Devis par (N°)",
+                labelText:
+                    "chercher un Devis par (N°(${displaydevislList.length}))",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -325,6 +326,7 @@ class _DevisInfoState extends State<DevisInfo> {
             devis[index] = tmp;
           }
         }
+        updateList('');
       });
     } catch (e) {
       if (!context.mounted) return;

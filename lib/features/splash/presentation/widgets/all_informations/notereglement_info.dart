@@ -197,10 +197,11 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
       final noteRef = db.collection('noteregle').doc(noteId);
 
       await noteRef.delete();
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -328,11 +329,13 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
             notes[index] = tmp;
           }
         }
+        updateList('');
       });
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 

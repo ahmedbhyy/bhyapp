@@ -88,7 +88,8 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                labelText: "chercher une Demande par (Société)",
+                labelText:
+                    "chercher une Demande par (Société:(${displaydemandeslList.length}))",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -314,6 +315,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
             demandes[index] = tmp;
           }
         }
+        updateList('');
       });
     } catch (e) {
       if (!context.mounted) return;
@@ -328,6 +330,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
     setState(() {
       demandes =
           List<Demande>.from(docs.docs.map((e) => Demande.fromMap(e)).toList());
+      updateList('');
     });
   }
 }
