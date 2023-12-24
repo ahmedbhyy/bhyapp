@@ -21,6 +21,20 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
   final TextEditingController _descrip = TextEditingController();
   final TextEditingController _total = TextEditingController();
   List<Bon> bons = [];
+  List<Bon> displaynoteslList = [];
+
+
+  void updateList(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        displaynoteslList = List.from(bons);
+      } else {
+        displaynoteslList = bons
+            .where((element) => element.numbonliv.contains(value))
+            .toList();
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -72,6 +86,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              onChanged: (_) => updateList(_),
               style: const TextStyle(fontSize: 17.0),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
@@ -90,10 +105,10 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
           ),
           Expanded(
             child: ListView.separated(
-              itemCount: bons.length,
+              itemCount: displaynoteslList.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                final bon = bons[index];
+                final bon = displaynoteslList[index];
                 return ListTile(
                   leading: Icon(
                     Icons.payments,
@@ -327,6 +342,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
     final docs = await db.collection('bonlivraison').get();
     setState(() {
       bons = List<Bon>.from(docs.docs.map((e) => Bon.fromMap(e)).toList());
+      updateList('');
     });
   }
 }

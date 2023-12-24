@@ -102,6 +102,46 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
                       style:
                           const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                            'Confirm Delete',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          content: const Text(
+                            'Are you sure you want to delete this item?',
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                await deleteitem(index);
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -109,6 +149,20 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
         ],
       ),
     );
+  }
+
+  Future<void> deleteitem(int index) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final ref = db.collection('ouvrier').doc(widget.id);
+      setState(() {
+        supp.removeAt(index);
+        ref.update({
+          "heures_sup":
+          supp.map((e) => {"num": e.num, "date": e.date.toString()})
+        });
+      });
+    } catch(e) {}
   }
 
   Widget _generateBottomSheet(BuildContext context) {
