@@ -96,7 +96,7 @@ class LoginPageState extends State<LoginPage> {
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("images/firm2.png"),
+              image: AssetImage("images/farm3.jpg"),
               fit: BoxFit.cover,
             ),
           ),
@@ -125,7 +125,7 @@ class LoginPageState extends State<LoginPage> {
                   const Padding(
                     padding: EdgeInsets.only(top: 20.0, left: 10),
                     child: Text(
-                      'Sign In',
+                      'Welcome',
                       style: TextStyle(
                         fontFamily: 'Michroma',
                         fontSize: 30,
@@ -141,7 +141,7 @@ class LoginPageState extends State<LoginPage> {
                               AlwaysStoppedAnimation<Color>(Color(0xFF6a040f)),
                         ))
                       : Container(),
-                  const SizedBox(height: 60.0),
+                  const SizedBox(height: 45.0),
                   Container(
                     width: 300,
                     height: 45,

@@ -65,13 +65,19 @@ class _EngraisHomeState extends State<EngraisHome> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: Icon(
+              Icons.add,
+              size: Platform.isAndroid ? 24 : 45,
+            ),
             onPressed: () {
               showEditDialog(context);
             },
           ),
           IconButton(
-              icon: const Icon(Icons.shopping_bag),
+              icon: Icon(
+                Icons.shopping_bag,
+                size: Platform.isAndroid ? 24 : 45,
+              ),
               onPressed: () {
                 Navigator.push(
                     context,
@@ -82,7 +88,10 @@ class _EngraisHomeState extends State<EngraisHome> {
             icon: Badge(
               label: Text("${panier.length}"),
               backgroundColor: Colors.green.shade500,
-              child: const Icon(Icons.shopping_cart),
+              child: Icon(
+                Icons.shopping_cart,
+                size: Platform.isAndroid ? 24 : 45,
+              ),
             ),
             onPressed: () async {
               final res = await Navigator.push<bool>(
@@ -294,12 +303,15 @@ class _EngraisHomeState extends State<EngraisHome> {
             height: 20,
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            TextButton.icon(
-              icon: const Icon(Icons.camera),
-              onPressed: () {
-                Navigator.pop(context, ImageSource.camera);
-              },
-              label: const Text("Camera"),
+            Visibility(
+              visible: Platform.isAndroid,
+              child: TextButton.icon(
+                icon: const Icon(Icons.camera),
+                onPressed: () {
+                  Navigator.pop(context, ImageSource.camera);
+                },
+                label: const Text("Camera"),
+              ),
             ),
             TextButton.icon(
               icon: const Icon(Icons.image),

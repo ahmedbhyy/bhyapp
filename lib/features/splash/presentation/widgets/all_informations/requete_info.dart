@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -127,10 +129,9 @@ class _RequeteInfoState extends State<RequeteInfo> {
                               child: Padding(
                                 padding: const EdgeInsets.all(30),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 223),
+                                    Align(
+                                      alignment: Alignment.topRight,
                                       child: IconButton(
                                         onPressed: () {
                                           Navigator.pop(context);
@@ -229,10 +230,10 @@ class _RequeteInfoState extends State<RequeteInfo> {
                   });
                 }
               },
-              icon: const Icon(
+              icon: Icon(
                 Icons.add,
                 color: Colors.green,
-                size: 35,
+                size: Platform.isAndroid ? 24 : 45,
               ),
             ),
           ],
@@ -272,7 +273,6 @@ class _CustomTileState extends State<CustomTile> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      //height: 110,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -284,7 +284,7 @@ class _CustomTileState extends State<CustomTile> {
             contentPadding: const EdgeInsets.all(8.0),
             isThreeLine: true,
             subtitle: Text(
-              '${DateFormat('yyyy-MM-dd').format(widget.request.date)} | ${widget.request.type.label}',
+              '${DateFormat('yyyy-MM-dd').format(widget.request.date)} | ${widget.request.type.label} | ${widget.request.firm}',
               style: TextStyle(color: Colors.green.shade500),
             ),
             title: Text(widget.request.title,

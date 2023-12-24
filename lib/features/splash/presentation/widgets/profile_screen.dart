@@ -51,131 +51,125 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: double.infinity,
           height: double.infinity,
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 50),
-          child: Center(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 365),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SplashBody()),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.logout,
-                      color: Colors.red,
-                    ),
-                  ),
+        Column(
+          children: [
+            const SizedBox(height: 30),
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SplashBody()),
+                  );
+                },
+                icon: Icon(
+                  Icons.logout,
+                  color: Colors.red,
+                  size: Platform.isAndroid ? 24 : 50,
                 ),
-                imageProfile(),
-                const SizedBox(height: 30),
-                Text(
-                  extractedUsername as String,
-                  style: const TextStyle(
-                    fontFamily: 'Michroma',
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff5f0f40),
-                  ),
-                ),
-                const SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AboutUs(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0x0042D351),
-                    shape: RoundedRectangleBorder(
-                      side:
-                          const BorderSide(width: 1, color: Color(0xFF191919)),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: Container(
-                    width: 320,
-                    height: 40,
-                    alignment: Alignment.center,
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Qui sommes-nous',
-                          style: TextStyle(
-                            color: Colors.lightGreen,
-                            fontSize: 18,
-                            fontFamily: 'Michroma',
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 4.08,
-                          ),
-                        ),
-                        SizedBox(width: 28),
-                        Icon(
-                          Icons.panorama_photosphere,
-                          color: Colors.amber,
-                          size: 24,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Settings(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0x0042D351),
-                    shape: RoundedRectangleBorder(
-                      side:
-                          const BorderSide(width: 1, color: Color(0xFF191919)),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: Container(
-                    width: 320,
-                    height: 40,
-                    alignment: Alignment.center,
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Modifiez votre profil',
-                          style: TextStyle(
-                            color: Colors.lightGreen,
-                            fontSize: 16,
-                            fontFamily: 'Michroma',
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 4.08,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Icon(
-                          Icons.settings,
-                          color: Colors.amber,
-                          size: 24,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+            imageProfile(),
+            const SizedBox(height: 30),
+            Text(
+              extractedUsername as String,
+              style: const TextStyle(
+                fontFamily: 'Michroma',
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff5f0f40),
+              ),
+            ),
+            const SizedBox(height: 40),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AboutUs(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0x0042D351),
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(width: 1, color: Color(0xFF191919)),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Container(
+                width: 320,
+                height: 40,
+                alignment: Alignment.center,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Qui sommes-nous',
+                      style: TextStyle(
+                        color: Colors.lightGreen,
+                        fontSize: 18,
+                        fontFamily: 'Michroma',
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 4.08,
+                      ),
+                    ),
+                    SizedBox(width: 28),
+                    Icon(
+                      Icons.panorama_photosphere,
+                      color: Colors.amber,
+                      size: 24,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Settings(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0x0042D351),
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(width: 1, color: Color(0xFF191919)),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Container(
+                width: 320,
+                height: 40,
+                alignment: Alignment.center,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Modifiez votre profil',
+                      style: TextStyle(
+                        color: Colors.lightGreen,
+                        fontSize: 16,
+                        fontFamily: 'Michroma',
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 4.08,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Icon(
+                      Icons.settings,
+                      color: Colors.amber,
+                      size: 24,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -201,12 +195,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 20,
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            TextButton.icon(
-              icon: const Icon(Icons.camera),
-              onPressed: () {
-                takePhoto2(ImageSource.camera);
-              },
-              label: const Text("Camera"),
+            Visibility(
+              visible: Platform.isAndroid,
+              child: TextButton.icon(
+                icon: const Icon(Icons.camera),
+                onPressed: () {
+                  takePhoto2(ImageSource.camera);
+                },
+                label: const Text("Camera"),
+              ),
             ),
             TextButton.icon(
               icon: const Icon(Icons.image),

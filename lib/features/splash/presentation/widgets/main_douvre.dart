@@ -153,7 +153,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                 suffixText: 'DT',
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 10, left: 250),
+                padding: const EdgeInsets.only(top: 12),
                 child: widget.user!.role == "admin"
                     ? null
                     : ElevatedButton(

@@ -34,151 +34,149 @@ class _OuvrierDetails extends State<OuvrierDetails> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 70, left: 30, right: 30),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 400,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OuvrierPrime(id: widget.id)),
-                      );
-                    },
-                    child: const Row(
-                      children: [
-                        Text(
-                          'Prime',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 23,
-                              color: Colors.green),
-                        ),
-                        SizedBox(width: 215),
-                        Icon(Icons.euro),
-                      ],
-                    ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 400,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OuvrierPrime(id: widget.id)),
+                    );
+                  },
+                  child: const Row(
+                    children: [
+                      Text(
+                        'Prime',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                            color: Colors.green),
+                      ),
+                      SizedBox(width: 215),
+                      Icon(Icons.euro),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 35),
-                SizedBox(
-                  width: 400,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CongesOuvrier(id: widget.id)),
-                      );
-                    },
-                    child: const Row(
-                      children: [
-                        Text(
-                          'Congés de Travail',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 23,
-                              color: Colors.green),
-                        ),
-                        SizedBox(width: 92),
-                        Icon(Icons.view_timeline),
-                      ],
-                    ),
+              ),
+              const SizedBox(height: 35),
+              SizedBox(
+                width: 400,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CongesOuvrier(id: widget.id)),
+                    );
+                  },
+                  child: const Row(
+                    children: [
+                      Text(
+                        'Congés de Travail',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                            color: Colors.green),
+                      ),
+                      SizedBox(width: 92),
+                      Icon(Icons.view_timeline),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 35),
-                SizedBox(
-                  width: 400,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OuvrierHeure(id: widget.id)),
-                      );
-                    },
-                    child: const Row(
-                      children: [
-                        Text(
-                          'Heures Supplémentaires',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 23,
-                              color: Colors.green),
-                        ),
-                        SizedBox(width: 20),
-                        Icon(Icons.more_time),
-                      ],
-                    ),
+              ),
+              const SizedBox(height: 35),
+              SizedBox(
+                width: 400,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OuvrierHeure(id: widget.id)),
+                    );
+                  },
+                  child: const Row(
+                    children: [
+                      Text(
+                        'Heures Supplémentaires',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                            color: Colors.green),
+                      ),
+                      SizedBox(width: 20),
+                      Icon(Icons.more_time),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 35),
-                SizedBox(
-                  width: 400,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OuvrierVoyageDiesel(
-                                  id: widget.id,
-                                )),
-                      );
-                    },
-                    child: const Row(
-                      children: [
-                        Text(
-                          'Voyages et Diesel',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 23,
-                              color: Colors.green),
-                        ),
-                        SizedBox(width: 90),
-                        Icon(Icons.oil_barrel),
-                      ],
-                    ),
+              ),
+              const SizedBox(height: 35),
+              SizedBox(
+                width: 400,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OuvrierVoyageDiesel(
+                                id: widget.id,
+                              )),
+                    );
+                  },
+                  child: const Row(
+                    children: [
+                      Text(
+                        'Voyages et Diesel',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                            color: Colors.green),
+                      ),
+                      SizedBox(width: 90),
+                      Icon(Icons.oil_barrel),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 35),
-                SizedBox(
-                  width: 400,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OuvrierDeplacement(
-                                  id: widget.id,
-                                )),
-                      );
-                    },
-                    child: const Row(
-                      children: [
-                        Text(
-                          'Déplacament',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 23,
-                              color: Colors.green),
-                        ),
-                        SizedBox(width: 135),
-                        Icon(Icons.local_shipping),
-                      ],
-                    ),
+              ),
+              const SizedBox(height: 35),
+              SizedBox(
+                width: 400,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OuvrierDeplacement(
+                                id: widget.id,
+                              )),
+                    );
+                  },
+                  child: const Row(
+                    children: [
+                      Text(
+                        'Déplacament',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                            color: Colors.green),
+                      ),
+                      SizedBox(width: 135),
+                      Icon(Icons.local_shipping),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ));
   }

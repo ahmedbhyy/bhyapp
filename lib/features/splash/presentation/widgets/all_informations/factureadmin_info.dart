@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -56,10 +58,10 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                 saveData(data);
               }
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.add,
               color: Colors.green,
-              size: 35,
+              size: Platform.isAndroid ? 32 : 45,
             ),
           ),
         ],
@@ -102,9 +104,53 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                     DateFormat('yyyy-MM-dd').format(facture.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(facture.total.toString(),
+                  title: Text(
+                      "Nom de Société: ${facture.nomsoc.toString()}\nN° Facture: ${facture.num}",
                       style: const TextStyle(
-                          fontSize: 25, fontWeight: FontWeight.bold)),
+                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                            'Confirm Delete',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          content: const Text(
+                            'Are you sure you want to delete this item?',
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                await deletefacadmin(factures[index].num);
+                                setState(() {
+                                  factures.removeAt(index);
+                                });
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   onTap: () async {
                     _total.text = facture.total.toString();
                     _desc.text = facture.desc;
@@ -129,6 +175,19 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
         ],
       ),
     );
+  }
+
+  Future<void> deletefacadmin(String facadminId) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final facadminRef = db.collection('adminfacture').doc(facadminId);
+
+      await facadminRef.delete();
+
+      print('facture admin deleted successfully');
+    } catch (e) {
+      print('Error deleting facture admin: $e');
+    }
   }
 
   Future<Facture?> showEditDialog(BuildContext context,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +46,10 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: Icon(
+              Icons.add,
+              size: Platform.isAndroid ? 24 : 45,
+            ),
             onPressed: () async {
               final res = await Navigator.push<Bon>(context,
                   MaterialPageRoute(builder: (context) => const AjoutBon()));
@@ -110,7 +115,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                     return ListTile(
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Destination: ${bon.destination} \nBénéficiaire : ${bon.beneficiaire}",
+                        "Destination: ${bon.destination} \nBénéficiaire : ${bon.beneficiaire}\nFirme: ${bon.firm}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,

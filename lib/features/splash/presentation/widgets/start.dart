@@ -30,32 +30,27 @@ class _StartPageState extends State<StartPage> {
       appBar: _selectedIndex == 0
           ? AppBar(
               automaticallyImplyLeading: false,
-              title: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Al Baraka',
-                      style: TextStyle(
-                        fontFamily: 'Michroma',
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Al Baraka',
+                    style: TextStyle(
+                      fontFamily: 'Michroma',
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 165),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'images/logo baraka.PNG',
-                          fit: BoxFit.cover,
-                          width: 45,
-                          height: 45,
-                        ),
-                      ),
+                  ),
+                  ClipOval(
+                    child: Image.asset(
+                      'images/logo baraka.PNG',
+                      fit: BoxFit.cover,
+                      width: 45,
+                      height: 45,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             )
           : null,

@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    /*return SingleChildScrollView(
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -146,6 +146,110 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );*/
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 10, 10, 80),
+        child: Center(
+          child: Wrap(spacing: 20, runSpacing: 20, children: [
+            const CustomCard(
+              source: 'images/engrais3.jpg',
+              title: 'Les Engrais',
+              child: EngraisHome(),
+            ),
+            const SizedBox(height: 20),
+            const CustomCard(
+              source: 'images/ImageOuvrier.png',
+              title: 'Les Ouvriers',
+              child: OuvrierHome(),
+            ),
+            const SizedBox(height: 20),
+            user != null && user!.role != "admin"
+                ? CustomCard(
+                    source: 'images/rapport.jpg',
+                    title: 'Rapport Journalier',
+                    child: RapportJournalier(user: user),
+                  )
+                : CustomCard(
+                    source: 'images/rapport.jpg',
+                    title: 'Les Rapports Journaliers',
+                    child: RapportAdmin(user: user),
+                  ),
+            const SizedBox(height: 20),
+            const CustomCard(
+              source: 'images/bonsortie.jpg',
+              title: 'Bon de sortie interne',
+              child: BonSortieInfo(),
+            ),
+            const SizedBox(height: 20),
+            const CustomCard(
+              source: 'images/factureuser.jpg',
+              title: 'Factures',
+              child: FactureInfo(),
+            ),
+            const SizedBox(height: 20),
+            const CustomCard(
+              source: 'images/pic2.png',
+              title: 'Requêtes',
+              child: RequeteInfo(),
+            ),
+            const SizedBox(height: 20),
+            Visibility(
+              visible: isVisible(),
+              child: const CustomCard(
+                source: 'images/boncommande.jpg',
+                title: 'Bon de Commande',
+                child: BonCommandeInfo(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Visibility(
+              visible: isVisible(),
+              child: const CustomCard(
+                source: 'images/bonlivraison.jpg',
+                title: 'Bon de Livraison',
+                child: BonLivraisonInfo(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Visibility(
+              visible: isVisible(),
+              child: const CustomCard(
+                source: 'images/factureadmin.jpg',
+                title: 'Facture Administrative',
+                child: FactureAdminInfo(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Visibility(
+              visible: isVisible(),
+              child: const CustomCard(
+                source: 'images/devis.webp',
+                title: 'Devis',
+                child: DevisInfo(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Visibility(
+              visible: isVisible(),
+              child: const CustomCard(
+                source: 'images/bourse.png',
+                title: "Demande d'offre de Prix",
+                child: DemandePrixInfo(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Visibility(
+                visible: isVisible(),
+                child: const CustomCard(
+                  source: 'images/pic.png',
+                  title: 'Note de Règlement',
+                  child: NoteReglementInfo(),
+                )),
+            const SizedBox(height: 60),
+          ]),
+        ),
+      ),
     );
   }
 
@@ -154,16 +258,23 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class MenuCard extends StatelessWidget {
+class UserLocal {
+  final String uid;
+  final String role;
+  final String firm;
+
+  UserLocal({required this.uid, required this.role, required this.firm});
+}
+
+class CustomCard extends StatelessWidget {
   final String source;
   final Widget child;
   final String title;
-  const MenuCard(
+  const CustomCard(
       {super.key,
       required this.child,
       required this.source,
       required this.title});
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -175,34 +286,43 @@ class MenuCard extends StatelessWidget {
       },
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(80.0),
+          borderRadius: BorderRadius.circular(10),
+          side: const BorderSide(
+            color: Colors.green,
+            width: 2.0,
+          ),
         ),
-        child: Column(
-          children: [
-            Image.asset(
-              source,
-              height: 150,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                title,
-                style: const TextStyle(fontSize: 20),
+        elevation: 5,
+        child: Container(
+          width: 300,
+          height: 280,
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+                child: Image.asset(
+                  source,
+                  width: 300,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 15),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-}
-
-class UserLocal {
-  final String uid;
-  final String role;
-  final String firm;
-
-  UserLocal({required this.uid, required this.role, required this.firm});
 }

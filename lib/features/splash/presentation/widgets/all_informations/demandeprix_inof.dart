@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -55,10 +56,10 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                 saveOffreData(dem);
               }
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.add,
               color: Colors.green,
-              size: 35,
+              size: Platform.isAndroid ? 32 : 45,
             ),
           ),
         ],
@@ -72,7 +73,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                labelText: "chercher une Demande par (Date)",
+                labelText: "chercher une Demande par (Nom Société)",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -101,9 +102,52 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                     DateFormat('yyyy-MM-dd').format(demande.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(demande.quantiteprix.toString(),
+                  title: Text(demande.nomsociete.toString(),
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                            'Confirm Delete',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          content: const Text(
+                            'Are you sure you want to delete this item?',
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                await deletedemandeprix(demandes[index].id);
+                                setState(() {
+                                  demandes.removeAt(index);
+                                });
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   onTap: () async {
                     _nomsoc.text = demande.nomsociete;
                     _desc.text = demande.description;
@@ -126,6 +170,19 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
         ],
       ),
     );
+  }
+
+  Future<void> deletedemandeprix(String prixId) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final prixRef = db.collection('demandeprix').doc(prixId);
+
+      await prixRef.delete();
+
+      print('prix deleted successfully');
+    } catch (e) {
+      print('Error deleting prix : $e');
+    }
   }
 
   Future<Demande?> showEditDialog(BuildContext context,

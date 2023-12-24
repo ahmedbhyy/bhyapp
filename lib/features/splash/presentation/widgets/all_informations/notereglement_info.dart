@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -17,11 +19,24 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   DateTime _datedenote = DateTime.now();
   List<Note> notes = [];
+  List<Note> displaynoteslList = [];
 
   @override
   void initState() {
     fetchData();
     super.initState();
+  }
+
+  void updateList(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        displaynoteslList = List.from(notes);
+      } else {
+        displaynoteslList = notes
+            .where((element) => element.numfacture.contains(value))
+            .toList();
+      }
+    });
   }
 
   @override
@@ -55,10 +70,10 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                 saveData(data);
               }
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.add,
               color: Colors.green,
-              size: 35,
+              size: Platform.isAndroid ? 32 : 45,
             ),
           ),
         ],
@@ -68,11 +83,13 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              onChanged: (value) => updateList(value),
               style: const TextStyle(fontSize: 17.0),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                labelText: "chercher une Note Par (N° Facture)",
+                labelText:
+                    "chercher une Note Par (N° Facture (${displaynoteslList.length}))",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -86,10 +103,10 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
           ),
           Expanded(
             child: ListView.separated(
-              itemCount: notes.length,
+              itemCount: displaynoteslList.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                final note = notes[index];
+                final note = displaynoteslList[index];
                 return ListTile(
                   leading: Icon(
                     Icons.payments,
@@ -101,9 +118,53 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     DateFormat('yyyy-MM-dd').format(note.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(note.montantfacture.toString(),
+                  title: Text(
+                      "Nom de Fournisseur : ${note.nomfournisseur.toString()}\nN° Facture : ${note.numfacture}",
                       style: const TextStyle(
-                          fontSize: 25, fontWeight: FontWeight.bold)),
+                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                            'Confirm Delete',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          content: const Text(
+                            'Are you sure you want to delete this item?',
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                await deletenoteregle(notes[index].numfacture);
+                                setState(() {
+                                  notes.removeAt(index);
+                                });
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   onTap: () async {
                     _nomfournisseur.text = note.nomfournisseur;
                     _numfacture.text = note.numfacture;
@@ -128,6 +189,19 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
         ],
       ),
     );
+  }
+
+  Future<void> deletenoteregle(String noteId) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final noteRef = db.collection('noteregle').doc(noteId);
+
+      await noteRef.delete();
+
+      print('note deleted successfully');
+    } catch (e) {
+      print('Error deleting note : $e');
+    }
   }
 
   Future<Note?> showEditDialog(BuildContext context,
@@ -266,6 +340,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
     final docs = await db.collection('noteregle').get();
     setState(() {
       notes = List<Note>.from(docs.docs.map((e) => Note.fromMap(e)).toList());
+      updateList('');
     });
   }
 }

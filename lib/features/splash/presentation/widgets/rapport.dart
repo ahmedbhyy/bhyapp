@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bhyapp/features/splash/presentation/widgets/main_douvre.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/taches.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/autres.dart';
@@ -50,152 +52,49 @@ class _RapportJournalier extends State<RapportJournalier> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Maindoeuvre(
-                            oeuvre: main_oeuvre,
-                            updateremotestate: updateremoteoeuvre,
-                            user: widget.user)),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/maindoeuvre.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "Main D'oeuvre",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 10, 80),
+          child: Center(
+            child: Wrap(
+              spacing: 30,
+              runSpacing: 20,
+              children: [
+                CustomCard(
+                  source: 'images/maindouvre.jpeg',
+                  title: 'Main D\'oeuvre',
+                  child: Maindoeuvre(
+                      oeuvre: main_oeuvre,
+                      updateremotestate: updateremoteoeuvre,
+                      user: widget.user),
                 ),
-              ),
-              const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Voyages(
-                            transport: transport,
-                            update: updateremotetransport,
-                            user: widget.user)),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/transport.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Transport',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
+                CustomCard(
+                  source: 'images/camion.png',
+                  title: 'Transport',
+                  child: Voyages(
+                      transport: transport,
+                      update: updateremotetransport,
+                      user: widget.user),
                 ),
-              ),
-              const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => TaskList(
-                            jobs: jobs,
-                            items: items,
-                            updatejobs: updateremotejobs,
-                            updateitems: updateremoteitems,
-                            user: widget.user)),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/tache.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Taches',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
+                CustomCard(
+                  source: 'images/taches2.jpg',
+                  title: 'Taches',
+                  child: TaskList(
+                      jobs: jobs,
+                      items: items,
+                      updatejobs: updateremotejobs,
+                      updateitems: updateremoteitems,
+                      user: widget.user),
                 ),
-              ),
-              const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Autres(
-                            autres: autres,
-                            updatestate: updateremoteautres,
-                            user: widget.user)),
-                  );
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'images/autre.png',
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Autres',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
+                CustomCard(
+                  source: 'images/autre2.jpg',
+                  title: 'Autres',
+                  child: Autres(
+                      autres: autres,
+                      updatestate: updateremoteautres,
+                      user: widget.user),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -204,7 +103,10 @@ class _RapportJournalier extends State<RapportJournalier> {
 
   Widget _buildDatePickerIconButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.calendar_today),
+      icon: Icon(
+        Icons.calendar_today,
+        size: Platform.isAndroid ? 24 : 45,
+      ),
       onPressed: () => _selectDate(context),
     );
   }
@@ -323,6 +225,67 @@ class _RapportJournalier extends State<RapportJournalier> {
       autres = (data?['autres'] ?? '');
       transport = Voyage.fromMap(transport_map);
     });
+  }
+}
+
+class CustomCard extends StatelessWidget {
+  final String source;
+  final Widget child;
+  final String title;
+  const CustomCard(
+      {super.key,
+      required this.child,
+      required this.source,
+      required this.title});
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => child),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: const BorderSide(
+            color: Colors.green,
+            width: 2.0,
+          ),
+        ),
+        elevation: 5,
+        child: Container(
+          width: 300,
+          height: 280,
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+                child: Image.asset(
+                  source,
+                  width: 300,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(height: 15),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

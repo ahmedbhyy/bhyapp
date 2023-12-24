@@ -46,7 +46,7 @@ class _AllCommandesState extends State<AllCommandes> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          "tous les commandes",
+          "Tous les commandes",
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,

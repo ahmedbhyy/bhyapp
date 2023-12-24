@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -57,10 +58,10 @@ class _DevisInfoState extends State<DevisInfo> {
                 saveData(data);
               }
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.add,
               color: Colors.green,
-              size: 35,
+              size: Platform.isAndroid ? 32 : 45,
             ),
           ),
         ],
@@ -103,9 +104,53 @@ class _DevisInfoState extends State<DevisInfo> {
                     DateFormat('yyyy-MM-dd').format(devi.datedevis),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(devi.totaldevis.toString(),
+                  title: Text(
+                      "Nom de Société: ${devi.nomsocietedevis.toString()}\nN° Devis: ${devi.numdevis}",
                       style: const TextStyle(
-                          fontSize: 25, fontWeight: FontWeight.bold)),
+                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                            'Confirm Delete',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          content: const Text(
+                            'Are you sure you want to delete this item?',
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                await deletedevis(devis[index].numdevis);
+                                setState(() {
+                                  devis.removeAt(index);
+                                });
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   onTap: () async {
                     _totaldevisadmin.text = devi.totaldevis.toString();
                     _descridevisadmin.text = devi.descridevis;
@@ -130,6 +175,19 @@ class _DevisInfoState extends State<DevisInfo> {
         ],
       ),
     );
+  }
+
+  Future<void> deletedevis(String devisId) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final devisRef = db.collection('devis').doc(devisId);
+
+      await devisRef.delete();
+
+      print('devis deleted successfully');
+    } catch (e) {
+      print('Error deleting devis admin: $e');
+    }
   }
 
   Future<Devi?> showEditDialog(BuildContext context,

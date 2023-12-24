@@ -48,7 +48,7 @@ class _RapportAdminState extends State<RapportAdmin> {
                 final firme = firmes[index];
                 return ListTile(
                   leading: Icon(
-                    Icons.payments,
+                    Icons.place,
                     color: Colors.green.shade600,
                   ),
                   contentPadding: const EdgeInsets.all(8.0),

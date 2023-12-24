@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -35,25 +37,29 @@ class WeatherPageState extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
+      height: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('images/weather2.png'),
           fit: BoxFit.cover,
         ),
       ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 250, left: 10, right: 10),
-          child: Column(
-            children: [
-              _buildWeatherCard('Tunis', tunisWeather),
-              _buildWeatherCard('Nabeul', nabeulWeather),
-              _buildWeatherCard('Kebili', kebiliWeather),
-              _buildWeatherCard('Kasserine', kasserineWeather),
-              _buildWeatherCard('Sidi Bouzid', sidiBouzidWeather),
-              _buildWeatherCard('Gafsa', gafsaWeather),
-            ],
-          ),
+      child: Padding(
+        padding: Platform.isAndroid
+            ? EdgeInsets.all(0)
+            : EdgeInsets.fromLTRB(350, 100, 350, 0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildWeatherCard('Tunis', tunisWeather),
+            _buildWeatherCard('Nabeul', nabeulWeather),
+            _buildWeatherCard('Kebili', kebiliWeather),
+            _buildWeatherCard('Kasserine', kasserineWeather),
+            _buildWeatherCard('Sidi Bouzid', sidiBouzidWeather),
+            _buildWeatherCard('Gafsa', gafsaWeather),
+          ],
         ),
       ),
     );

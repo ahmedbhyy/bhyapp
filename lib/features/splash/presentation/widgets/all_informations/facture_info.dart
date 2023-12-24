@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +46,10 @@ class _FactureInfoState extends State<FactureInfo> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: Icon(
+              Icons.add,
+              size: Platform.isAndroid ? 24 : 45,
+            ),
             onPressed: () async {
               final res = await Navigator.push<Facture>(
                   context,
@@ -112,7 +117,7 @@ class _FactureInfoState extends State<FactureInfo> {
                     return ListTile(
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Nom de la Societé : ${facture.nom_soc} \nTotal : ${facture.total} DT",
+                        "Nom de la Societé : ${facture.nom_soc} \nTotal : ${facture.total} DT\nFirme: ${facture.firm}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bhyapp/features/splash/presentation/widgets/ouvrier_details.dart';
 import 'package:bhyapp/ouvrier/ouvrier_name.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -76,7 +78,10 @@ class _OuvrierHomeState extends State<OuvrierHome> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.person_add),
+            icon: Icon(
+              Icons.person_add,
+              size: Platform.isAndroid ? 24 : 45,
+            ),
             onPressed: () {
               String hintText = "Ajouter un Ouvrier";
               showEditDialog(context, hintText, controller);

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -57,10 +59,10 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                 saveData(data);
               }
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.add,
               color: Colors.green,
-              size: 35,
+              size: Platform.isAndroid ? 30 : 45,
             ),
           ),
         ],
@@ -103,9 +105,53 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                     DateFormat('yyyy-MM-dd').format(bon.dateliv),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(bon.totalliv.toString(),
+                  title: Text(
+                      "Nom Société : ${bon.nomsocieteliv.toString()}\nN° Bon: ${bon.numbonliv}",
                       style: const TextStyle(
-                          fontSize: 25, fontWeight: FontWeight.bold)),
+                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                            'Confirm Delete',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          content: const Text(
+                            'Are you sure you want to delete this item?',
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                await deletebonliv(bons[index].numbonliv);
+                                setState(() {
+                                  bons.removeAt(index);
+                                });
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   onTap: () async {
                     _total.text = bon.totalliv.toString();
                     _descrip.text = bon.descripliv;
@@ -130,6 +176,19 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
         ],
       ),
     );
+  }
+
+  Future<void> deletebonliv(String livId) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final livRef = db.collection('bonlivraison').doc(livId);
+
+      await livRef.delete();
+
+      print('bon liv deleted successfully');
+    } catch (e) {
+      print('Error deleting bon liv: $e');
+    }
   }
 
   Future<Bon?> showEditDialog(BuildContext context,
