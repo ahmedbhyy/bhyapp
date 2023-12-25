@@ -122,49 +122,63 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                       "Nom de Société: ${facture.nomsoc.toString()}\nN° Facture: ${facture.num}",
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold)),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text(
-                            'Confirm Delete',
-                            style: TextStyle(
-                              color: Colors.red,
-                            ),
-                          ),
-                          content: const Text(
-                            'Are you sure you want to delete this item?',
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                await deletefacadmin(factures[index].num);
-                                setState(() {
-                                  factures.removeAt(index);
-                                  updateList('');
-                                });
-                              },
-                              child: const Text('Delete'),
-                            ),
-                          ],
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.picture_as_pdf,
+                          color: Colors.green,
                         ),
-                      );
-                    },
+                        onPressed: () {
+                          //TODO : pdf
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text(
+                                'Confirm Delete',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                              content: const Text(
+                                'Are you sure you want to delete this item?',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await deletefacadmin(factures[index].num);
+                                    setState(() {
+                                      factures.removeAt(index);
+                                      updateList('');
+                                    });
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   onTap: () async {
                     _total.text = facture.total.toString();
@@ -206,8 +220,8 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement"),
+        content:
+            Text("une erreur est survenue veuillez réessayer ultérieurement"),
         backgroundColor: Colors.red,
       ));
     }
@@ -298,7 +312,8 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                 String des = _desc.text;
                 String tot = _total.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty )return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
 
                 final tmp = Facture(
                     date: _date,

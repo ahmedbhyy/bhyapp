@@ -121,49 +121,63 @@ class _DevisInfoState extends State<DevisInfo> {
                       "Nom de Société: ${devi.nomsocietedevis.toString()}\nN° Devis: ${devi.numdevis}",
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold)),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text(
-                            'Confirm Delete',
-                            style: TextStyle(
-                              color: Colors.red,
-                            ),
-                          ),
-                          content: const Text(
-                            'Are you sure you want to delete this item?',
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                await deletedevis(devis[index].numdevis);
-                                setState(() {
-                                  devis.removeAt(index);
-                                  updateList('');
-                                });
-                              },
-                              child: const Text('Delete'),
-                            ),
-                          ],
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.picture_as_pdf,
+                          color: Colors.green,
                         ),
-                      );
-                    },
+                        onPressed: () {
+                          //TODO : pdf
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text(
+                                'Confirm Delete',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                              content: const Text(
+                                'Are you sure you want to delete this item?',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await deletedevis(devis[index].numdevis);
+                                    setState(() {
+                                      devis.removeAt(index);
+                                      updateList('');
+                                    });
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   onTap: () async {
                     _totaldevisadmin.text = devi.totaldevis.toString();
@@ -205,8 +219,8 @@ class _DevisInfoState extends State<DevisInfo> {
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement"),
+        content:
+            Text("une erreur est survenue veuillez réessayer ultérieurement"),
         backgroundColor: Colors.red,
       ));
     }
@@ -300,7 +314,8 @@ class _DevisInfoState extends State<DevisInfo> {
                 String des = _descridevisadmin.text;
                 String tot = _totaldevisadmin.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
 
                 final tmp = Devi(
                     datedevis: _datedeviss,

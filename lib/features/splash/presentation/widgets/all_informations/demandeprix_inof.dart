@@ -121,49 +121,63 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                   title: Text('Société: ${demande.nomsociete.toString()}',
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text(
-                            'Confirm Delete',
-                            style: TextStyle(
-                              color: Colors.red,
-                            ),
-                          ),
-                          content: const Text(
-                            'Are you sure you want to delete this item?',
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                await deletedemandeprix(demandes[index].id);
-                                setState(() {
-                                  demandes.removeAt(index);
-                                  updateList('');
-                                });
-                              },
-                              child: const Text('Delete'),
-                            ),
-                          ],
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.picture_as_pdf,
+                          color: Colors.green,
                         ),
-                      );
-                    },
+                        onPressed: () {
+                          //TODO : pdf
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text(
+                                'Confirm Delete',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                              content: const Text(
+                                'Are you sure you want to delete this item?',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await deletedemandeprix(demandes[index].id);
+                                    setState(() {
+                                      demandes.removeAt(index);
+                                      updateList('');
+                                    });
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   onTap: () async {
                     _nomsoc.text = demande.nomsociete;
