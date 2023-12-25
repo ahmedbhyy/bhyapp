@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
       if (Platform.isAndroid) {
         await OneSignal.login(id);
         OneSignal.User.addTagWithKey("role", value.data()!["role"]);
+        OneSignal.User.addTagWithKey("firme", value.data()!["lieu de travail"]);
       }
       setState(() {
         user = UserLocal(

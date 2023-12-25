@@ -35,11 +35,11 @@ class Request {
   Request(
       {required this.title,
       required this.type,
-        required this .response,
+      required this.response,
       required this.state,
       required this.desc,
       required this.firm,
-        required this.id,
+      required this.id,
       required this.date});
   static const finished = "finish";
   static const waiting = "waiting";
@@ -70,9 +70,10 @@ class _RequeteInfoState extends State<RequeteInfo> {
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-    final reqs = db
-        .collection('request');
-    final docs = widget.user!.role == "admin" ? reqs : reqs.where('firm', isEqualTo: widget.user!.firm);
+    final reqs = db.collection('request');
+    final docs = widget.user!.role == "admin"
+        ? reqs
+        : reqs.where('firm', isEqualTo: widget.user!.firm);
     docs.get().then((value) {
       if (value.size == 0) return;
       setState(() {
@@ -154,9 +155,11 @@ class _RequeteInfoState extends State<RequeteInfo> {
                                       DropdownMenu<RequeteType>(
                                         initialSelection: RequeteType.admin,
                                         dropdownMenuEntries: RequeteType.values
-                                            .map<DropdownMenuEntry<RequeteType>>(
+                                            .map<
+                                                DropdownMenuEntry<RequeteType>>(
                                           (RequeteType type) {
-                                            return DropdownMenuEntry<RequeteType>(
+                                            return DropdownMenuEntry<
+                                                RequeteType>(
                                               value: type,
                                               label: type.label,
                                               leadingIcon: Icon(type.icon),
@@ -239,7 +242,8 @@ class _RequeteInfoState extends State<RequeteInfo> {
                     final body = jsonEncode(<String, dynamic>{
                       'app_id': '19ca5fd9-1a46-413f-9209-d77a7d63dde0',
                       'contents': {
-                        "en": "vous avez reçu une nouvelle requete ${request.type.label} de ${request.firm}"
+                        "en":
+                            "vous avez reçu une nouvelle requete ${request.type.label} de ${request.firm}"
                       },
                       'filters': [
                         {
@@ -255,7 +259,8 @@ class _RequeteInfoState extends State<RequeteInfo> {
                       body: body,
                       headers: {
                         'Content-Type': "application/json",
-                        HttpHeaders.authorizationHeader: 'Basic YmU0YTUwODktOGIxZC00MTIwLTkyY2UtOWVkZTg1NTYyZWZj',
+                        HttpHeaders.authorizationHeader:
+                            'Basic YmU0YTUwODktOGIxZC00MTIwLTkyY2UtOWVkZTg1NTYyZWZj',
                       },
                     );
                   }
@@ -274,30 +279,36 @@ class _RequeteInfoState extends State<RequeteInfo> {
             itemCount: wait.length,
             separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, index) {
-              return CustomTile(request: wait[index], user: widget.user!, onchange: (reqMap) {
-                setState(() {
-                  final ii = requests.indexOf(wait[index]);
-                  requests[ii] = Request(
-                    id: wait[index].id,
-                    firm: wait[index].firm,
-                    date: wait[index].date,
-                    desc: wait[index].desc,
-                    type: wait[index].type,
-                    response: reqMap["response"],
-                    state: Request.finished,
-                    title: wait[index].title,
-                  );
-                });
-              },);
+              return CustomTile(
+                request: wait[index],
+                user: widget.user!,
+                onchange: (reqMap) {
+                  setState(() {
+                    final ii = requests.indexOf(wait[index]);
+                    requests[ii] = Request(
+                      id: wait[index].id,
+                      firm: wait[index].firm,
+                      date: wait[index].date,
+                      desc: wait[index].desc,
+                      type: wait[index].type,
+                      response: reqMap["response"],
+                      state: Request.finished,
+                      title: wait[index].title,
+                    );
+                  });
+                },
+              );
             },
           ),
           ListView.separated(
             itemCount: finished.length,
             separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, index) {
-              return CustomTile(request: finished[index], user: widget.user!, onchange: (_) {
-
-              },);
+              return CustomTile(
+                request: finished[index],
+                user: widget.user!,
+                onchange: (_) {},
+              );
             },
           ),
         ]),
@@ -310,7 +321,11 @@ class CustomTile extends StatefulWidget {
   final Request request;
   final UserLocal user;
   final void Function(Map<String, dynamic>) onchange;
-  const CustomTile({super.key, required this.request, required this.user, required this.onchange});
+  const CustomTile(
+      {super.key,
+      required this.request,
+      required this.user,
+      required this.onchange});
 
   @override
   State<CustomTile> createState() => _CustomTileState();
@@ -344,29 +359,59 @@ class _CustomTileState extends State<CustomTile> {
                 _height = 250 - _height;
               });
             },
-            trailing: widget.user.role != "admin" || widget.request.state == Request.finished  ? null : FilledButton.icon(onPressed: () async {
-              final res = await showModalBottomSheet<String>(
-                context: context,
-                builder: (context) {
-                  return MyBottomSheet(request: widget.request);
-                },
-                showDragHandle: true,
-                scrollControlDisabledMaxHeightRatio: .8,
-              );
-              if(res == null) return;
-              if(res.isEmpty) return;
+            trailing: widget.user.role != "admin" ||
+                    widget.request.state == Request.finished
+                ? null
+                : FilledButton.icon(
+                    onPressed: () async {
+                      final res = await showModalBottomSheet<String>(
+                        context: context,
+                        builder: (context) {
+                          return MyBottomSheet(request: widget.request);
+                        },
+                        showDragHandle: true,
+                        scrollControlDisabledMaxHeightRatio: .8,
+                      );
+                      if (res == null) return;
+                      if (res.isEmpty) return;
 
-              final db = FirebaseFirestore.instance;
-              final reqs = db.collection('request').doc(widget.request.id);
-              var nreqmap = widget.request.toMap();
-              nreqmap["response"] = res;
-              nreqmap["state"] = Request.finished;
-              reqs.set(nreqmap, SetOptions(merge: true));
-              setState(() {
-                widget.onchange(nreqmap);
-              });
-
-            }, icon: const Icon(Icons.subdirectory_arrow_left_outlined), label: const Text("répondre")),
+                      final db = FirebaseFirestore.instance;
+                      final reqs =
+                          db.collection('request').doc(widget.request.id);
+                      var nreqmap = widget.request.toMap();
+                      nreqmap["response"] = res;
+                      nreqmap["state"] = Request.finished;
+                      reqs.set(nreqmap, SetOptions(merge: true));
+                      setState(() {
+                        widget.onchange(nreqmap);
+                      });
+                      final body = jsonEncode(<String, dynamic>{
+                        'app_id': '19ca5fd9-1a46-413f-9209-d77a7d63dde0',
+                        'contents': {
+                          "en":
+                              "Vous avez recu une réponse pour votre requête ${widget.request.title}"
+                        },
+                        'filters': [
+                          {
+                            "field": "tag",
+                            "key": "firme",
+                            "relation": "=",
+                            "value": widget.request.firm
+                          }
+                        ]
+                      });
+                      final response = await http.post(
+                        Uri.parse('https://onesignal.com/api/v1/notifications'),
+                        body: body,
+                        headers: {
+                          'Content-Type': "application/json",
+                          HttpHeaders.authorizationHeader:
+                              'Basic YmU0YTUwODktOGIxZC00MTIwLTkyY2UtOWVkZTg1NTYyZWZj',
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.subdirectory_arrow_left_outlined),
+                    label: const Text("répondre")),
           ),
           AnimatedContainer(
               height: _height,
@@ -380,14 +425,11 @@ class _CustomTileState extends State<CustomTile> {
                         fontWeight: FontWeight.w400, fontSize: 19),
                   ),
                 ),
-              )
-          ),
+              )),
         ],
       ),
     );
   }
-
-
 }
 
 class MyBottomSheet extends StatefulWidget {
@@ -410,8 +452,8 @@ class _MyBottomSheetState extends State<MyBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Padding(
         padding: const EdgeInsets.all(40),
         child: Column(
@@ -420,8 +462,18 @@ class _MyBottomSheetState extends State<MyBottomSheet> {
           children: [
             Column(
               children: [
-                Align(alignment: Alignment.topLeft, child: Text(widget.request.title, style: TextStyle(color: Colors.green.shade700, fontSize: 23, fontWeight: FontWeight.w500),)),
-                const SizedBox(height: 50,),
+                Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      widget.request.title,
+                      style: TextStyle(
+                          color: Colors.green.shade700,
+                          fontSize: 23,
+                          fontWeight: FontWeight.w500),
+                    )),
+                const SizedBox(
+                  height: 50,
+                ),
                 TextField(
                   onSubmitted: (val) {},
                   controller: controller,
