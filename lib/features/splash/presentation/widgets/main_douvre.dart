@@ -175,20 +175,20 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                           widget.updateremotestate(tmp);
                           final response = await http.post(
                             Uri.parse('https://jsonplaceholder.typicode.com/albums/1'),
-                            body: jsonEncode(<String, String>{
+                            body: jsonEncode(<String, dynamic>{
                               'app_id': '19ca5fd9-1a46-413f-9209-d77a7d63dde0',
-                              'contents': """{
+                              'contents': {
                                   "en": "English or Any Language Message",
                                   "es": "Spanish Message"
-                                  }""",
-                              'filters': """[
+                                  },
+                              'filters': [
                                   {
                                       "field": "tag",
                                       "key": "role",
                                       "relation": "=",
                                       "value": "admin"
                                   }
-                              ]"""
+                              ]
                             }),
                             headers: {
                               HttpHeaders.authorizationHeader: 'Basic YmU0YTUwODktOGIxZC00MTIwLTkyY2UtOWVkZTg1NTYyZWZj',
