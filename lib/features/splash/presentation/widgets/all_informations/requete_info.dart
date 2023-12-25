@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../homepage.dart';
+import 'package:http/http.dart' as http;
 
 class RequeteInfo extends StatefulWidget {
   final UserLocal? user;
@@ -233,6 +235,29 @@ class _RequeteInfoState extends State<RequeteInfo> {
                     setState(() {
                       requests.add(request);
                     });
+
+                    final body = jsonEncode(<String, dynamic>{
+                      'app_id': '19ca5fd9-1a46-413f-9209-d77a7d63dde0',
+                      'contents': {
+                        "en": "vous avez reçu une nouvelle requete ${request.type.label} de ${request.firm}"
+                      },
+                      'filters': [
+                        {
+                          "field": "tag",
+                          "key": "role",
+                          "relation": "=",
+                          "value": "admin"
+                        }
+                      ]
+                    });
+                    final response = await http.post(
+                      Uri.parse('https://onesignal.com/api/v1/notifications'),
+                      body: body,
+                      headers: {
+                        'Content-Type': "application/json",
+                        HttpHeaders.authorizationHeader: 'Basic YmU0YTUwODktOGIxZC00MTIwLTkyY2UtOWVkZTg1NTYyZWZj',
+                      },
+                    );
                   }
                 },
                 icon: Icon(

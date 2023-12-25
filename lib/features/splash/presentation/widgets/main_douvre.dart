@@ -176,7 +176,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                           final body = jsonEncode(<String, dynamic>{
                             'app_id': '19ca5fd9-1a46-413f-9209-d77a7d63dde0',
                             'contents': {
-                              "en": "English or Any Language Message"
+                              "en": "le rapport de la firme ${widget.user!.firm} à été modifier"
                             },
                             'filters': [
                               {

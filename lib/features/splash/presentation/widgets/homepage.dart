@@ -33,8 +33,10 @@ class _HomePageState extends State<HomePage> {
     final id = FirebaseAuth.instance.currentUser!.uid;
     final db = FirebaseFirestore.instance;
     db.collection("users").doc(id).get().then((value) async {
-      await OneSignal.login(id);
-      OneSignal.User.addTagWithKey("role", value.data()!["role"]);
+      if (Platform.isAndroid) {
+        await OneSignal.login(id);
+        OneSignal.User.addTagWithKey("role", value.data()!["role"]);
+      }
       setState(() {
         user = UserLocal(
           role: value.data()!["role"],

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bhyapp/features/splash/presentation/splash_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -32,36 +34,12 @@ class _AlbarakaState extends State<Albaraka> {
   Future<void> initPlatformState() async {
     if (!mounted) return;
 
-    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-
-    OneSignal.Debug.setAlertLevel(OSLogLevel.none);
-
-    OneSignal.initialize("19ca5fd9-1a46-413f-9209-d77a7d63dde0");
-
-
-    OneSignal.Notifications.clearAll();
-
-    OneSignal.User.pushSubscription.addObserver((state) {
-      print(OneSignal.User.pushSubscription.optedIn);
-      print(OneSignal.User.pushSubscription.id);
-      print(OneSignal.User.pushSubscription.token);
-      print(state.current.jsonRepresentation());
-    });
-    OneSignal.User.pushSubscription.optIn();
-    OneSignal.Notifications.addPermissionObserver((state) {
-      print("Has permission $state");
-    });
-
-    OneSignal.Notifications.addClickListener((event) {
-      print('NOTIFICATION CLICK LISTENER CALLED WITH EVENT: $event');
-    });
-
-    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
-      print(
-          'NOTIFICATION WILL DISPLAY LISTENER CALLED WITH: ${event.notification.jsonRepresentation()}');
-
-      event.notification.display();
-    });
+    if(Platform.isAndroid) {
+      OneSignal.initialize("19ca5fd9-1a46-413f-9209-d77a7d63dde0");
+      OneSignal.Notifications.clearAll();
+      OneSignal.User.pushSubscription.optIn();
+      await OneSignal.Notifications.requestPermission(true);
+    }
 
   }
 
