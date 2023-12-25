@@ -254,7 +254,7 @@ class _RequeteInfoState extends State<RequeteInfo> {
                         }
                       ]
                     });
-                    final response = await http.post(
+                    await http.post(
                       Uri.parse('https://onesignal.com/api/v1/notifications'),
                       body: body,
                       headers: {
@@ -400,7 +400,7 @@ class _CustomTileState extends State<CustomTile> {
                           }
                         ]
                       });
-                      final response = await http.post(
+                       await http.post(
                         Uri.parse('https://onesignal.com/api/v1/notifications'),
                         body: body,
                         headers: {

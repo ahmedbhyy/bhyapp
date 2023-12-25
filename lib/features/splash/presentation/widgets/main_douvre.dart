@@ -176,7 +176,8 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                           final body = jsonEncode(<String, dynamic>{
                             'app_id': '19ca5fd9-1a46-413f-9209-d77a7d63dde0',
                             'contents': {
-                              "en": "le rapport de la firme ${widget.user!.firm} à été modifier"
+                              "en":
+                                  "le rapport de la firme ${widget.user!.firm} à été modifier"
                             },
                             'filters': [
                               {
@@ -187,16 +188,16 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                               }
                             ]
                           });
-                          final response = await http.post(
-                            Uri.parse('https://onesignal.com/api/v1/notifications'),
+                          await http.post(
+                            Uri.parse(
+                                'https://onesignal.com/api/v1/notifications'),
                             body: body,
                             headers: {
                               'Content-Type': "application/json",
-                              HttpHeaders.authorizationHeader: 'Basic YmU0YTUwODktOGIxZC00MTIwLTkyY2UtOWVkZTg1NTYyZWZj',
+                              HttpHeaders.authorizationHeader:
+                                  'Basic YmU0YTUwODktOGIxZC00MTIwLTkyY2UtOWVkZTg1NTYyZWZj',
                             },
                           );
-                          print(response.body);
-                          print(body);
                         },
                         child: const Text('Enregistrer'),
                       ),

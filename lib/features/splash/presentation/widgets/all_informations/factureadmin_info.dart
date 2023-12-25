@@ -298,8 +298,7 @@ class _FactureAdminInfoState extends State<FactureAdminInfo> {
                 String des = _desc.text;
                 String tot = _total.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
-                  return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty )return;
 
                 final tmp = Facture(
                     date: _date,

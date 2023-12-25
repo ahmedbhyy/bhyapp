@@ -300,8 +300,7 @@ class _DevisInfoState extends State<DevisInfo> {
                 String des = _descridevisadmin.text;
                 String tot = _totaldevisadmin.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
-                  return;
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)return;
 
                 final tmp = Devi(
                     datedevis: _datedeviss,
