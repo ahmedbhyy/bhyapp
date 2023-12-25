@@ -105,9 +105,9 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
                     "${DateFormat('yyyy-MM-dd').format(voyage.date)} | ${voyage.diesel}L",
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(voyage.description,
-                      style:
-                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  title: Text('Description: ${voyage.description}',
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
                   trailing: IconButton(
                     icon: const Icon(
@@ -162,17 +162,29 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
     try {
       final db = FirebaseFirestore.instance;
       final ref = db.collection('ouvrier').doc(widget.id);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
       setState(() {
         voyages.removeAt(index);
         ref.update({
           "voyages": voyages.map((e) => {
-            "diesel": e.diesel,
-            "desc": e.description,
-            "date": e.date.toString()
-          })
+                "diesel": e.diesel,
+                "desc": e.description,
+                "date": e.date.toString()
+              })
         });
       });
-    } catch(e) {}
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   Widget _generateBottomSheet(BuildContext context) {

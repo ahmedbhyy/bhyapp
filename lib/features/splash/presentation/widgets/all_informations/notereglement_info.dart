@@ -198,11 +198,18 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
       final noteRef = db.collection('noteregle').doc(noteId);
 
       await noteRef.delete();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement")));
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
     }
   }
 

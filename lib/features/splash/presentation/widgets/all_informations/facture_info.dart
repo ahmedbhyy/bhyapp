@@ -210,7 +210,9 @@ class _FactureInfoState extends State<FactureInfo> {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement")));
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
     }
   }
 }

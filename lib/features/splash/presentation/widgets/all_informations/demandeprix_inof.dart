@@ -89,7 +89,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
                 labelText:
-                    "chercher une Demande par (Société:(${displaydemandeslList.length}))",
+                    "chercher une Demande par (Société (${displaydemandeslList.length}))",
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -118,7 +118,7 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
                     DateFormat('yyyy-MM-dd').format(demande.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(demande.nomsociete.toString(),
+                  title: Text('Société: ${demande.nomsociete.toString()}',
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
                   trailing: IconButton(
@@ -195,11 +195,18 @@ class _DemandePrixInfoState extends State<DemandePrixInfo> {
       final prixRef = db.collection('demandeprix').doc(prixId);
 
       await prixRef.delete();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement")));
+        content:
+            Text("une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
     }
   }
 

@@ -83,7 +83,8 @@ class _EngraisHomeState extends State<EngraisHome> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AllCommandes(user: widget.user!)));
+                        builder: (context) =>
+                            AllCommandes(user: widget.user!)));
               }),
           IconButton(
             icon: Badge(
@@ -280,7 +281,19 @@ class _EngraisHomeState extends State<EngraisHome> {
       final engraisRef = db.collection('engrais').doc(engraisId);
 
       await engraisRef.delete();
-    } finally {}
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   Widget bottomSheet(String filename) {

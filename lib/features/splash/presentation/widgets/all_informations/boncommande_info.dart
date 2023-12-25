@@ -197,11 +197,18 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
       final bonRef = db.collection('bons_commandes').doc(bonId);
 
       await bonRef.delete();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement")));
+        content:
+            Text("une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
     }
   }
 }

@@ -99,7 +99,7 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
                     DateFormat('yyyy-MM-dd').format(cong.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(cong.cause,
+                  title: Text('Cause et durée: ${cong.cause}',
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
@@ -156,6 +156,11 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
     try {
       final db = FirebaseFirestore.instance;
       final ref = db.collection('ouvrier').doc(widget.id);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
       setState(() {
         conges.removeAt(index);
         ref.update({
@@ -163,7 +168,14 @@ class _CongesOuvrierState extends State<CongesOuvrier> {
               conges.map((e) => {"cause": e.cause, "date": e.date.toString()})
         });
       });
-    } catch (e) {}
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   Widget _generateBottomSheet(BuildContext context) {

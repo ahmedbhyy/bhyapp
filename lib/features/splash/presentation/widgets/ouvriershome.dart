@@ -23,7 +23,6 @@ class _OuvrierHomeState extends State<OuvrierHome> {
     super.dispose();
   }
 
-
   List<Ouvriername> displayList = [];
   List<Ouvriername> originalList = [];
   List<String> firmes = [];
@@ -213,10 +212,18 @@ class _OuvrierHomeState extends State<OuvrierHome> {
       final ouvrierRef = db.collection('ouvrier').doc(ouvrierId);
 
       await ouvrierRef.delete();
-
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
     }
   }
 
@@ -240,27 +247,25 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                       labelText: 'Nom et Prénom',
                     ),
                   ),
-                  const SizedBox(height: 20,),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: DropdownButton<String>(
-                      value: selectedFirm,
-                      hint: const Text('Lieu de Travail'),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedFirm = newValue;
-                          ss(() {});
-                        });
-                      },
-                      items: firmes.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
+                  const SizedBox(
+                    height: 20,
                   ),
-
+                  DropdownButton<String>(
+                    value: selectedFirm,
+                    hint: const Text('Lieu de Travail'),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedFirm = newValue;
+                        ss(() {});
+                      });
+                    },
+                    items: firmes.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
                 ],
               ),
             ),
@@ -274,8 +279,8 @@ class _OuvrierHomeState extends State<OuvrierHome> {
                       if (newName.isNotEmpty) {
                         final db = FirebaseFirestore.instance;
                         final ouvrier = db.collection("ouvrier");
-                        ouvrier
-                            .add({'nom': newName, 'lieu': newlieu}).then((value) {
+                        ouvrier.add({'nom': newName, 'lieu': newlieu}).then(
+                            (value) {
                           Ouvriername newOuvrier = Ouvriername(
                               name: newName, lieu: newlieu, id: value.id);
                           setState(() {

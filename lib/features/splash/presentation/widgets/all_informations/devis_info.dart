@@ -197,11 +197,18 @@ class _DevisInfoState extends State<DevisInfo> {
       final devisRef = db.collection('devis').doc(devisId);
 
       await devisRef.delete();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement")));
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
     }
   }
 

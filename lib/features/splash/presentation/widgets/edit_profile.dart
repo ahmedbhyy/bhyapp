@@ -77,23 +77,20 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               enabled: false,
             ),
             const SizedBox(height: 30),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: DropdownButton<String>(
-                value: selectedFirm,
-                hint: const Text('Lieu de Travail'),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedFirm = newValue;
-                  });
-                },
-                items: firmes.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
+            DropdownButton<String>(
+              value: selectedFirm,
+              hint: const Text('Lieu de Travail'),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedFirm = newValue;
+                });
+              },
+              items: firmes.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 35, left: 8),
@@ -166,8 +163,10 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         _role.text = userData['role'] ?? '';
       }
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 
@@ -196,10 +195,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         if (!context.mounted) return;
         Navigator.pop(context, true);
       }
-
     } catch (e) {
-      if(!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("une erreur est survenue veuillez réessayer ultérieurement")));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement")));
     }
   }
 }

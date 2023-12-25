@@ -156,6 +156,11 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
     try {
       final db = FirebaseFirestore.instance;
       final ref = db.collection('ouvrier').doc(widget.id);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
       setState(() {
         primes.removeAt(index);
         ref.update({
@@ -163,7 +168,14 @@ class _OuvrierPrimeState extends State<OuvrierPrime> {
               .map((e) => {"montant": e.montant, "date": e.date.toString()})
         });
       });
-    } catch (e) {}
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   Widget _generateBottomSheet(BuildContext context) {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/boncommande_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonlivraison_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info.dart';
@@ -87,10 +89,23 @@ class _HomePageState extends State<HomePage> {
                 title: 'Factures',
                 child: FactureInfo(user: user),
               ),
-              CustomCard(
-                source: 'images/pic2.png',
-                title: 'Requêtes',
-                child: RequeteInfo(user: user),
+              Visibility(
+                visible: Platform.isAndroid,
+                child: Center(
+                  child: CustomCard(
+                    source: 'images/pic2.png',
+                    title: 'Requêtes',
+                    child: RequeteInfo(user: user),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: !Platform.isAndroid,
+                child: CustomCard(
+                  source: 'images/pic2.png',
+                  title: 'Requêtes',
+                  child: RequeteInfo(user: user),
+                ),
               ),
               Visibility(
                 visible: isVisible(),

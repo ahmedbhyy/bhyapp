@@ -72,6 +72,7 @@ class LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('email ou mot de passe invalide !'),
+            backgroundColor: Colors.red,
           ),
         );
       }

@@ -99,9 +99,9 @@ class _OuvrierDeplacementState extends State<OuvrierDeplacement> {
                     DateFormat('yyyy-MM-dd').format(cong.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(cong.description,
-                      style:
-                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  title: Text('Description: ${cong.description}',
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
                   trailing: IconButton(
                     icon: const Icon(
@@ -156,14 +156,26 @@ class _OuvrierDeplacementState extends State<OuvrierDeplacement> {
     try {
       final db = FirebaseFirestore.instance;
       final ref = db.collection('ouvrier').doc(widget.id);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
       setState(() {
         deps.removeAt(index);
         ref.update({
-          "deps": deps.map(
-                  (e) => {"desc": e.description, "date": e.date.toString()})
+          "deps": deps
+              .map((e) => {"desc": e.description, "date": e.date.toString()})
         });
       });
-    } catch(e) {}
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   Widget _generateBottomSheet(BuildContext context) {

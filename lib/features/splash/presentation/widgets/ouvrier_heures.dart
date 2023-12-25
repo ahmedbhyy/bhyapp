@@ -155,6 +155,11 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
     try {
       final db = FirebaseFirestore.instance;
       final ref = db.collection('ouvrier').doc(widget.id);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
       setState(() {
         supp.removeAt(index);
         ref.update({
@@ -162,7 +167,14 @@ class _OuvrierHeureState extends State<OuvrierHeure> {
               supp.map((e) => {"num": e.num, "date": e.date.toString()})
         });
       });
-    } catch (e) {}
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   Widget _generateBottomSheet(BuildContext context) {
