@@ -173,27 +173,31 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                             midiChargeFemme: double.parse(_chargefemme2.text),
                           );
                           widget.updateremotestate(tmp);
+                          final body = jsonEncode(<String, dynamic>{
+                            'app_id': '19ca5fd9-1a46-413f-9209-d77a7d63dde0',
+                            'contents': {
+                              "en": "English or Any Language Message",
+                              "es": "Spanish Message"
+                            },
+                            'filters': [
+                              {
+                                "field": "tag",
+                                "key": "role",
+                                "relation": "=",
+                                "value": "admin"
+                              }
+                            ]
+                          });
                           final response = await http.post(
-                            Uri.parse('https://jsonplaceholder.typicode.com/albums/1'),
-                            body: jsonEncode(<String, dynamic>{
-                              'app_id': '19ca5fd9-1a46-413f-9209-d77a7d63dde0',
-                              'contents': {
-                                  "en": "English or Any Language Message",
-                                  "es": "Spanish Message"
-                                  },
-                              'filters': [
-                                  {
-                                      "field": "tag",
-                                      "key": "role",
-                                      "relation": "=",
-                                      "value": "admin"
-                                  }
-                              ]
-                            }),
+                            Uri.parse('https://onesignal.com/api/v1/notifications'),
+                            body: body,
                             headers: {
+                              'Content-Type': "application/json",
                               HttpHeaders.authorizationHeader: 'Basic YmU0YTUwODktOGIxZC00MTIwLTkyY2UtOWVkZTg1NTYyZWZj',
                             },
                           );
+                          print(response.body);
+                          print(body);
                         },
                         child: const Text('Enregistrer'),
                       ),
