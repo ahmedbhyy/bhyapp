@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Maindoeuvre extends StatefulWidget {
   final Oeuvre oeuvre;
@@ -157,7 +161,7 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                 child: widget.user!.role == "admin"
                     ? null
                     : ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Oeuvre tmp = Oeuvre(
                             matinHomme: int.parse(_nombrehomme.text),
                             matinFemme: int.parse(_nombrefemme.text),
@@ -169,6 +173,27 @@ class _MaindoeuvreState extends State<Maindoeuvre> {
                             midiChargeFemme: double.parse(_chargefemme2.text),
                           );
                           widget.updateremotestate(tmp);
+                          final response = await http.post(
+                            Uri.parse('https://jsonplaceholder.typicode.com/albums/1'),
+                            body: jsonEncode(<String, String>{
+                              'app_id': '19ca5fd9-1a46-413f-9209-d77a7d63dde0',
+                              'contents': """{
+                                  "en": "English or Any Language Message",
+                                  "es": "Spanish Message"
+                                  }""",
+                              'filters': """[
+                                  {
+                                      "field": "tag",
+                                      "key": "role",
+                                      "relation": "=",
+                                      "value": "admin"
+                                  }
+                              ]"""
+                            }),
+                            headers: {
+                              HttpHeaders.authorizationHeader: 'Basic YmU0YTUwODktOGIxZC00MTIwLTkyY2UtOWVkZTg1NTYyZWZj',
+                            },
+                          );
                         },
                         child: const Text('Enregistrer'),
                       ),

@@ -16,6 +16,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/ouvriershome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -32,6 +33,7 @@ class _HomePageState extends State<HomePage> {
     final id = FirebaseAuth.instance.currentUser!.uid;
     final db = FirebaseFirestore.instance;
     db.collection("users").doc(id).get().then((value) {
+      OneSignal.User.addTagWithKey("role", value.data()!["role"]);
       setState(() {
         user = UserLocal(
           role: value.data()!["role"],

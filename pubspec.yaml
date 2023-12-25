@@ -44,6 +44,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   date_format_field: ^0.0.4
   cached_network_image: ^3.3.0
+  onesignal_flutter: ^5.0.4
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to
