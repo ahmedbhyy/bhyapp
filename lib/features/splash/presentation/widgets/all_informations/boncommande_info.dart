@@ -30,6 +30,10 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final displays = displayList
+        .where((element) =>
+        element.beneficiaire.contains(search.text))
+        .toList();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -77,7 +81,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
               decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
-                  labelText: "chercher un Bon par (nom de société)",
+                  labelText: "chercher un Bon par (nom de société (${displays.length}))",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -98,18 +102,11 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
             child: Padding(
               padding: const EdgeInsets.all(7.0),
               child: ListView.separated(
-                  itemCount: displayList
-                      .where((element) =>
-                          element.beneficiaire.contains(search.text))
-                      .toList()
+                  itemCount: displays
                       .length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
-                    final list = displayList
-                        .where((element) =>
-                            element.beneficiaire.contains(search.text))
-                        .toList();
-                    final bon = list[index];
+                    final bon = displays[index];
                     return ListTile(
                       leading: Icon(
                         Icons.description,
