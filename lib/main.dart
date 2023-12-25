@@ -48,7 +48,6 @@ class _AlbarakaState extends State<Albaraka> {
       print(state.current.jsonRepresentation());
     });
     OneSignal.User.pushSubscription.optIn();
-    OneSignal.login("12");
     OneSignal.Notifications.addPermissionObserver((state) {
       print("Has permission $state");
     });
