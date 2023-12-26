@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:bhyapp/apis/invoice.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -134,8 +134,15 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                               Icons.picture_as_pdf,
                               color: Colors.green,
                             ),
-                            onPressed: () {
-                              //TODO : pdf
+                            onPressed: () async {
+                              PdfApi.openFile(await InvoicApi.generateBonSortie(
+                                  items: bon.items,
+                                  address: bon.destination,
+                                  client: bon.beneficiaire,
+                                  date: bon.date,
+                                  num: bon.num,
+                                  title: "Bon de Sortie"
+                              ));
                             },
                           ),
                           IconButton(
@@ -442,11 +449,18 @@ class ItemAdder extends StatefulWidget {
 class _ItemAdderState extends State<ItemAdder> {
   final _designation = TextEditingController();
   final _quantite = TextEditingController();
+  final _tva = TextEditingController();
+  final _poids = TextEditingController();
+  final _unit = TextEditingController();
+
 
   @override
   void initState() {
     if (widget.item != null) {
       _designation.text = widget.item!["des"];
+      _tva.text = (widget.item!['tva']*100).toString();
+      _unit.text = (widget.item!['unit']).toString();
+      _poids.text = (widget.item!['poids']).toString();
       _quantite.text = widget.item!["quantite"].toString();
     }
     super.initState();
@@ -455,10 +469,10 @@ class _ItemAdderState extends State<ItemAdder> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Padding(
         padding: const EdgeInsets.all(40),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
               children: [
@@ -477,6 +491,48 @@ class _ItemAdderState extends State<ItemAdder> {
                 ),
                 TextField(
                   onSubmitted: (val) {},
+                  controller: _tva,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("%TVA"),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  onSubmitted: (val) {},
+                  controller: _unit,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("unité"),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  onSubmitted: (val) {},
+                  controller: _poids,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("Poids"),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  onSubmitted: (val) {},
                   controller: _quantite,
                   maxLines: null,
                   keyboardType: TextInputType.number,
@@ -486,7 +542,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   ),
                 ),
                 const SizedBox(
-                  height: 150,
+                  height: 15,
                 ),
               ],
             ),
@@ -494,7 +550,10 @@ class _ItemAdderState extends State<ItemAdder> {
                 onPressed: () {
                   final tmp = ({
                     "des": _designation.text,
-                    "quantite": int.parse(_quantite.text)
+                    "quantite": int.parse(_quantite.text),
+                    "tva": double.parse(_tva.text)/100,
+                    "unit": double.parse(_unit.text),
+                    "poids": double.parse(_poids.text),
                   });
                   Navigator.pop(context, tmp);
                 },
