@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 
 class FactureInfo extends StatefulWidget {
   final UserLocal? user;
-  const FactureInfo({super.key, this.user});
+  final bool? admin;
+  const FactureInfo({super.key, this.user, this.admin});
 
   @override
   State<FactureInfo> createState() => _FactureInfoState();
@@ -20,9 +21,16 @@ class _FactureInfoState extends State<FactureInfo> {
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-    final factures = db.collection("factures");
+    Query<Map<String, dynamic>> factures = db.collection("factures");
     final firm = widget.user!.firm;
-    factures.where("firm", isEqualTo: firm).get().then((qsnap) {
+    if (widget.admin != null) {
+      factures = db.collection("adminfacture");
+    } else {
+      if (widget.user!.role != "admin") {
+        factures = factures.where("firm", isEqualTo: firm);
+      }
+    }
+    factures.get().then((qsnap) {
       setState(() {
         displayList = qsnap.docs.map((e) => Facture.fromMap(e)).toList();
         _isLoading = false;
@@ -39,9 +47,9 @@ class _FactureInfoState extends State<FactureInfo> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
-          "Les Factures",
-          style: TextStyle(
+        title: Text(
+          "Les Factures ${widget.admin != null ? 'administratives' : ''}",
+          style: const TextStyle(
             fontSize: 15.5,
             fontWeight: FontWeight.bold,
             fontFamily: 'Michroma',
@@ -63,7 +71,9 @@ class _FactureInfoState extends State<FactureInfo> {
                           )));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
-                final factures = db.collection("factures");
+                final factures = widget.admin == null
+                    ? db.collection("factures")
+                    : db.collection("adminfacture");
                 factures.doc(res.num).set(res.toMap(), SetOptions(merge: true));
                 setState(() {
                   displayList.add(res);
@@ -119,7 +129,7 @@ class _FactureInfoState extends State<FactureInfo> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFirme: ${facture.firm}",
+                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFerme: ${facture.firm}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -200,8 +210,9 @@ class _FactureInfoState extends State<FactureInfo> {
                         }));
                         final db = FirebaseFirestore.instance;
                         if (facttmp == null) return;
-                        db
-                            .collection("factures")
+                        (widget.admin == null
+                                ? db.collection("factures")
+                                : db.collection("adminfacture"))
                             .doc(facture.num)
                             .set(facttmp.toMap(), SetOptions(merge: true));
                         setState(() {
@@ -220,7 +231,10 @@ class _FactureInfoState extends State<FactureInfo> {
   Future<void> deletefacture(String facId) async {
     try {
       final db = FirebaseFirestore.instance;
-      final facRef = db.collection('factures').doc(facId);
+      final facRef = (widget.admin == null
+              ? db.collection('factures')
+              : db.collection("adminfacture"))
+          .doc(facId);
 
       await facRef.delete();
       if (!context.mounted) return;

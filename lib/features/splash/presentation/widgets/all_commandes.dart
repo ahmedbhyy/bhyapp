@@ -82,7 +82,7 @@ class _AllCommandesState extends State<AllCommandes> {
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
                   subtitle: Text(
-                    "total de la commande: ${panier.fold(.0, (previousValue, element) => previousValue + element.priv * element.quantity)} DT\nfirme: ${com["firm"]}",
+                    "total de la commande: ${panier.fold(.0, (previousValue, element) => previousValue + element.priv * element.quantity)} DT\nferme: ${com["firm"]}",
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(DateFormat('yyyy-MM-dd').format(com["date"]),

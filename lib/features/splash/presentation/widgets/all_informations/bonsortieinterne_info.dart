@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:bhyapp/apis/invoice.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,9 +20,12 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-    final bons = db.collection("bons");
+    Query<Map<String, dynamic>> bons = db.collection("bons");
     final firm = widget.user!.firm;
-    bons.where("firm", isEqualTo: firm).get().then((qsnap) {
+    if (widget.user!.role != "admin") {
+      bons = bons.where("firm", isEqualTo: firm);
+    }
+    bons.get().then((qsnap) {
       setState(() {
         displayList = qsnap.docs.map((e) => Bon.fromMap(e)).toList();
         _isLoading = false;
@@ -63,7 +67,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final bons = db.collection("bons");
-                bons.doc(res.num).set(res.toMap(), SetOptions(merge: true));
+                bons.doc(res.id).set(res.toMap(), SetOptions(merge: true));
                 setState(() {
                   displayList.add(res);
                 });
@@ -175,7 +179,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                                     TextButton(
                                       onPressed: () async {
                                         Navigator.pop(context);
-                                        await deletebon(displayList[index].num);
+                                        await deletebon(displayList[index].id);
                                         setState(() {
                                           displayList.removeAt(index);
                                         });
@@ -400,6 +404,8 @@ class _AjoutBonState extends State<AjoutBon> {
                     }
                     final firm = widget.user.firm;
                     final bon = Bon(
+                      id: _numerodubon.text +
+                          Random().nextInt(10000000).toString(),
                       items: items,
                       beneficiaire: _beneficiaire.text,
                       destination: _destination.text,
@@ -566,6 +572,7 @@ class _ItemAdderState extends State<ItemAdder> {
 }
 
 class Bon {
+  final String id;
   final String num;
   final String beneficiaire;
   final String destination;
@@ -575,6 +582,7 @@ class Bon {
   Bon(
       {required this.date,
       required this.num,
+      required this.id,
       required this.beneficiaire,
       required this.destination,
       required this.items,
@@ -587,12 +595,14 @@ class Bon {
       "firm": firm,
       "items": items,
       "date": date.toString(),
+      "num": num,
     };
   }
 
   static Bon fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Bon(
-      num: e.id,
+      id: e.id,
+      num: e['num'],
       firm: e['firm'],
       beneficiaire: e["beneficiaire"],
       destination: e['destination'],

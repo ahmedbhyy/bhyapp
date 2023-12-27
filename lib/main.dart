@@ -24,7 +24,6 @@ class Albaraka extends StatefulWidget {
 }
 
 class _AlbarakaState extends State<Albaraka> {
-
   @override
   void initState() {
     super.initState();
@@ -34,13 +33,12 @@ class _AlbarakaState extends State<Albaraka> {
   Future<void> initPlatformState() async {
     if (!mounted) return;
 
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       OneSignal.initialize("19ca5fd9-1a46-413f-9209-d77a7d63dde0");
       OneSignal.Notifications.clearAll();
       OneSignal.User.pushSubscription.optIn();
       await OneSignal.Notifications.requestPermission(true);
     }
-
   }
 
   @override

@@ -49,7 +49,8 @@ class _TousCommandesState extends State<TousCommandes> {
           return ListTile(
             leading: const Icon(Icons.shopping_cart_outlined, size: 70),
             title: Text("commandes ${index + 1}"),
-            subtitle: Text('${DateFormat('yyyy-MM-dd').format(now)}\n${commandes[index]["desc"]}\n${commandes[index]["prix"]}\n${commandes[index]["quant"]}'),
+            subtitle: Text(
+                '${DateFormat('yyyy-MM-dd').format(now)}\n${commandes[index]["desc"]}\n${commandes[index]["prix"]}\n${commandes[index]["quant"]}'),
           );
         },
         itemCount: commandes.length,

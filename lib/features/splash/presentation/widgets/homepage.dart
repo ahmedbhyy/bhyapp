@@ -131,10 +131,13 @@ class _HomePageState extends State<HomePage> {
               ),
               Visibility(
                 visible: isVisible(),
-                child: const CustomCard(
+                child: CustomCard(
                   source: 'images/factureadmin.jpg',
                   title: 'Facture Administrative',
-                  child: FactureAdminInfo(),
+                  child: FactureInfo(
+                    admin: true,
+                    user: user,
+                  ),
                 ),
               ),
               Visibility(

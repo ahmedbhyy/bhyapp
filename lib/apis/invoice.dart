@@ -114,7 +114,7 @@ class InvoicApi {
         Align(
             alignment: Alignment.bottomRight,
             child: Text(
-                "Total HT:$totalhc DT\n\nTotal Tva: ......\n\nTimbre Fiscale:0,6 DT\n\nTotal TTC:${totalhc + 0.6} DT"))
+                "Total HT:\t$totalhc DT\n\nTotal Tva:\t......\n\nTimbre Fiscale:\t0,6 DT\n\nTotal TTC:\t${totalhc + 0.6} DT"))
       ],
       //footer: (context) => buildFooter(invoice),
     ));

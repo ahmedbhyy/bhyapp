@@ -180,8 +180,8 @@ class _OuvrierVoyageDieselState extends State<OuvrierVoyageDiesel> {
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement"),
+        content:
+            Text("une erreur est survenue veuillez réessayer ultérieurement"),
         backgroundColor: Colors.red,
       ));
     }
