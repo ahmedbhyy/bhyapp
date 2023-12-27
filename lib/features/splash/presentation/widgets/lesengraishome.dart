@@ -214,13 +214,13 @@ class _EngraisHomeState extends State<EngraisHome> {
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text(
-                                'Confirm Delete',
+                                'Confirmer la Suppression',
                                 style: TextStyle(
                                   color: Colors.red,
                                 ),
                               ),
                               content: const Text(
-                                'Are you sure you want to delete this item?',
+                                'Vous êtes sûr ?',
                                 style: TextStyle(
                                   fontSize: 17,
                                 ),
@@ -240,7 +240,7 @@ class _EngraisHomeState extends State<EngraisHome> {
                                       displayList.removeAt(index);
                                     });
                                   },
-                                  child: const Text('Delete'),
+                                  child: const Text('Supprimer'),
                                 ),
                               ],
                             ),
@@ -289,8 +289,8 @@ class _EngraisHomeState extends State<EngraisHome> {
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement"),
+        content:
+            Text("une erreur est survenue veuillez réessayer ultérieurement"),
         backgroundColor: Colors.red,
       ));
     }

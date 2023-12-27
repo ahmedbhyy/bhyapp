@@ -7,90 +7,174 @@ import 'package:pdf/pdf.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'dart:io';
 
-
 class Utils {
   static formatPrice(double price) => '${price.toStringAsFixed(2)}TND';
-  static formatDate(DateTime date) =>  DateFormat.yMMMMd('fr_FR').format(date);
+  static formatDate(DateTime date) => DateFormat.yMMMMd('fr_FR').format(date);
 }
 
 class InvoicApi {
-
-  static Future<File> generateBonSortie({required List<Map<String, dynamic>> items, required DateTime date, required String num, required String title, required String client, required String address}) async {
+  static Future<File> generateBonSortie(
+      {required List<Map<String, dynamic>> items,
+      required DateTime date,
+      required String num,
+      required String title,
+      required String client,
+      required String address}) async {
     await initializeDateFormatting();
     final pdf = Document();
-    final header = await buildHeader(title: "Bon de Sortie", num: num, date:date);
+    final header = await buildHeader(title: title, num: num, date: date);
     pdf.addPage(MultiPage(
-     pageFormat: pw.PdfPageFormat.a4,
+      pageFormat: pw.PdfPageFormat.a4,
       build: (context) => [
         header,
         SizedBox(height: 15 * pw.PdfPageFormat.mm),
-        Text("Client: $client\nAdresse: ${address}  Tel: ..........................\nM.F: .......................................\nNombre de produits: ${items.length}", style: TextStyle(lineSpacing: 1.6 * pw.PdfPageFormat.mm)),
-        SizedBox(height: 9*pw.PdfPageFormat.mm,),
+        Text(
+            "Client: $client\nAdresse: $address  Tel: ..........................\nM.F: .......................................\nNombre de produits: ${items.length}",
+            style: const TextStyle(lineSpacing: 1.6 * pw.PdfPageFormat.mm)),
+        SizedBox(
+          height: 9 * pw.PdfPageFormat.mm,
+        ),
         //table Code
         buildInvoiceBon(items),
         Divider(),
         Align(
-          child: Text("Poids Total: ${items.fold(0.0, (prev, next) => prev + next["poids"]*next['quantite'])}"),
-          alignment: AlignmentDirectional.bottomEnd
-        ),
-
-
+            child: Text(
+                "Poids Total: ${items.fold(0.0, (prev, next) => prev + next["poids"] * next['quantite'])}"),
+            alignment: AlignmentDirectional.bottomEnd),
       ],
       //footer: (context) => buildFooter(invoice),
-
     ));
 
     return PdfApi.saveDocument(name: 'my_invoice.pdf', pdf: pdf);
   }
 
-  static Future<Widget> buildHeader({required String title, required String num, required DateTime date})  async{
-    final memoryImage = MemoryImage((await rootBundle.load("images/print.png")).buffer.asUint8List()); 
-
-  return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(height: 2.5 * pw.PdfPageFormat.cm, child: Image(memoryImage),),
-              Text("Adresse: 020, Ibn Battouta, Rades 2040\nTel: (+216) 79 490 323\nMF: 0987104/Q", style:  const TextStyle(
-              lineSpacing: 1.6 * pw.PdfPageFormat.mm
-              )),
-          ]
+  static Future<File> generateBonlivraison(
+      {required List<Map<String, dynamic>> items,
+      required DateTime date,
+      required String num,
+      required String title,
+      required String client,
+      required String address}) async {
+    await initializeDateFormatting();
+    final pdf = Document();
+    final header = await buildHeader(title: title, num: num, date: date);
+    pdf.addPage(MultiPage(
+      pageFormat: pw.PdfPageFormat.a4,
+      build: (context) => [
+        header,
+        SizedBox(height: 15 * pw.PdfPageFormat.mm),
+        Text(
+            "Client: $client\nAdresse: $address  Tel: ..........................\nM.F: .......................................\nNombre de produits: ${items.length}",
+            style: const TextStyle(lineSpacing: 1.6 * pw.PdfPageFormat.mm)),
+        SizedBox(
+          height: 9 * pw.PdfPageFormat.mm,
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-          SizedBox(height: .3 * pw.PdfPageFormat.cm),
-          Text(title, style:  TextStyle(fontSize: 13 * pw.PdfPageFormat.mm, fontWeight: FontWeight.bold)),
-          SizedBox(height: .7 * pw.PdfPageFormat.cm),
-          Text(" N°: $num\n Date: le ${Utils.formatDate(date)}", style: TextStyle(lineSpacing: 4.9 * pw.PdfPageFormat.mm)),
-        ])
-      ]
-  );
+        //table Code
+        buildInvoiceBon(items),
+        Divider(),
+        Align(
+            child: Text(
+                "Poids Total: ${items.fold(0.0, (prev, next) => prev + next["poids"] * next['quantite'])}"),
+            alignment: AlignmentDirectional.bottomEnd),
+      ],
+      //footer: (context) => buildFooter(invoice),
+    ));
+
+    return PdfApi.saveDocument(name: 'my_invoice.pdf', pdf: pdf);
+  }
+
+  static Future<File> generateFacture(
+      {required List<Map<String, dynamic>> items,
+      required DateTime date,
+      required String num,
+      required String title,
+      required String client,
+      required String address}) async {
+    await initializeDateFormatting();
+    final totalhc = items.fold(
+        0.0,
+        (previousValue, element) =>
+            previousValue + element['quantite'] * element['montant']);
+    final pdf = Document();
+    final header = await buildHeader(title: title, num: num, date: date);
+    pdf.addPage(MultiPage(
+      pageFormat: pw.PdfPageFormat.a4,
+      build: (context) => [
+        header,
+        SizedBox(height: 15 * pw.PdfPageFormat.mm),
+        Text(
+            "Client: $client\nAdresse: $address  Tel: ..........................\nM.F: .......................................\nNombre de produits: ${items.length}",
+            style: const TextStyle(lineSpacing: 1.6 * pw.PdfPageFormat.mm)),
+        SizedBox(
+          height: 9 * pw.PdfPageFormat.mm,
+        ),
+        //table Code
+        buildFacture(items),
+        Divider(),
+        Align(
+            alignment: Alignment.bottomRight,
+            child: Text(
+                "Total HT:$totalhc DT\n\nTotal Tva: ......\n\nTimbre Fiscale:0,6 DT\n\nTotal TTC:${totalhc + 0.6} DT"))
+      ],
+      //footer: (context) => buildFooter(invoice),
+    ));
+
+    return PdfApi.saveDocument(name: 'my_invoice.pdf', pdf: pdf);
+  }
+
+  static Future<Widget> buildHeader(
+      {required String title,
+      required String num,
+      required DateTime date}) async {
+    final memoryImage = MemoryImage(
+        (await rootBundle.load("images/print.png")).buffer.asUint8List());
+
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(
+              height: 2.5 * pw.PdfPageFormat.cm,
+              child: Image(memoryImage),
+            ),
+            Text(
+                "Adresse: 020, Ibn Battouta, Rades 2040\nTel: (+216) 79 490 323\nMF: 0987104/Q",
+                style: const TextStyle(lineSpacing: 1.6 * pw.PdfPageFormat.mm)),
+          ]),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            SizedBox(height: .3 * pw.PdfPageFormat.cm),
+            Text(title,
+                style: TextStyle(
+                    fontSize: 13 * pw.PdfPageFormat.mm,
+                    fontWeight: FontWeight.bold)),
+            SizedBox(height: .7 * pw.PdfPageFormat.cm),
+            Text(" N°: $num\n Date: le ${Utils.formatDate(date)}",
+                style: const TextStyle(lineSpacing: 4.9 * pw.PdfPageFormat.mm)),
+          ])
+        ]);
   }
 
   static Widget buildInvoiceBon(List<Map<String, dynamic>> items) {
-    final headers = [
-      'Code',
-      'Description',
-      'Qté',
-      'Unité',
-      'Poids',
-      '%TVA'
-    ];
+    final headers = ['Code', 'Description', 'Qté', 'Unité', 'Poids', '%TVA'];
 
     return Table.fromTextArray(
       headers: headers,
-      data: items.map((e) => ["", e["des"], e["quantite"], e["unit"], e["poids"], e["tva"] * 100]).toList(),
+      data: items
+          .map((e) => [
+                "",
+                e["des"],
+                e["quantite"],
+                e["unit"],
+                e["poids"],
+                e["tva"] * 100
+              ])
+          .toList(),
       border: null,
       headerStyle: TextStyle(fontWeight: FontWeight.bold),
       headerDecoration: const BoxDecoration(color: pw.PdfColors.grey300),
       cellHeight: 30,
-      columnWidths: {
-        0:  const FixedColumnWidth(1.1 * pw.PdfPageFormat.cm)
-      },
+      columnWidths: {0: const FixedColumnWidth(1.1 * pw.PdfPageFormat.cm)},
       cellAlignments: {
         0: Alignment.centerLeft,
         1: Alignment.centerRight,
@@ -102,40 +186,83 @@ class InvoicApi {
     );
   }
 
-  static buildSimpleText({
-    required String title,
-    required String value,
-  }) {
-    final style = TextStyle(fontWeight: FontWeight.bold);
+  static Widget buildInvoiceliv(List<Map<String, dynamic>> items) {
+    final headers = [
+      'Code',
+      'Description',
+      'Qté',
+      'Unité',
+      'P.U.H.T',
+      '%TVA',
+      'Prix Total'
+    ];
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(title, style: style),
-        SizedBox(width: 2 * pw.PdfPageFormat.mm),
-        Text(value),
-      ],
+    return Table.fromTextArray(
+      headers: headers,
+      data: items
+          .map((e) => [
+                "",
+                e["des"],
+                e["quantite"],
+                e["unit"],
+                e["poids"],
+                e["tva"] * 100
+              ])
+          .toList(),
+      border: null,
+      headerStyle: TextStyle(fontWeight: FontWeight.bold),
+      headerDecoration: const BoxDecoration(color: pw.PdfColors.grey300),
+      cellHeight: 30,
+      columnWidths: {0: const FixedColumnWidth(1.1 * pw.PdfPageFormat.cm)},
+      cellAlignments: {
+        0: Alignment.centerLeft,
+        1: Alignment.centerRight,
+        2: Alignment.centerRight,
+        3: Alignment.centerRight,
+        4: Alignment.centerRight,
+        5: Alignment.centerRight,
+      },
     );
   }
 
-  static buildText({
-    required String title,
-    required String value,
-    double width = double.infinity,
-    TextStyle? titleStyle,
-    bool unite = false,
-  }) {
-    final style = titleStyle ?? TextStyle(fontWeight: FontWeight.bold);
+  static Widget buildFacture(List<Map<String, dynamic>> items) {
+    final headers = [
+      'Code',
+      'Description',
+      'Qté',
+      'Unité',
+      'P.U.H.T',
+      '%TVA',
+      'Prix Total'
+    ];
 
-    return Container(
-      width: width,
-      child: Row(
-        children: [
-          Expanded(child: Text(title, style: style)),
-          Text(value, style: unite ? style : null),
-        ],
-      ),
+    return Table.fromTextArray(
+      headers: headers,
+      data: items
+          .map((e) => [
+                "",
+                e["des"],
+                e["quantite"],
+                e["montant"],
+                "",
+                "",
+                e["montant"] * e["quantite"],
+              ])
+          .toList(),
+      border: null,
+      headerStyle: TextStyle(fontWeight: FontWeight.bold),
+      headerDecoration: const BoxDecoration(color: pw.PdfColors.grey300),
+      cellHeight: 30,
+      columnWidths: {0: const FixedColumnWidth(1.8 * pw.PdfPageFormat.cm)},
+      cellAlignments: {
+        0: Alignment.centerLeft,
+        1: Alignment.centerRight,
+        2: Alignment.centerRight,
+        3: Alignment.centerRight,
+        4: Alignment.centerRight,
+        5: Alignment.centerRight,
+        6: Alignment.centerRight,
+      },
     );
   }
 }
@@ -157,7 +284,7 @@ class PdfApi {
 
   static Future openFile(File file) async {
     final url = file.path;
-  print(url);
+    print(url);
     await OpenFilex.open(url);
   }
 }

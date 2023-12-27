@@ -31,8 +31,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
   @override
   Widget build(BuildContext context) {
     final displays = displayList
-        .where((element) =>
-        element.beneficiaire.contains(search.text))
+        .where((element) => element.beneficiaire.contains(search.text))
         .toList();
     return Scaffold(
       appBar: AppBar(
@@ -81,7 +80,8 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
               decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
-                  labelText: "chercher un Bon par (nom de société (${displays.length}))",
+                  labelText:
+                      "chercher un Bon par (nom de société (${displays.length}))",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -102,8 +102,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
             child: Padding(
               padding: const EdgeInsets.all(7.0),
               child: ListView.separated(
-                  itemCount: displays
-                      .length,
+                  itemCount: displays.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
                     final bon = displays[index];
@@ -143,13 +142,13 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: const Text(
-                                    'Confirm Delete',
+                                    'Confirmer la Suppression',
                                     style: TextStyle(
                                       color: Colors.red,
                                     ),
                                   ),
                                   content: const Text(
-                                    'Are you sure you want to delete this item?',
+                                    'Vous êtes sûr ?',
                                     style: TextStyle(
                                       fontSize: 17,
                                     ),
@@ -169,7 +168,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                                           displayList.removeAt(index);
                                         });
                                       },
-                                      child: const Text('Delete'),
+                                      child: const Text('Supprimer'),
                                     ),
                                   ],
                                 ),

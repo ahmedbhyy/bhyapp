@@ -145,13 +145,13 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text(
-                                'Confirm Delete',
+                                'Confirmer la Suppression',
                                 style: TextStyle(
                                   color: Colors.red,
                                 ),
                               ),
                               content: const Text(
-                                'Are you sure you want to delete this item?',
+                                'Vous êtes sûr ?',
                                 style: TextStyle(
                                   fontSize: 17,
                                 ),
@@ -172,7 +172,7 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                                       updateList('');
                                     });
                                   },
-                                  child: const Text('Delete'),
+                                  child: const Text('Supprimer'),
                                 ),
                               ],
                             ),
@@ -317,7 +317,8 @@ class _BonLivraisonInfoState extends State<BonLivraisonInfo> {
                 String des = _descrip.text;
                 String tot = _total.text;
 
-                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)return;               
+                if (tot.isEmpty || des.isEmpty || num.isEmpty || nom.isEmpty)
+                  return;
 
                 final tmp = Bon(
                   dateliv: _datebonliv,

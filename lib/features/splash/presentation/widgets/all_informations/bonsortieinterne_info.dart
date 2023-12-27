@@ -141,8 +141,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                                   client: bon.beneficiaire,
                                   date: bon.date,
                                   num: bon.num,
-                                  title: "Bon de Sortie"
-                              ));
+                                  title: "Bon de Sortie"));
                             },
                           ),
                           IconButton(
@@ -155,13 +154,13 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: const Text(
-                                    'Confirm Delete',
+                                    'Confirmer la Suppression',
                                     style: TextStyle(
                                       color: Colors.red,
                                     ),
                                   ),
                                   content: const Text(
-                                    'Are you sure you want to delete this item?',
+                                    'Vous êtes sûr ?',
                                     style: TextStyle(
                                       fontSize: 17,
                                     ),
@@ -181,7 +180,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                                           displayList.removeAt(index);
                                         });
                                       },
-                                      child: const Text('Delete'),
+                                      child: const Text('Supprimer'),
                                     ),
                                   ],
                                 ),
@@ -449,16 +448,15 @@ class ItemAdder extends StatefulWidget {
 class _ItemAdderState extends State<ItemAdder> {
   final _designation = TextEditingController();
   final _quantite = TextEditingController();
-  final _tva = TextEditingController();
+  final _tva = TextEditingController(text: "19");
   final _poids = TextEditingController();
   final _unit = TextEditingController();
-
 
   @override
   void initState() {
     if (widget.item != null) {
       _designation.text = widget.item!["des"];
-      _tva.text = (widget.item!['tva']*100).toString();
+      _tva.text = (widget.item!['tva'] * 100).toString();
       _unit.text = (widget.item!['unit']).toString();
       _poids.text = (widget.item!['poids']).toString();
       _quantite.text = widget.item!["quantite"].toString();
@@ -469,7 +467,8 @@ class _ItemAdderState extends State<ItemAdder> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Padding(
         padding: const EdgeInsets.all(40),
         child: Column(
@@ -551,7 +550,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   final tmp = ({
                     "des": _designation.text,
                     "quantite": int.parse(_quantite.text),
-                    "tva": double.parse(_tva.text)/100,
+                    "tva": double.parse(_tva.text) / 100,
                     "unit": double.parse(_unit.text),
                     "poids": double.parse(_poids.text),
                   });

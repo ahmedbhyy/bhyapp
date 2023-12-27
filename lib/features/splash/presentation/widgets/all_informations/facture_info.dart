@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bhyapp/apis/invoice.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -133,8 +134,14 @@ class _FactureInfoState extends State<FactureInfo> {
                               Icons.picture_as_pdf,
                               color: Colors.green,
                             ),
-                            onPressed: () {
-                              //TODO : pdf
+                            onPressed: () async {
+                              PdfApi.openFile(await InvoicApi.generateFacture(
+                                  items: facture.items,
+                                  address: facture.nomsoc,
+                                  client: facture.nomsoc,
+                                  date: facture.date,
+                                  num: facture.num,
+                                  title: "Facture"));
                             },
                           ),
                           IconButton(
@@ -147,13 +154,13 @@ class _FactureInfoState extends State<FactureInfo> {
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: const Text(
-                                    'Confirm Delete',
+                                    'Confirmer la Suppression',
                                     style: TextStyle(
                                       color: Colors.red,
                                     ),
                                   ),
                                   content: const Text(
-                                    'Are you sure you want to delete this item?',
+                                    'Vous êtes sûr ?',
                                     style: TextStyle(
                                       fontSize: 17,
                                     ),
@@ -168,12 +175,13 @@ class _FactureInfoState extends State<FactureInfo> {
                                     TextButton(
                                       onPressed: () async {
                                         Navigator.pop(context);
-                                        await deletefacture(displayList[index].num);
+                                        await deletefacture(
+                                            displayList[index].num);
                                         setState(() {
                                           displayList.removeAt(index);
                                         });
                                       },
-                                      child: const Text('Delete'),
+                                      child: const Text('Supprimer'),
                                     ),
                                   ],
                                 ),
@@ -223,8 +231,8 @@ class _FactureInfoState extends State<FactureInfo> {
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "une erreur est survenue veuillez réessayer ultérieurement"),
+        content:
+            Text("une erreur est survenue veuillez réessayer ultérieurement"),
         backgroundColor: Colors.red,
       ));
     }
@@ -505,7 +513,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   height: 20,
                 ),
                 TextField(
-                  onSubmitted: (val) {},
+                  onSubmitted: (a) => onclick(),
                   controller: _montant,
                   maxLines: null,
                   keyboardType: TextInputType.number,
@@ -521,20 +529,22 @@ class _ItemAdderState extends State<ItemAdder> {
               ],
             ),
             FilledButton(
-                onPressed: () {
-                  final tmp = ({
-                    "des": _designation.text,
-                    "quantite": int.parse(_quantite.text),
-                    "montant": double.parse(_montant.text),
-                  });
-                  Navigator.pop(context, tmp);
-                },
+                onPressed: onclick,
                 child: Center(
                     child: Text(widget.item == null ? "ajouter" : "modifier")))
           ],
         ),
       ),
     );
+  }
+
+  onclick() {
+    final tmp = ({
+      "des": _designation.text,
+      "quantite": int.parse(_quantite.text),
+      "montant": double.parse(_montant.text),
+    });
+    Navigator.pop(context, tmp);
   }
 }
 
