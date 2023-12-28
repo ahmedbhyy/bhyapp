@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
@@ -9,7 +8,7 @@ import 'package:pdf/widgets.dart';
 import 'dart:io';
 
 class Utils {
-  static formatPrice(double price) => '${price.toStringAsFixed(2)}TND';
+  static formatPrice(double price) => '${price.toStringAsFixed(2)}DT';
   static formatDate(DateTime date) => DateFormat.yMMMMd('fr_FR').format(date);
   static formatMoney(double money) => money.toStringAsFixed(2);
 }
@@ -93,12 +92,7 @@ class InvoicApi {
       required String client,
       required String address}) async {
     await initializeDateFormatting();
-    final totalTTC = items.fold(
-        0.0,
-        (previousValue, element) =>
-            previousValue + element['quantite'] * element['montant']);
-    final totalhc  = items.fold(0.0, (prev,next) => prev + next['quantite']*(next['montant']/(1+next['tva']/100)));
-    final totaltva  = items.fold(0.0, (prev,next) => prev + next['quantite']*(next['montant']/(1+next['tva']/100)*next['tva']/100));
+    
     final pdf = Document();
     final header = await buildHeader(title: title, num: num, date: date);
     pdf.addPage(MultiPage(
@@ -115,15 +109,87 @@ class InvoicApi {
         //table Code
         buildFacture(items),
         Divider(),
-        Align(
-            alignment: Alignment.bottomRight,
-            child: Text(
-                "Total HT:\t\t${Utils.formatMoney(totalhc)} DT\n\nTotal TVA:\t\t${Utils.formatMoney(totaltva)}DT\n\nTimbre fiscale:\t\t0,6 DT\n\nTotal TTC:\t\t${totalTTC + 0.6} DT"))
+        buildTotal(items),
       ],
       //footer: (context) => buildFooter(invoice),
     ));
 
     return PdfApi.saveDocument(name: 'my_invoice.pdf', pdf: pdf);
+  }
+
+  static Widget buildTotal(List<Map<String, dynamic>> items) {
+    final totalTTC = items.fold(
+        0.0,
+        (previousValue, element) =>
+            previousValue + element['quantite'] * element['montant']);
+    final totalhc  = items.fold(0.0, (prev,next) => prev + next['quantite']*(next['montant']/(1+next['tva']/100)));
+    final totaltva  = items.fold(0.0, (prev,next) => prev + next['quantite']*(next['montant']/(1+next['tva']/100)*next['tva']/100));
+
+    return Container(
+      alignment: Alignment.centerRight,
+      child: Row(
+        children: [
+          Spacer(flex: 6),
+          Expanded(
+            flex: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildText(
+                  title: 'total HT',
+                  value: Utils.formatPrice(totalhc),
+                  unite: true,
+                ),
+                buildText(
+                  title: 'total TVA',
+                  value: Utils.formatPrice(totaltva),
+                  unite: true,
+                ),
+                buildText(
+                  title: 'timbre fiscale',
+                  value: "0.6 DT",
+                  unite: true,
+                ),
+                Divider(),
+                buildText(
+                  title: 'Total TTC',
+                  titleStyle: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  value: Utils.formatPrice(totalTTC+0.6),
+                  unite: true,
+                ),
+                SizedBox(height: 2 * pw.PdfPageFormat.mm),
+                Container(height: 1, color: pw.PdfColors.grey400),
+                SizedBox(height: 0.5 * pw.PdfPageFormat.mm),
+                Container(height: 1, color: pw.PdfColors.grey400),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+    static buildText({
+    required String title,
+    required String value,
+    double width = double.infinity,
+    TextStyle? titleStyle,
+    bool unite = false,
+  }) {
+    final style = titleStyle ?? TextStyle(fontWeight: FontWeight.bold);
+
+    return Container(
+      width: width,
+      child: Row(
+        children: [
+          Expanded(child: Text(title, style: style)),
+          Text(value, style: unite ? style : null),
+        ],
+      ),
+    );
   }
 
   static Future<Widget> buildHeader(
