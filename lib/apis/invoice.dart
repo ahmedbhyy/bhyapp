@@ -92,7 +92,7 @@ class InvoicApi {
       required String client,
       required String address}) async {
     await initializeDateFormatting();
-    
+
     final pdf = Document();
     final header = await buildHeader(title: title, num: num, date: date);
     pdf.addPage(MultiPage(
@@ -117,13 +117,58 @@ class InvoicApi {
     return PdfApi.saveDocument(name: 'my_invoice.pdf', pdf: pdf);
   }
 
+  static Future<File> generateFacture2(
+      {required List<Map<String, dynamic>> items,
+      required DateTime date,
+      required String num,
+      required String title,
+      required String client,
+      required String address}) async {
+    await initializeDateFormatting();
+
+    final pdf = Document();
+    final header = await buildHeader(title: title, num: num, date: date);
+    pdf.addPage(MultiPage(
+      pageFormat: pw.PdfPageFormat.a4,
+      build: (context) => [
+        header,
+        SizedBox(height: 15 * pw.PdfPageFormat.mm),
+        Text(
+            "Client: $client\nAdresse: $address  Tel: ..........................\nM.F: .......................................\nNombre de produits: ${items.length}",
+            style: const TextStyle(lineSpacing: 1.6 * pw.PdfPageFormat.mm)),
+        SizedBox(
+          height: 9 * pw.PdfPageFormat.mm,
+        ),
+        //table Code
+        buildFacture2(items),
+        Divider(),
+        buildTotal2(items),
+      ],
+      //footer: (context) => buildFooter(invoice),
+    ));
+
+    return PdfApi.saveDocument(name: 'my_invoice.pdf', pdf: pdf);
+  }
+
   static Widget buildTotal(List<Map<String, dynamic>> items) {
     final totalTTC = items.fold(
         0.0,
         (previousValue, element) =>
             previousValue + element['quantite'] * element['montant']);
-    final totalhc  = items.fold(0.0, (prev,next) => prev + next['quantite']*(next['montant']/(1+next['tva']/100)));
-    final totaltva  = items.fold(0.0, (prev,next) => prev + next['quantite']*(next['montant']/(1+next['tva']/100)*next['tva']/100));
+    final totalhc = items.fold(
+        0.0,
+        (prev, next) =>
+            prev +
+            next['quantite'] * (next['montant'] / (1 + next['tva'] / 100)));
+    final totaltva = items.fold(
+        0.0,
+        (prev, next) =>
+            prev +
+            next['quantite'] *
+                (next['montant'] /
+                    (1 + next['tva'] / 100) *
+                    next['tva'] /
+                    100));
 
     return Container(
       alignment: Alignment.centerRight,
@@ -157,7 +202,7 @@ class InvoicApi {
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
-                  value: Utils.formatPrice(totalTTC+0.6),
+                  value: Utils.formatPrice(totalTTC + 0.6),
                   unite: true,
                 ),
                 SizedBox(height: 2 * pw.PdfPageFormat.mm),
@@ -172,7 +217,70 @@ class InvoicApi {
     );
   }
 
-    static buildText({
+  static Widget buildTotal2(List<Map<String, dynamic>> items) {
+    final totalTTC = items.fold(
+        0.0,
+        (previousValue, element) =>
+            previousValue + element['quantite'] * element['unit']);
+    final totalhc = items.fold(
+        0.0,
+        (prev, next) =>
+            prev + next['quantite'] * (next['unit'] / (1 + next['tva'])));
+    final totaltva = items.fold(
+        0.0,
+        (prev, next) =>
+            prev +
+            next['quantite'] *
+                (next['unit'] / (1 + next['tva']) * next['tva']));
+
+    return Container(
+      alignment: Alignment.centerRight,
+      child: Row(
+        children: [
+          Spacer(flex: 6),
+          Expanded(
+            flex: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildText(
+                  title: 'total HT',
+                  value: Utils.formatPrice(totalhc),
+                  unite: true,
+                ),
+                buildText(
+                  title: 'total TVA',
+                  value: Utils.formatPrice(totaltva),
+                  unite: true,
+                ),
+                buildText(
+                  title: 'timbre fiscale',
+                  value: "0.6 DT",
+                  unite: true,
+                ),
+                Divider(),
+                buildText(
+                  title: 'Total TTC',
+                  titleStyle: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  value: Utils.formatPrice(totalTTC + 0.6),
+                  unite: true,
+                ),
+                SizedBox(height: 2 * pw.PdfPageFormat.mm),
+                Container(height: 1, color: pw.PdfColors.grey400),
+                SizedBox(height: 0.5 * pw.PdfPageFormat.mm),
+                Container(height: 1, color: pw.PdfColors.grey400),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static buildText({
     required String title,
     required String value,
     double width = double.infinity,
@@ -212,15 +320,20 @@ class InvoicApi {
                 "Adresse: 020, Ibn Battouta, Rades 2040\nTel: (+216) 79 490 323\nMF: 0987104/Q",
                 style: const TextStyle(lineSpacing: 1.6 * pw.PdfPageFormat.mm)),
           ]),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
             SizedBox(height: .3 * pw.PdfPageFormat.cm),
             Text(title,
                 style: TextStyle(
                     fontSize: 13 * pw.PdfPageFormat.mm,
                     fontWeight: FontWeight.bold)),
             SizedBox(height: .7 * pw.PdfPageFormat.cm),
-            Text(" N°: $num\n Date: le ${Utils.formatDate(date)}",
-                style: const TextStyle(lineSpacing: 4.9 * pw.PdfPageFormat.mm)),
+            Align(
+              alignment: Alignment.topRight,
+              child: Text(" N°: $num\n Date: le ${Utils.formatDate(date)}",
+                  style: TextStyle(
+                      lineSpacing: 4.9 * pw.PdfPageFormat.mm,
+                      fontWeight: FontWeight.bold)),
+            )
           ])
         ]);
   }
@@ -314,9 +427,50 @@ class InvoicApi {
                 e["des"],
                 e["quantite"],
                 e["montant"],
-                Utils.formatMoney(e['montant']/(1+e['tva']/100)),
+                Utils.formatMoney(e['montant'] / (1 + e['tva'] / 100)),
                 e['tva'],
                 e["montant"] * e["quantite"],
+              ])
+          .toList(),
+      border: null,
+      headerStyle: TextStyle(fontWeight: FontWeight.bold),
+      headerDecoration: const BoxDecoration(color: pw.PdfColors.grey300),
+      cellHeight: 30,
+      columnWidths: {0: const FixedColumnWidth(1.8 * pw.PdfPageFormat.cm)},
+      cellAlignments: {
+        0: Alignment.centerLeft,
+        1: Alignment.centerRight,
+        2: Alignment.centerRight,
+        3: Alignment.centerRight,
+        4: Alignment.centerRight,
+        5: Alignment.centerRight,
+        6: Alignment.centerRight,
+      },
+    );
+  }
+
+  static Widget buildFacture2(List<Map<String, dynamic>> items) {
+    final headers = [
+      'Code',
+      'Description',
+      'Qté',
+      'Unité',
+      'P.U.H.T',
+      '%TVA',
+      'Prix Total'
+    ];
+
+    return Table.fromTextArray(
+      headers: headers,
+      data: items
+          .map((e) => [
+                "",
+                e["des"],
+                e["quantite"],
+                e["unit"],
+                Utils.formatMoney(e['unit'] / (1 + e['tva'])),
+                e['tva'] * 100,
+                e["unit"] * e["quantite"],
               ])
           .toList(),
       border: null,

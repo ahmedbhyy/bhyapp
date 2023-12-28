@@ -1,43 +1,50 @@
 import 'dart:io';
-
+import 'dart:math';
+import 'package:bhyapp/apis/invoice.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class BonCommandeInfo extends StatefulWidget {
-  const BonCommandeInfo({super.key});
+class BonLivraisonInfo2 extends StatefulWidget {
+  final UserLocal? user;
+  const BonLivraisonInfo2({super.key, this.user});
 
   @override
-  State<BonCommandeInfo> createState() => _BonCommandeInfoState();
+  State<BonLivraisonInfo2> createState() => _BonLivraisonInfo2State();
 }
 
-class _BonCommandeInfoState extends State<BonCommandeInfo> {
+class _BonLivraisonInfo2State extends State<BonLivraisonInfo2> {
   bool _isLoading = true;
   List<Bon> displayList = [];
   final search = TextEditingController();
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-    final bons = db.collection("bons_commandes");
+    Query<Map<String, dynamic>> bons = db.collection("bonlivraison");
+    final firm = widget.user!.firm;
+    if (widget.user!.role != "admin") {
+      bons = bons.where("firm", isEqualTo: firm);
+    }
     bons.get().then((qsnap) {
       setState(() {
         displayList = qsnap.docs.map((e) => Bon.fromMap(e)).toList();
         _isLoading = false;
       });
     });
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final displays = displayList
-        .where((element) => element.beneficiaire.contains(search.text))
+    final display = displayList
+        .where((element) => element.num.toString().contains(search.text))
         .toList();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          "Les Bons de commandes",
+          "Les Bons de Livraison",
           style: TextStyle(
             fontSize: 15.5,
             fontWeight: FontWeight.bold,
@@ -52,12 +59,16 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
               size: Platform.isAndroid ? 24 : 45,
             ),
             onPressed: () async {
-              final res = await Navigator.push<Bon>(context,
-                  MaterialPageRoute(builder: (context) => const AjoutBon()));
+              final res = await Navigator.push<Bon>(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AjoutBonLiv(
+                            user: widget.user!,
+                          )));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
-                final bons = db.collection("bons_commandes");
-                bons.doc(res.num).set(res.toMap(), SetOptions(merge: true));
+                final bons = db.collection("bonlivraison");
+                bons.doc(res.id).set(res.toMap(), SetOptions(merge: true));
                 setState(() {
                   displayList.add(res);
                 });
@@ -81,7 +92,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
                   labelText:
-                      "chercher un Bon par (nom de société (${displays.length}))",
+                      "chercher un Bon de Livraison Par N°(${display.length})",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -102,24 +113,24 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
             child: Padding(
               padding: const EdgeInsets.all(7.0),
               child: ListView.separated(
-                  itemCount: displays.length,
+                  itemCount: display.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
-                    final bon = displays[index];
+                    final bon = display[index];
                     return ListTile(
                       leading: Icon(
-                        Icons.description,
+                        Icons.local_shipping,
                         color: Colors.green.shade600,
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Sociétè: ${bon.beneficiaire}",
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        DateFormat('yyyy-MM-dd').format(bon.date),
+                        style: TextStyle(color: Colors.green.shade500),
                       ),
-                      title: Text("Numéro du bon : ${bon.num}"),
+                      title: Text(
+                          "Nom Société : ${bon.beneficiaire.toString()}\nN° Bon: ${bon.num}",
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -128,8 +139,14 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                               Icons.picture_as_pdf,
                               color: Colors.green,
                             ),
-                            onPressed: () {
-                              //TODO : pdf
+                            onPressed: () async {
+                              PdfApi.openFile(await InvoicApi.generateFacture2(
+                                  items: bon.items,
+                                  address: bon.destination,
+                                  client: bon.beneficiaire,
+                                  date: bon.date,
+                                  num: bon.num,
+                                  title: "Bon de Livraison"));
                             },
                           ),
                           IconButton(
@@ -163,7 +180,8 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                                     TextButton(
                                       onPressed: () async {
                                         Navigator.pop(context);
-                                        await deletebon(displayList[index].num);
+                                        await deletebonliv(
+                                            displayList[index].num);
                                         setState(() {
                                           displayList.removeAt(index);
                                         });
@@ -180,13 +198,16 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                       onTap: () async {
                         final bn = await Navigator.push<Bon>(context,
                             MaterialPageRoute(builder: (context) {
-                          return AjoutBon(bon: bon);
+                          return AjoutBonLiv(
+                            bon: bon,
+                            user: widget.user!,
+                          );
                         }));
                         final db = FirebaseFirestore.instance;
                         if (bn == null) return;
                         db
-                            .collection("bons_commandes")
-                            .doc(bon.num)
+                            .collection("bonlivraison")
+                            .doc(bon.id)
                             .set(bn.toMap(), SetOptions(merge: true));
                         setState(() {
                           displayList[displayList.indexOf(bon)] = bn;
@@ -201,12 +222,13 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
     );
   }
 
-  Future<void> deletebon(String bonId) async {
+  Future<void> deletebonliv(String livId) async {
     try {
       final db = FirebaseFirestore.instance;
-      final bonRef = db.collection('bons_commandes').doc(bonId);
+      final livRef = db.collection('bonlivraison').doc(livId);
 
-      await bonRef.delete();
+      await livRef.delete();
+
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("element Deleted"),
@@ -223,19 +245,21 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
   }
 }
 
-class AjoutBon extends StatefulWidget {
+class AjoutBonLiv extends StatefulWidget {
   final Bon? bon;
-  const AjoutBon({super.key, this.bon});
+  final UserLocal user;
+  const AjoutBonLiv({super.key, this.bon, required this.user});
 
   @override
-  State<AjoutBon> createState() => _AjoutBonState();
+  State<AjoutBonLiv> createState() => _AjoutBonLivState();
 }
 
-class _AjoutBonState extends State<AjoutBon> {
+class _AjoutBonLivState extends State<AjoutBonLiv> {
   final TextEditingController _numerodubon = TextEditingController();
-  final TextEditingController _beneficiaire = TextEditingController();
+  final TextEditingController _nomdesociete = TextEditingController();
+  final TextEditingController _destination = TextEditingController();
   List<Map<String, dynamic>> items = [];
-  String _title = "ajouter un bon de commandes";
+  String _title = "Ajouter un bon de Livraison";
   DateTime _datebon = DateTime.now();
 
   @override
@@ -243,10 +267,11 @@ class _AjoutBonState extends State<AjoutBon> {
     if (widget.bon != null) {
       final bon = widget.bon!;
       _numerodubon.text = bon.num.toString();
-      _beneficiaire.text = bon.beneficiaire;
+      _nomdesociete.text = bon.beneficiaire;
+      _destination.text = bon.destination;
       items = bon.items;
       _datebon = bon.date;
-      _title = "modifier le bon de commandes";
+      _title = "Modifier le Bon de Livraison";
     }
     super.initState();
   }
@@ -255,7 +280,8 @@ class _AjoutBonState extends State<AjoutBon> {
   void dispose() {
     super.dispose();
     _numerodubon.dispose();
-    _beneficiaire.dispose();
+    _nomdesociete.dispose();
+    _destination.dispose();
   }
 
   @override
@@ -306,11 +332,22 @@ class _AjoutBonState extends State<AjoutBon> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    controller: _beneficiaire,
+                    controller: _nomdesociete,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      labelText: 'Nom de la société',
+                      labelText: 'Nom de la Société',
                       labelStyle: TextStyle(fontSize: 20),
+                    ),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _destination,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      labelText: 'Destination',
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.place),
                     ),
                     maxLines: null,
                   ),
@@ -363,13 +400,19 @@ class _AjoutBonState extends State<AjoutBon> {
                 child: FilledButton(
                   onPressed: () {
                     if (items.isEmpty ||
-                        _beneficiaire.text.isEmpty ||
+                        _nomdesociete.text.isEmpty ||
+                        _destination.text.isEmpty ||
                         _numerodubon.text.isEmpty) {
                       return;
                     }
+                    final firm = widget.user.firm;
                     final bon = Bon(
+                      id: _numerodubon.text +
+                          Random().nextInt(10000000).toString(),
                       items: items,
-                      beneficiaire: _beneficiaire.text,
+                      beneficiaire: _nomdesociete.text,
+                      destination: _destination.text,
+                      firm: firm,
                       num: _numerodubon.text,
                       date: _datebon,
                     );
@@ -414,11 +457,15 @@ class ItemAdder extends StatefulWidget {
 class _ItemAdderState extends State<ItemAdder> {
   final _designation = TextEditingController();
   final _quantite = TextEditingController();
+  final _tva = TextEditingController(text: "19");
+  final _unit = TextEditingController();
 
   @override
   void initState() {
     if (widget.item != null) {
       _designation.text = widget.item!["des"];
+      _tva.text = (widget.item!['tva'] * 100).toString();
+      _unit.text = (widget.item!['unit']).toString();
       _quantite.text = widget.item!["quantite"].toString();
     }
     super.initState();
@@ -427,10 +474,11 @@ class _ItemAdderState extends State<ItemAdder> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Padding(
         padding: const EdgeInsets.all(40),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
               children: [
@@ -448,6 +496,34 @@ class _ItemAdderState extends State<ItemAdder> {
                   height: 20,
                 ),
                 TextField(
+                  onSubmitted: (val) {},
+                  controller: _tva,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("%TVA"),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  onSubmitted: (val) {},
+                  controller: _unit,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("unité"),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
                   onSubmitted: (a) => onclick(),
                   controller: _quantite,
                   maxLines: null,
@@ -458,7 +534,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   ),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 15,
                 ),
               ],
             ),
@@ -473,36 +549,51 @@ class _ItemAdderState extends State<ItemAdder> {
   }
 
   onclick() {
-    final tmp =
-        ({"des": _designation.text, "quantite": int.parse(_quantite.text)});
+    final tmp = ({
+      "des": _designation.text,
+      "quantite": int.parse(_quantite.text),
+      "tva": double.parse(_tva.text) / 100,
+      "unit": double.parse(_unit.text),
+    });
     Navigator.pop(context, tmp);
   }
 }
 
 class Bon {
+  final String id;
   final String num;
   final String beneficiaire;
+  final String destination;
+  final String firm;
   final DateTime date;
   final List<Map<String, dynamic>> items;
-  Bon({
-    required this.date,
-    required this.num,
-    required this.beneficiaire,
-    required this.items,
-  });
+  Bon(
+      {required this.date,
+      required this.num,
+      required this.id,
+      required this.beneficiaire,
+      required this.destination,
+      required this.items,
+      required this.firm});
 
   Map<String, dynamic> toMap() {
     return {
       "beneficiaire": beneficiaire,
+      "destination": destination,
+      "firm": firm,
       "items": items,
       "date": date.toString(),
+      "num": num,
     };
   }
 
   static Bon fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Bon(
-      num: e.id,
+      id: e.id,
+      num: e['num'],
+      firm: e['firm'],
       beneficiaire: e["beneficiaire"],
+      destination: e['destination'],
       items: List<Map<String, dynamic>>.from(e["items"]! as List),
       date: DateTime.parse(e["date"]),
     );

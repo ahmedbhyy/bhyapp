@@ -482,7 +482,7 @@ class _ItemAdderState extends State<ItemAdder> {
   final _designation = TextEditingController();
   final _quantite = TextEditingController();
   final _montant = TextEditingController();
-  final _tvafacture = TextEditingController();
+  final _tvafacture = TextEditingController(text: '19');
 
   @override
   void initState() {
@@ -556,7 +556,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   ),
                 ),
                 const SizedBox(
-                  height: 150,
+                  height: 50,
                 ),
               ],
             ),

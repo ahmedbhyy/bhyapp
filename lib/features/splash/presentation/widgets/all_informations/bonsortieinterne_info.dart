@@ -91,7 +91,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
                   labelText:
-                      "chercher un Bon de sortie interne (${display.length})",
+                      "chercher un Bon de sortie interne Par N°(${display.length})",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -205,7 +205,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                         if (bn == null) return;
                         db
                             .collection("bons")
-                            .doc(bon.num)
+                            .doc(bon.id)
                             .set(bn.toMap(), SetOptions(merge: true));
                         setState(() {
                           displayList[displayList.indexOf(bon)] = bn;

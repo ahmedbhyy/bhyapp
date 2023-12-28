@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/boncommande_info.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonlivraison_info.dart';
+
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info%20copy.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/demandeprix_inof.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/devis_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/all_informations/factureadmin_info.dart';
+
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/notereglement_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/rapport_adminn.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/requete_info.dart';
@@ -123,10 +124,10 @@ class _HomePageState extends State<HomePage> {
               ),
               Visibility(
                 visible: isVisible(),
-                child: const CustomCard(
+                child: CustomCard(
                   source: 'images/bonlivraison.jpg',
                   title: 'Bon de Livraison',
-                  child: BonLivraisonInfo(),
+                  child: BonLivraisonInfo2(user: user),
                 ),
               ),
               Visibility(
