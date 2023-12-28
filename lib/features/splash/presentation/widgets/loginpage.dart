@@ -157,7 +157,10 @@ class LoginPageState extends State<LoginPage> {
                       controller: usernameController,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.email, AutofillHints.username],
+                      autofillHints: const [
+                        AutofillHints.email,
+                        AutofillHints.username
+                      ],
                       decoration: const InputDecoration(
                         hintText: 'adresse e-mail',
                         border: InputBorder.none,

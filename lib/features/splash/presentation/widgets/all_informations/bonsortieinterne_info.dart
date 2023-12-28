@@ -256,7 +256,7 @@ class _AjoutBonState extends State<AjoutBon> {
   final TextEditingController _beneficiaire = TextEditingController();
   final TextEditingController _destination = TextEditingController();
   List<Map<String, dynamic>> items = [];
-  String _title = "ajouter un bon de sortie";
+  String _title = "Ajouter un bon de sortie";
   DateTime _datebon = DateTime.now();
 
   @override
