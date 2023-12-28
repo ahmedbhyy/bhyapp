@@ -125,15 +125,6 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                         children: [
                           IconButton(
                             icon: const Icon(
-                              Icons.picture_as_pdf,
-                              color: Colors.green,
-                            ),
-                            onPressed: () {
-                              //TODO : pdf
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(
                               Icons.delete,
                               color: Colors.red,
                             ),
