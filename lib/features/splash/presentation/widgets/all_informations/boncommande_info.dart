@@ -448,7 +448,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   height: 20,
                 ),
                 TextField(
-                  onSubmitted: (val) {},
+                  onSubmitted: (a) => onclick(),
                   controller: _quantite,
                   maxLines: null,
                   keyboardType: TextInputType.number,
@@ -463,19 +463,19 @@ class _ItemAdderState extends State<ItemAdder> {
               ],
             ),
             FilledButton(
-                onPressed: () {
-                  final tmp = ({
-                    "des": _designation.text,
-                    "quantite": int.parse(_quantite.text)
-                  });
-                  Navigator.pop(context, tmp);
-                },
+                onPressed: onclick,
                 child: Center(
                     child: Text(widget.item == null ? "ajouter" : "modifier")))
           ],
         ),
       ),
     );
+  }
+
+  onclick() {
+    final tmp =
+        ({"des": _designation.text, "quantite": int.parse(_quantite.text)});
+    Navigator.pop(context, tmp);
   }
 }
 

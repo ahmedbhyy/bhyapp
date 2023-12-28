@@ -328,6 +328,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                   ),
                   TextField(
                     controller: _numerodufact,
+                    keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: 'N° de la facture',
@@ -351,6 +352,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _totalfact,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'total de la facture',
                       labelStyle: TextStyle(fontSize: 20),
@@ -480,6 +482,7 @@ class _ItemAdderState extends State<ItemAdder> {
   final _designation = TextEditingController();
   final _quantite = TextEditingController();
   final _montant = TextEditingController();
+  final _tvafacture = TextEditingController();
 
   @override
   void initState() {
@@ -487,6 +490,7 @@ class _ItemAdderState extends State<ItemAdder> {
       _designation.text = widget.item!["des"];
       _quantite.text = widget.item!["quantite"].toString();
       _montant.text = widget.item!["montant"].toString();
+      _tvafacture.text = widget.item!["tva"].toString();
     }
     super.initState();
   }
@@ -527,6 +531,20 @@ class _ItemAdderState extends State<ItemAdder> {
                   height: 20,
                 ),
                 TextField(
+                  onSubmitted: (val) {},
+                  controller: _tvafacture,
+                  maxLines: null,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("%TVA"),
+                    suffixText: '%',
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
                   onSubmitted: (a) => onclick(),
                   controller: _montant,
                   maxLines: null,
@@ -556,6 +574,7 @@ class _ItemAdderState extends State<ItemAdder> {
     final tmp = ({
       "des": _designation.text,
       "quantite": int.parse(_quantite.text),
+      "tva": int.parse(_tvafacture.text),
       "montant": double.parse(_montant.text),
     });
     Navigator.pop(context, tmp);
