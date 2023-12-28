@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
@@ -10,6 +11,7 @@ import 'dart:io';
 class Utils {
   static formatPrice(double price) => '${price.toStringAsFixed(2)}TND';
   static formatDate(DateTime date) => DateFormat.yMMMMd('fr_FR').format(date);
+  static formatMoney(double money) => money.toStringAsFixed(2);
 }
 
 class InvoicApi {
@@ -91,10 +93,12 @@ class InvoicApi {
       required String client,
       required String address}) async {
     await initializeDateFormatting();
-    final totalhc = items.fold(
+    final totalTTC = items.fold(
         0.0,
         (previousValue, element) =>
             previousValue + element['quantite'] * element['montant']);
+    final totalhc  = items.fold(0.0, (prev,next) => prev + next['quantite']*(next['montant']/(1+next['tva']/100)));
+    final totaltva  = items.fold(0.0, (prev,next) => prev + next['quantite']*(next['montant']/(1+next['tva']/100)*next['tva']/100));
     final pdf = Document();
     final header = await buildHeader(title: title, num: num, date: date);
     pdf.addPage(MultiPage(
@@ -114,7 +118,7 @@ class InvoicApi {
         Align(
             alignment: Alignment.bottomRight,
             child: Text(
-                "Total HT:\t$totalhc DT\n\nTotal Tva:\t......\n\nTimbre Fiscale:\t0,6 DT\n\nTotal TTC:\t${totalhc + 0.6} DT"))
+                "Total HT:\t\t${Utils.formatMoney(totalhc)} DT\n\nTotal TVA:\t\t${Utils.formatMoney(totaltva)}DT\n\nTimbre fiscale:\t\t0,6 DT\n\nTotal TTC:\t\t${totalTTC + 0.6} DT"))
       ],
       //footer: (context) => buildFooter(invoice),
     ));
@@ -244,8 +248,8 @@ class InvoicApi {
                 e["des"],
                 e["quantite"],
                 e["montant"],
-                "",
-                "",
+                Utils.formatMoney(e['montant']/(1+e['tva']/100)),
+                e['tva'],
                 e["montant"] * e["quantite"],
               ])
           .toList(),
