@@ -181,7 +181,7 @@ class _BonLivraisonInfo2State extends State<BonLivraisonInfo2> {
                                       onPressed: () async {
                                         Navigator.pop(context);
                                         await deletebonliv(
-                                            displayList[index].num);
+                                            displayList[index].id);
                                         setState(() {
                                           displayList.removeAt(index);
                                         });
