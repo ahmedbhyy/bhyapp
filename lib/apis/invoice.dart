@@ -117,6 +117,39 @@ class InvoicApi {
     return PdfApi.saveDocument(name: 'my_invoice.pdf', pdf: pdf);
   }
 
+  static Future<File> generateFacture3(
+      {required List<Map<String, dynamic>> items,
+      required DateTime date,
+      required String num,
+      required String title,
+      required String client,
+      double size = 13,
+      required String address}) async {
+    await initializeDateFormatting();
+
+    final pdf = Document();
+    final header =
+        await buildHeader(title: title, num: num, date: date, size: size);
+    pdf.addPage(MultiPage(
+      pageFormat: pw.PdfPageFormat.a4,
+      build: (context) => [
+        header,
+        SizedBox(height: 15 * pw.PdfPageFormat.mm),
+        Text(
+            "Client: $client\nAdresse: $address  Tel: ..........................\nM.F: .......................................\nNombre de produits: ${items.length}",
+            style: const TextStyle(lineSpacing: 1.6 * pw.PdfPageFormat.mm)),
+        SizedBox(
+          height: 9 * pw.PdfPageFormat.mm,
+        ),
+        //table Code
+        buildFacture3(items),
+      ],
+      //footer: (context) => buildFooter(invoice),
+    ));
+
+    return PdfApi.saveDocument(name: 'my_invoice.pdf', pdf: pdf);
+  }
+
   static Future<File> generateFacture2(
       {required List<Map<String, dynamic>> items,
       required DateTime date,
@@ -303,6 +336,7 @@ class InvoicApi {
   static Future<Widget> buildHeader(
       {required String title,
       required String num,
+      double size = 13,
       required DateTime date}) async {
     final memoryImage = MemoryImage(
         (await rootBundle.load("images/print.png")).buffer.asUint8List());
@@ -324,7 +358,7 @@ class InvoicApi {
             SizedBox(height: .3 * pw.PdfPageFormat.cm),
             Text(title,
                 style: TextStyle(
-                    fontSize: 13 * pw.PdfPageFormat.mm,
+                    fontSize: size * pw.PdfPageFormat.mm,
                     fontWeight: FontWeight.bold)),
             SizedBox(height: .7 * pw.PdfPageFormat.cm),
             Align(
@@ -445,6 +479,35 @@ class InvoicApi {
         4: Alignment.centerRight,
         5: Alignment.centerRight,
         6: Alignment.centerRight,
+      },
+    );
+  }
+
+  static Widget buildFacture3(List<Map<String, dynamic>> items) {
+    final headers = ['Code', 'Description', 'Qté'];
+
+    return Table.fromTextArray(
+      headers: headers,
+      data: items
+          .map((e) => [
+                "",
+                e["des"],
+                e["quantite"],
+              ])
+          .toList(),
+      border: null,
+      headerStyle: TextStyle(fontWeight: FontWeight.bold),
+      headerDecoration: const BoxDecoration(color: pw.PdfColors.grey300),
+      cellHeight: 30,
+      columnWidths: {
+        0: const FlexColumnWidth(1),
+        1: const FlexColumnWidth(1),
+        2: const FlexColumnWidth(1)
+      },
+      cellAlignments: {
+        0: Alignment.centerLeft,
+        1: Alignment.center,
+        2: Alignment.centerRight,
       },
     );
   }

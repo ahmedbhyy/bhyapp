@@ -267,7 +267,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
   final TextEditingController _totalfact = TextEditingController(text: "0");
   final TextEditingController _nomsoc = TextEditingController();
   List<Map<String, dynamic>> items = [];
-  String _title = "ajouter une facture";
+  String _title = "Ajouter une facture";
   DateTime _datefact = DateTime.now();
 
   @override
@@ -279,7 +279,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
       _nomsoc.text = facture.nomsoc;
       items = facture.items;
       _datefact = facture.date;
-      _title = "modifier la facture";
+      _title = "Modifier la facture";
     }
     super.initState();
   }
@@ -354,7 +354,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                     controller: _totalfact,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: 'total de la facture',
+                      labelText: 'Total de la facture ',
                       labelStyle: TextStyle(fontSize: 20),
                       icon: Icon(Icons.euro),
                       suffixText: 'DT',
@@ -435,7 +435,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                     );
                     Navigator.pop(context, bon);
                   },
-                  child: const Text("enregistrer"),
+                  child: const Text("Enregistrer"),
                 )),
             Positioned(
                 bottom: 0,
@@ -462,7 +462,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                       }
                     },
                     icon: const Icon(Icons.add_outlined),
-                    label: const Text("ajouter")))
+                    label: const Text("Ajouter")))
           ],
         ),
       ),
@@ -511,7 +511,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   maxLines: null,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    label: Text("désignation"),
+                    label: Text("Désignation"),
                   ),
                 ),
                 const SizedBox(
@@ -524,7 +524,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    label: Text("quantité"),
+                    label: Text("Quantité"),
                   ),
                 ),
                 const SizedBox(
@@ -551,7 +551,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    label: Text("montant"),
+                    label: Text("Montant"),
                     suffixText: 'DT',
                   ),
                 ),
@@ -563,7 +563,7 @@ class _ItemAdderState extends State<ItemAdder> {
             FilledButton(
                 onPressed: onclick,
                 child: Center(
-                    child: Text(widget.item == null ? "ajouter" : "modifier")))
+                    child: Text(widget.item == null ? "Ajouter" : "Modifier")))
           ],
         ),
       ),

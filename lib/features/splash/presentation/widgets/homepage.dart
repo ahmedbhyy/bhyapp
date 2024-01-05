@@ -1,11 +1,11 @@
 import 'dart:io';
 
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/boncommande_info%20copy.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/boncommande_info.dart';
 
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info%20copy.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/bonsortieinterne_info.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/all_informations/demandeprix_inof.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/all_informations/devis_info.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info%20copy.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info.dart';
 
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/notereglement_info.dart';
@@ -143,10 +143,10 @@ class _HomePageState extends State<HomePage> {
               ),
               Visibility(
                 visible: isVisible(),
-                child: const CustomCard(
+                child: CustomCard(
                   source: 'images/devis.webp',
                   title: 'Devis',
-                  child: DevisInfo(),
+                  child: Devisinfo2(user: user),
                 ),
               ),
               Visibility(
@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                 child: const CustomCard(
                   source: 'images/bourse.png',
                   title: "Demande d'offre de Prix",
-                  child: DemandePrixInfo(),
+                  child: DemandePrix2(),
                 ),
               ),
               Visibility(

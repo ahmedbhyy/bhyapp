@@ -28,6 +28,7 @@ class _AllCommandesState extends State<AllCommandes> {
       setState(() {
         commandes = dd.docs
             .map((e) => {
+                  "id": e.id,
                   "date": DateTime.parse(e["date"]),
                   "panier": List<Map<String, dynamic>>.from(e["panier"])
                       .map((e) => Engrai.fromMap2(e))
@@ -85,6 +86,49 @@ class _AllCommandesState extends State<AllCommandes> {
                     "total de la commande: ${panier.fold(.0, (previousValue, element) => previousValue + element.priv * element.quantity)} DT\nferme: ${com["firm"]}",
                     style: TextStyle(color: Colors.green.shade500),
                   ),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                            'Confirmer la Suppression',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          content: const Text(
+                            'Vous êtes sûr ?',
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                await deletecommandeeng(com['id']);
+                                setState(() {
+                                  commandes.removeAt(index);
+                                });
+                              },
+                              child: const Text('Supprimer'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   title: Text(DateFormat('yyyy-MM-dd').format(com["date"]),
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
@@ -95,5 +139,26 @@ class _AllCommandesState extends State<AllCommandes> {
         ],
       ),
     );
+  }
+
+  Future<void> deletecommandeeng(String ouvrierId) async {
+    try {
+      final db = FirebaseFirestore.instance;
+      final ouvrierRef = db.collection('commandes').doc(ouvrierId);
+
+      await ouvrierRef.delete();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("element Deleted"),
+        backgroundColor: Colors.green,
+      ));
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+            Text("une erreur est survenue veuillez réessayer ultérieurement"),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }

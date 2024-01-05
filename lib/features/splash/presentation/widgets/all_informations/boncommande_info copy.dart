@@ -3,22 +3,23 @@ import 'dart:io';
 import 'package:bhyapp/apis/invoice.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class BonCommandeInfo extends StatefulWidget {
-  const BonCommandeInfo({super.key});
+class DemandePrix2 extends StatefulWidget {
+  const DemandePrix2({super.key});
 
   @override
-  State<BonCommandeInfo> createState() => _BonCommandeInfoState();
+  State<DemandePrix2> createState() => _DemandePrix2State();
 }
 
-class _BonCommandeInfoState extends State<BonCommandeInfo> {
+class _DemandePrix2State extends State<DemandePrix2> {
   bool _isLoading = true;
   List<Bon> displayList = [];
   final search = TextEditingController();
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-    final bons = db.collection("bons_commandes");
+    final bons = db.collection("demandeprix");
     bons.get().then((qsnap) {
       setState(() {
         displayList = qsnap.docs.map((e) => Bon.fromMap(e)).toList();
@@ -38,7 +39,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
-          "Les Bons de commandes",
+          "Les Demandes des Prix",
           style: TextStyle(
             fontSize: 15.5,
             fontWeight: FontWeight.bold,
@@ -57,7 +58,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                   MaterialPageRoute(builder: (context) => const AjoutBon()));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
-                final bons = db.collection("bons_commandes");
+                final bons = db.collection("demandeprix");
                 bons.doc(res.num).set(res.toMap(), SetOptions(merge: true));
                 setState(() {
                   displayList.add(res);
@@ -82,7 +83,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
                   labelText:
-                      "chercher un Bon par (nom de société (${displays.length}))",
+                      "chercher une Demande par (nom de société (${displays.length}))",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: Colors.white,
@@ -114,13 +115,12 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Sociétè: ${bon.beneficiaire}",
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        DateFormat('yyyy-MM-dd').format(bon.date),
+                        style: TextStyle(color: Colors.green.shade500),
                       ),
-                      title: Text("Numéro du bon : ${bon.num}"),
+                      title: Text('Société: ${bon.beneficiaire.toString()}',
+                          style: const TextStyle(
+                              fontSize: 25, fontWeight: FontWeight.bold)),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -136,8 +136,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                                   client: bon.beneficiaire,
                                   date: bon.date,
                                   num: bon.num,
-                                  title: "Bon de commande",
-                                  size: 10));
+                                  title: "Demande de Prix"));
                             },
                           ),
                           IconButton(
@@ -193,7 +192,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                         final db = FirebaseFirestore.instance;
                         if (bn == null) return;
                         db
-                            .collection("bons_commandes")
+                            .collection("demandeprix")
                             .doc(bon.num)
                             .set(bn.toMap(), SetOptions(merge: true));
                         setState(() {
@@ -212,7 +211,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
   Future<void> deletebon(String bonId) async {
     try {
       final db = FirebaseFirestore.instance;
-      final bonRef = db.collection('bons_commandes').doc(bonId);
+      final bonRef = db.collection('demandeprix').doc(bonId);
 
       await bonRef.delete();
       if (!context.mounted) return;
@@ -243,7 +242,7 @@ class _AjoutBonState extends State<AjoutBon> {
   final TextEditingController _numerodubon = TextEditingController();
   final TextEditingController _beneficiaire = TextEditingController();
   List<Map<String, dynamic>> items = [];
-  String _title = "Ajouter un bon de commandes";
+  String _title = "Ajouter une Demande de Prix";
   DateTime _datebon = DateTime.now();
 
   @override
@@ -254,7 +253,7 @@ class _AjoutBonState extends State<AjoutBon> {
       _beneficiaire.text = bon.beneficiaire;
       items = bon.items;
       _datebon = bon.date;
-      _title = "Modifier le bon de commandes";
+      _title = "Modifier La demande";
     }
     super.initState();
   }
@@ -305,7 +304,7 @@ class _AjoutBonState extends State<AjoutBon> {
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'N° du bon',
+                      labelText: 'N° du Demande',
                       enabled: widget.bon == null,
                       labelStyle: const TextStyle(fontSize: 20),
                       icon: const Icon(Icons.numbers),
@@ -473,7 +472,7 @@ class _ItemAdderState extends State<ItemAdder> {
             FilledButton(
                 onPressed: onclick,
                 child: Center(
-                    child: Text(widget.item == null ? "Ajouter" : "Modifier")))
+                    child: Text(widget.item == null ? "ajouter" : "modifier")))
           ],
         ),
       ),
