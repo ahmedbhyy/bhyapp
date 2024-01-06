@@ -16,7 +16,7 @@ class QuinzMoney extends StatefulWidget {
 class _QuinzMoneyState extends State<QuinzMoney> {
   final controller = TextEditingController();
   final saljour = TextEditingController();
-  List<Prime> primes = [];
+  List<Transport> transports = [];
   @override
   void dispose() {
     super.dispose();
@@ -32,9 +32,9 @@ class _QuinzMoneyState extends State<QuinzMoney> {
         .get()
         .then((doc) async {
       setState(() {
-        primes = doc.docs
-            .map((e) => Prime(
-                montant: e['montant'],
+        transports = doc.docs
+            .map((e) => Transport(
+                quantity: e['montant'],
                 date: (e['date'] as Timestamp).toDate(),
                 id: e.id))
             .toList();
@@ -53,7 +53,7 @@ class _QuinzMoneyState extends State<QuinzMoney> {
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
         onPressed: () async {
-          final res = await showModalBottomSheet<Prime>(
+          final res = await showModalBottomSheet<Transport>(
             context: context,
             builder: (context) {
               return _generateBottomSheet(context);
@@ -64,13 +64,13 @@ class _QuinzMoneyState extends State<QuinzMoney> {
           if (res != null) {
             final db = FirebaseFirestore.instance;
             final ouvrier = await db.collection("quinz_money").add({
-              "montant": res.montant,
+              "montant": res.quantity,
               "date": res.date,
               "ouvrier": widget.ouvrier.id
             });
             setState(() {
-              primes.add(
-                  Prime(montant: res.montant, date: res.date, id: ouvrier.id));
+              transports.add(
+                  Transport(quantity: res.quantity, date: res.date, id: ouvrier.id));
             });
           }
         },
@@ -137,10 +137,10 @@ class _QuinzMoneyState extends State<QuinzMoney> {
           const SizedBox(height: 5.0),
           Expanded(
             child: ListView.separated(
-              itemCount: primes.length,
+              itemCount: transports.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                final prime = primes[index];
+                final prime = transports[index];
                 return ListTile(
                   leading: Icon(
                     Icons.person_outlined,
@@ -152,7 +152,7 @@ class _QuinzMoneyState extends State<QuinzMoney> {
                     DateFormat('yyyy-MM-dd').format(prime.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text(prime.montant.toString(),
+                  title: Text(prime.quantity.toString(),
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
@@ -208,14 +208,14 @@ class _QuinzMoneyState extends State<QuinzMoney> {
   Future<void> deleteitem(int index) async {
     try {
       final db = FirebaseFirestore.instance;
-      final ref = db.collection('quinz_money').doc(primes[index].id);
+      final ref = db.collection('quinz_money').doc(transports[index].id);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("element Deleted"),
         backgroundColor: Colors.green,
       ));
       setState(() {
-        primes.removeAt(index);
+        transports.removeAt(index);
         ref.delete();
       });
     } catch (e) {
@@ -268,8 +268,8 @@ class _QuinzMoneyState extends State<QuinzMoney> {
             ),
             FilledButton(
                 onPressed: () {
-                  final tmp = Prime(
-                      montant: double.parse(controller.text),
+                  final tmp = Transport(
+                      quantity: double.parse(controller.text),
                       date: date,
                       id: "");
                   Navigator.pop(context, tmp);
@@ -282,10 +282,10 @@ class _QuinzMoneyState extends State<QuinzMoney> {
   }
 }
 
-class Prime {
-  final double montant;
+class Transport {
+  final double quantity;
   final DateTime date;
   final String id;
 
-  Prime({required this.montant, required this.date, required this.id});
+  Transport({required this.quantity, required this.date, required this.id});
 }
