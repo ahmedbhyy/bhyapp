@@ -276,9 +276,9 @@ class _TerreHomeState extends State<TerreHome> {
               });
               head.addAll([TextCellValue(tot.toString()), TextCellValue(value['salaire'].toString()), TextCellValue((value['salaire']*tot).toString())]);
               sheetObject.appendRow(head);
-              sheetObject.appendRow([null]);
             }
           });
+          sheetObject.appendRow([null]);
         });
         PdfApi.openFile(await PdfApi.saveDocumentexcel(name: "a.xlsx", excel: excel));
     }
