@@ -170,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                   child: const CustomCard(
                     source: 'images/quinz.jpg',
                     title: 'Quinzz',
-                    child: TerreHome(),
+                    child: ParcelleHome(),
                   )),
             ]),
       ),

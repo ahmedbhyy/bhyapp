@@ -1,13 +1,12 @@
 import 'dart:io';
-
+import 'package:bhyapp/features/splash/presentation/widgets/quinz.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/quinz_money.dart';
-import 'package:bhyapp/ouvrier/ouvrier_name.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class QuinzOuvrier extends StatefulWidget {
-  final Ouvriername2 terre;
-  const QuinzOuvrier({super.key, required this.terre});
+  final Parcelle parcelle;
+  const QuinzOuvrier({super.key, required this.parcelle});
 
   @override
   State<QuinzOuvrier> createState() => _QuinzOuvrierState();
@@ -15,33 +14,32 @@ class QuinzOuvrier extends StatefulWidget {
 
 class _QuinzOuvrierState extends State<QuinzOuvrier> {
   bool _isLoading = true;
-  final TextEditingController _nomdeouvrier = TextEditingController();
-  final TextEditingController salairecontroller = TextEditingController();
-  TextEditingController get controller => _nomdeouvrier;
+  final nom = TextEditingController();
+  final salairecontroller = TextEditingController();
+  final search = TextEditingController();
+  TextEditingController get controller => nom;
 
 
   @override
   void dispose() {
-    _nomdeouvrier.dispose();
+    nom.dispose();
     super.dispose();
   }
 
-  List<Ouvrier> displayList = [];
-  List<Ouvrier> originalList = [];
+  List<Ouvrier> ouvriers = [];
   List<String> firmes = [];
 
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-    db.collection("quinz_ouvrier").where("terre", isEqualTo: widget.terre.id).get().then((qsnap) {
+    db.collection("quinz_ouvrier").where("terre", isEqualTo: widget.parcelle.id).get().then((qsnap) {
       setState(() {
-        originalList = qsnap.docs
+        ouvriers = qsnap.docs
             .map((ouvier) => Ouvrier(
                 name: ouvier.data()["nom"],
                 salaire: ouvier.data()["salaire"],
                 id: ouvier.id))
             .toList();
-        displayList = List.from(originalList);
         _isLoading = false;
       });
     });
@@ -53,21 +51,12 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
     super.initState();
   }
 
-  void updateList(String value) {
-    setState(() {
-      if (value.isEmpty) {
-        displayList = List.from(originalList);
-      } else {
-        displayList = originalList
-            .where((element) =>
-                element.name.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final souvriers = ouvriers
+        .where((element) =>
+        element.name.toLowerCase().contains(search.text.toLowerCase()))
+        .toList();
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
       appBar: AppBar(
@@ -102,12 +91,13 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
             children: [
               const SizedBox(height: 5.0),
               TextField(
-                onChanged: (value) => updateList(value),
+                onChanged: (value) => setState(() {}),
+                controller: search,
                 style: const TextStyle(fontSize: 17.0),
                 decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 20.0),
-                    labelText: "chercher un ouvrier (${displayList.length})",
+                    labelText: "chercher un ouvrier (${souvriers.length})",
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: Colors.white,
@@ -127,12 +117,12 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
                   : Container(),
               Expanded(
                 child: ListView.separated(
-                  itemCount: displayList.length,
+                  itemCount: souvriers.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) => ListTile(
                     contentPadding: const EdgeInsets.all(8.0),
                     title: Text(
-                      displayList[index].name,
+                      souvriers[index].name,
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -170,9 +160,9 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
                               TextButton(
                                 onPressed: () async {
                                   Navigator.pop(context);
-                                  await deleteOuvrier(displayList[index].id);
+                                  await deleteOuvrier(souvriers[index].id);
                                   setState(() {
-                                    displayList.removeAt(index);
+                                    ouvriers.removeAt(index);
                                   });
                                 },
                                 child: const Text('Supprimer'),
@@ -187,10 +177,10 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => QuinzMoney(
-                            ouvrier: displayList[index],
+                            ouvrier: souvriers[index],
                             onsalchanged: (val) {
                               setState(() {
-                                displayList[index] = val;
+                                ouvriers[ouvriers.indexOf(souvriers[index])] = val;
                               });
                             },
                           ),
@@ -267,12 +257,12 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
                       if (newName.isNotEmpty) {
                         final db = FirebaseFirestore.instance;
                         final ouvrier = db.collection("quinz_ouvrier");
-                        ouvrier.add({'nom': newName, 'terre': widget.terre.id, "salaire": salaire}).then(
+                        ouvrier.add({'nom': newName, 'terre': widget.parcelle.id, "salaire": salaire}).then(
                             (value) {
                           final newOuvrier = Ouvrier(
                               name: newName, id: value.id, salaire: salaire);
                           setState(() {
-                            displayList.add(newOuvrier);
+                            ouvriers.add(newOuvrier);
                           });
                         });
                         controller.clear();
@@ -296,5 +286,5 @@ class Ouvrier {
   final String id;
   final double salaire;
 
-  Ouvrier({required this.name, required this.id, this.salaire=.0});
+  Ouvrier({required this.name, required this.id,required this.salaire});
 }

@@ -1,64 +1,51 @@
 import 'dart:io';
-
 import 'package:bhyapp/apis/invoice.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/quinz_ouvrier.dart';
-import 'package:bhyapp/ouvrier/ouvrier_name.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 
-class TerreHome extends StatefulWidget {
-  const TerreHome({super.key});
+class ParcelleHome extends StatefulWidget {
+  const ParcelleHome({super.key});
 
   @override
-  State<TerreHome> createState() => _TerreHomeState();
+  State<ParcelleHome> createState() => _ParcelleHomeState();
 }
 
-class _TerreHomeState extends State<TerreHome> {
+class _ParcelleHomeState extends State<ParcelleHome> {
   bool _isLoading = true;
-  final TextEditingController _nomdeouvrier = TextEditingController();
-  TextEditingController get controller => _nomdeouvrier;
+  final controller = TextEditingController();
+  final search = TextEditingController();
 
   @override
   void dispose() {
-    _nomdeouvrier.dispose();
+    controller.dispose();
     super.dispose();
   }
-
-  List<Ouvriername2> displayList = [];
-  List<Ouvriername2> originalList = [];
+  
+  List<Parcelle> parcelles = [];
 
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
     db.collection("terre").get().then((qsnap) {
       setState(() {
-        originalList = qsnap.docs
+        parcelles = qsnap.docs
             .map((ouvier) =>
-                Ouvriername2(name: ouvier.data()["nom"], id: ouvier.id))
+                Parcelle(name: ouvier.data()["nom"], id: ouvier.id))
             .toList();
-        displayList = List.from(originalList);
         _isLoading = false;
       });
     });
     super.initState();
   }
 
-  void updateList(String value) {
-    setState(() {
-      if (value.isEmpty) {
-        displayList = List.from(originalList);
-      } else {
-        displayList = originalList
-            .where((element) =>
-                element.name.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final sparcelles = parcelles
+        .where((element) =>
+        element.name.toLowerCase().contains(search.text.toLowerCase()))
+        .toList();
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
       appBar: AppBar(
@@ -102,12 +89,13 @@ class _TerreHomeState extends State<TerreHome> {
             children: [
               const SizedBox(height: 5.0),
               TextField(
-                onChanged: (value) => updateList(value),
+                onChanged: (value) => setState(() {}),
                 style: const TextStyle(fontSize: 17.0),
+                controller: search,
                 decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 20.0),
-                    labelText: "chercher une Parcelle (${displayList.length})",
+                    labelText: "chercher une Parcelle (${sparcelles.length})",
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: Colors.white,
@@ -127,12 +115,12 @@ class _TerreHomeState extends State<TerreHome> {
                   : Container(),
               Expanded(
                 child: ListView.separated(
-                  itemCount: displayList.length,
+                  itemCount: sparcelles.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) => ListTile(
                     contentPadding: const EdgeInsets.all(8.0),
                     title: Text(
-                      displayList[index].name,
+                      sparcelles[index].name,
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -170,9 +158,9 @@ class _TerreHomeState extends State<TerreHome> {
                               TextButton(
                                 onPressed: () async {
                                   Navigator.pop(context);
-                                  await deleteOuvrier(displayList[index].id);
+                                  await deleteOuvrier(sparcelles[index].id);
                                   setState(() {
-                                    displayList.removeAt(index);
+                                    parcelles.remove(sparcelles[index]);
                                   });
                                 },
                                 child: const Text('Supprimer'),
@@ -187,7 +175,7 @@ class _TerreHomeState extends State<TerreHome> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => QuinzOuvrier(
-                            terre: displayList[index],
+                            parcelle: sparcelles[index],
                           ),
                         ),
                       );
@@ -227,12 +215,12 @@ class _TerreHomeState extends State<TerreHome> {
               .subtract(const Duration(days: 1))
           : picked.copyWith(day: 15);
       final db = FirebaseFirestore.instance;
-      final moneyDocs = await db
+      final transportDocs = await db
           .collection("quinz_money")
           .where('date', isLessThanOrEqualTo: fdate)
           .where('date', isGreaterThanOrEqualTo: idate)
           .get();
-      final money = moneyDocs.docs.map<Map<String, dynamic>>((e) => {
+      final transports = transportDocs.docs.map<Map<String, dynamic>>((e) => {
             "person": e['ouvrier'],
             "data": {
               "day": (e['date'] as Timestamp).toDate().day,
@@ -242,13 +230,13 @@ class _TerreHomeState extends State<TerreHome> {
       final databyouvrier = {};
       final uppercaseLetters =
           List.generate(26, (index) => String.fromCharCode(index + 65));
-      money.forEach((element) {
-        if (databyouvrier.containsKey(element["person"])) {
-          (databyouvrier[element["person"]] as List).add(element["data"]);
+      for (var transport in transports) {
+        if (databyouvrier.containsKey(transport["person"])) {
+          (databyouvrier[transport["person"]] as List).add(transport["data"]);
         } else {
-          databyouvrier[element["person"]] = [element["data"]];
+          databyouvrier[transport["person"]] = [transport["data"]];
         }
-      });
+      }
       final ouvDocs = await db.collection("quinz_ouvrier").get();
       final ouv = ouvDocs.docs.map((e) => {
             "id": e.id,
@@ -257,37 +245,37 @@ class _TerreHomeState extends State<TerreHome> {
             "terre": e["terre"],
           });
       final ouvbyid = {};
-      ouv.forEach((e) {
+      for (var e in ouv) {
         ouvbyid[e['id']] = {
           "nom": e['nom'],
           "salaire": e["salaire"],
           "terre": e["terre"],
         };
-      });
+      }
 
 
       var excel = Excel.createExcel();
       Sheet sheetObject = excel["Sheet1"];
-      originalList.forEach((terre) {
-        sheetObject.appendRow([TextCellValue(terre.name)]);
+      for (var parcelle in parcelles) {
+        sheetObject.appendRow([TextCellValue(parcelle.name)]);
         List<String> headers = ["Transp"];
-        headers.addAll(getDaysInBetween(idate, fdate).map((e) => e.toString()));
+        final dayslist = getDaysInBetween(idate, fdate);
+        headers.addAll(dayslist.map((e) => e.toString()));
         headers.addAll(["Tot", "Sal/Jr", "Montant"]);
         sheetObject.appendRow(headers.map((e) => TextCellValue(e)).toList());
-        final dayslist = getDaysInBetween(idate, fdate);
         ouvbyid.forEach((key, value) {
-          if (value["terre"] == terre.id && databyouvrier.containsKey(key)) {
+          if (value["terre"] == parcelle.id && databyouvrier.containsKey(key)) {
             List<CellValue?> head = [TextCellValue(value["nom"])];
             for (int i = 0; i < dayslist.length; i++) {
               head.add(const TextCellValue(
                   "0")); // Assuming generateElement is a function that generates an element based on i
             }
             int tot = 0;
-            (databyouvrier[key] as List).forEach((element) {
+            for (var element in (databyouvrier[key] as List)) {
               head[dayslist.indexOf(element["day"]) + 1] =
                   TextCellValue(element["people"].toString());
               tot = tot + element['people'] as int;
-            });
+            }
             head.addAll([
               TextCellValue(tot.toString()),
               TextCellValue(value['salaire'].toString()),
@@ -297,7 +285,7 @@ class _TerreHomeState extends State<TerreHome> {
           }
         });
         sheetObject.appendRow([null]);
-      });
+      }
       PdfApi.openFile(
           await PdfApi.saveDocumentexcel(name: "a.xlsx", excel: excel));
     }
@@ -356,10 +344,10 @@ class _TerreHomeState extends State<TerreHome> {
                         final db = FirebaseFirestore.instance;
                         final ouvrier = db.collection("terre");
                         ouvrier.add({'nom': newName}).then((value) {
-                          Ouvriername2 newOuvrier =
-                              Ouvriername2(name: newName, id: value.id);
+                          Parcelle newOuvrier =
+                              Parcelle(name: newName, id: value.id);
                           setState(() {
-                            displayList.add(newOuvrier);
+                            parcelles.add(newOuvrier);
                           });
                         });
                         controller.clear();
@@ -377,3 +365,11 @@ class _TerreHomeState extends State<TerreHome> {
     );
   }
 }
+
+
+class Parcelle {
+  final String name;
+  final String id;
+  Parcelle({required this.name, required this.id});
+}
+
