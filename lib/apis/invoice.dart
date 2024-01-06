@@ -9,7 +9,7 @@ import 'package:pdf/widgets.dart';
 import 'dart:io';
 
 class Utils {
-  static formatPrice(double price) => '${price.toStringAsFixed(2)}DT';
+  static formatPrice(double price) => '${price.toStringAsFixed(3)} DT';
   static formatDate(DateTime date) => DateFormat.yMMMMd('fr_FR').format(date);
   static formatMoney(double money) => money.toStringAsFixed(2);
 }
@@ -226,7 +226,7 @@ class InvoicApi {
                 ),
                 buildText(
                   title: 'timbre fiscale',
-                  value: "0.6 DT",
+                  value: "1.000 DT",
                   unite: true,
                 ),
                 Divider(),
@@ -236,7 +236,7 @@ class InvoicApi {
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
-                  value: Utils.formatPrice(totalTTC + 0.6),
+                  value: Utils.formatPrice(totalTTC + 1.0),
                   unite: true,
                 ),
                 SizedBox(height: 2 * pw.PdfPageFormat.mm),
@@ -289,7 +289,7 @@ class InvoicApi {
                 ),
                 buildText(
                   title: 'timbre fiscale',
-                  value: "0.6 DT",
+                  value: "1.000 DT",
                   unite: true,
                 ),
                 Divider(),
@@ -299,7 +299,7 @@ class InvoicApi {
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
-                  value: Utils.formatPrice(totalTTC + 0.6),
+                  value: Utils.formatPrice(totalTTC + 1.0),
                   unite: true,
                 ),
                 SizedBox(height: 2 * pw.PdfPageFormat.mm),
