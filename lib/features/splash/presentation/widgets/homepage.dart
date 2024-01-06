@@ -12,6 +12,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/all_informations/not
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/rapport_adminn.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/requete_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/lesengraishome.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/quinz.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/ouvriershome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -163,6 +164,13 @@ class _HomePageState extends State<HomePage> {
                     source: 'images/pic.png',
                     title: 'Note de Règlement',
                     child: NoteReglementInfo(),
+                  )),
+              Visibility(
+                  visible: isVisible(),
+                  child: const CustomCard(
+                    source: 'images/pic.png',
+                    title: 'Quinzz',
+                    child: TerreHome(),
                   )),
             ]),
       ),

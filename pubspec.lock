@@ -114,7 +114,7 @@ packages:
     source: hosted
     version: "3.8.10"
   collection:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: collection
       sha256: ee67cb0715911d28db6bf4af1026078bd6f0128b07a5f66fb2ed94ec6783c09a
@@ -177,6 +177,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.9"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
+  excel:
+    dependency: "direct main"
+    description:
+      name: excel
+      sha256: c299b5ccf14bb7f24fe64ca1a15e4a3796ab563575087ce3f7e07fc2e3429db5
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.2"
   fake_async:
     dependency: transitive
     description:

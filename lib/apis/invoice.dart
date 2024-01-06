@@ -1,3 +1,4 @@
+import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -565,6 +566,20 @@ class PdfApi {
     final file = File('${dir.path}/$name');
 
     await file.writeAsBytes(bytes);
+
+    return file;
+  }
+
+  static Future<File> saveDocumentexcel({
+    required String name,
+    required Excel excel,
+  }) async {
+    final bytes = await excel.save();
+
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/$name');
+
+    await file.writeAsBytes(bytes!);
 
     return file;
   }

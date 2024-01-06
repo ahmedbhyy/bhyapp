@@ -2,7 +2,7 @@
 // ignore_for_file: lines_longer_than_80_chars, avoid_classes_with_only_static_members
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show defaultTargetPlatform, kIsWeb,  TargetPlatform;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -36,10 +33,8 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        return android;
-      case TargetPlatform.linux:
         throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
+          'DefaultFirebaseOptions have not been configured for windows - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       default:
@@ -48,6 +43,16 @@ class DefaultFirebaseOptions {
         );
     }
   }
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyD8miM_QrqQFArHEPwU4BuH2cDOV7wXY1E',
+    appId: '1:164313311350:web:a52484fb2eae000c869757',
+    messagingSenderId: '164313311350',
+    projectId: 'agri-c6980',
+    authDomain: 'agri-c6980.firebaseapp.com',
+    storageBucket: 'agri-c6980.appspot.com',
+    measurementId: 'G-7CM05DH73Q',
+  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCN53RLEDCwom6GZ_6EcNNOaym5lYW7u7k',
