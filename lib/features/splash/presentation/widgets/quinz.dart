@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:bhyapp/apis/invoice.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/ouvrier_details.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/quinz_ouvrier.dart';
 import 'package:bhyapp/ouvrier/ouvrier_name.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,9 +34,8 @@ class _TerreHomeState extends State<TerreHome> {
     db.collection("terre").get().then((qsnap) {
       setState(() {
         originalList = qsnap.docs
-            .map((ouvier) => Ouvriername2(
-                name: ouvier.data()["nom"],
-                id: ouvier.id))
+            .map((ouvier) =>
+                Ouvriername2(name: ouvier.data()["nom"], id: ouvier.id))
             .toList();
         displayList = List.from(originalList);
         _isLoading = false;
@@ -67,7 +65,7 @@ class _TerreHomeState extends State<TerreHome> {
         backgroundColor: const Color(0xffffffff),
         elevation: 0.0,
         title: const Text(
-          "Les terres",
+          "Les Parcelles",
           style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
@@ -90,7 +88,7 @@ class _TerreHomeState extends State<TerreHome> {
               size: Platform.isAndroid ? 24 : 45,
             ),
             onPressed: () {
-              String hintText = "Ajouter une terre";
+              String hintText = "Ajouter une Parcelle";
               showEditDialog(context, hintText, controller);
             },
           ),
@@ -109,7 +107,7 @@ class _TerreHomeState extends State<TerreHome> {
                 decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 20.0),
-                    labelText: "chercher une terre (${displayList.length})",
+                    labelText: "chercher une Parcelle (${displayList.length})",
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: Colors.white,
@@ -140,7 +138,7 @@ class _TerreHomeState extends State<TerreHome> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    subtitle: Text('voir plus'),
+                    subtitle: const Text('voir plus'),
                     trailing: IconButton(
                       icon: const Icon(
                         Icons.delete,
@@ -201,9 +199,12 @@ class _TerreHomeState extends State<TerreHome> {
           )),
     );
   }
+
   List<int> getDaysInBetween(DateTime startDate, DateTime endDate) {
     List<int> days = [];
-    for (DateTime d = startDate; d.isBefore(endDate.add(const Duration(days: 1))); d = d.add(const Duration(days: 1))) {
+    for (DateTime d = startDate;
+        d.isBefore(endDate.add(const Duration(days: 1)));
+        d = d.add(const Duration(days: 1))) {
       days.add(d.day);
     }
     return days;
@@ -218,69 +219,87 @@ class _TerreHomeState extends State<TerreHome> {
     );
 
     if (picked != null) {
-        final idate = picked.day > 15 ? picked.copyWith(day: 16): picked.copyWith(day: 1);
-        final fdate = picked.day > 15 ? picked.copyWith(month: picked.month+1, day:1).subtract(const Duration(days: 1)) : picked.copyWith(day:15);
-        final db = FirebaseFirestore.instance;
-        final money_docs = await db.collection("quinz_money").where('date', isLessThanOrEqualTo: fdate).where('date', isGreaterThanOrEqualTo: idate).get();
-        final money = money_docs.docs.map<Map<String,dynamic>>((e) => {
-          "person": e['ouvrier'],
-          "data": {
-            "day": (e['date'] as Timestamp).toDate().day,
-            "people": (e['montant'] as double).toInt()
-          },
+      final idate =
+          picked.day > 15 ? picked.copyWith(day: 16) : picked.copyWith(day: 1);
+      final fdate = picked.day > 15
+          ? picked
+              .copyWith(month: picked.month + 1, day: 1)
+              .subtract(const Duration(days: 1))
+          : picked.copyWith(day: 15);
+      final db = FirebaseFirestore.instance;
+      final moneyDocs = await db
+          .collection("quinz_money")
+          .where('date', isLessThanOrEqualTo: fdate)
+          .where('date', isGreaterThanOrEqualTo: idate)
+          .get();
+      final money = moneyDocs.docs.map<Map<String, dynamic>>((e) => {
+            "person": e['ouvrier'],
+            "data": {
+              "day": (e['date'] as Timestamp).toDate().day,
+              "people": (e['montant'] as double).toInt()
+            },
+          });
+      final databyouvrier = {};
+      final uppercaseLetters =
+          List.generate(26, (index) => String.fromCharCode(index + 65));
+      money.forEach((element) {
+        if (databyouvrier.containsKey(element["person"])) {
+          (databyouvrier[element["person"]] as List).add(element["data"]);
+        } else {
+          databyouvrier[element["person"]] = [element["data"]];
+        }
+      });
+      final ouvDocs = await db.collection("quinz_ouvrier").get();
+      final ouv = ouvDocs.docs.map((e) => {
+            "id": e.id,
+            "nom": e['nom'],
+            "salaire": e["salaire"],
+            "terre": e["terre"],
+          });
+      final ouvbyid = {};
+      ouv.forEach((e) {
+        ouvbyid[e['id']] = {
+          "nom": e['nom'],
+          "salaire": e["salaire"],
+          "terre": e["terre"],
+        };
+      });
 
-        });
-        final databyouvrier = {};
-        final uppercaseLetters = List.generate(26, (index) => String.fromCharCode(index + 65));
-        money.forEach((element) {
-          if(databyouvrier.containsKey(element["person"])) {
-            (databyouvrier[element["person"]] as List).add(element["data"]);
-          } else {
-            databyouvrier[element["person"]] = [element["data"]];
+
+      var excel = Excel.createExcel();
+      Sheet sheetObject = excel["Sheet1"];
+      originalList.forEach((terre) {
+        sheetObject.appendRow([TextCellValue(terre.name)]);
+        List<String> headers = ["Transp"];
+        headers.addAll(getDaysInBetween(idate, fdate).map((e) => e.toString()));
+        headers.addAll(["Tot", "Sal/Jr", "Montant"]);
+        sheetObject.appendRow(headers.map((e) => TextCellValue(e)).toList());
+        final dayslist = getDaysInBetween(idate, fdate);
+        ouvbyid.forEach((key, value) {
+          if (value["terre"] == terre.id && databyouvrier.containsKey(key)) {
+            List<CellValue?> head = [TextCellValue(value["nom"])];
+            for (int i = 0; i < dayslist.length; i++) {
+              head.add(const TextCellValue(
+                  "0")); // Assuming generateElement is a function that generates an element based on i
+            }
+            int tot = 0;
+            (databyouvrier[key] as List).forEach((element) {
+              head[dayslist.indexOf(element["day"]) + 1] =
+                  TextCellValue(element["people"].toString());
+              tot = tot + element['people'] as int;
+            });
+            head.addAll([
+              TextCellValue(tot.toString()),
+              TextCellValue(value['salaire'].toString()),
+              TextCellValue((value['salaire'] * tot).toString())
+            ]);
+            sheetObject.appendRow(head);
           }
         });
-        final ouv_docs = await db.collection("quinz_ouvrier").get();
-        final ouv = ouv_docs.docs.map((e) => {
-          "id": e.id,
-          "nom": e['nom'],
-          "salaire": e["salaire"],
-          "terre": e["terre"],
-        });
-        final ouvbyid = {};
-        ouv.forEach((e) { ouvbyid[e['id']] = {
-          "nom": e['nom'],
-          "salaire": e["salaire"],
-          "terre": e["terre"],
-        }; });
-        print(databyouvrier);
-        print(ouvbyid);
-        var excel = Excel.createExcel();
-        Sheet sheetObject = excel["Sheet1"];
-        originalList.forEach((terre) {
-          sheetObject.appendRow([TextCellValue(terre.name)]);
-          List<String> headers = ["Transp"];
-          headers.addAll(getDaysInBetween(idate, fdate).map((e) => e.toString()));
-          headers.addAll(["Tot", "Sal/Jr", "Montant"]);
-          sheetObject.appendRow(headers.map((e) => TextCellValue(e)).toList());
-          final dayslist = getDaysInBetween(idate, fdate);
-          ouvbyid.forEach((key, value) {
-            if(value["terre"] == terre.id && databyouvrier.containsKey(key)) {
-              List<CellValue?> head = [TextCellValue(value["nom"])];
-              for (int i = 0; i < dayslist.length; i++) {
-                head.add(TextCellValue("0"));// Assuming generateElement is a function that generates an element based on i
-              }
-              int tot = 0;
-              (databyouvrier[key] as List).forEach((element) {
-                head[dayslist.indexOf(element["day"]) + 1] = TextCellValue(element["people"].toString());
-                tot = tot + element['people'] as int;
-              });
-              head.addAll([TextCellValue(tot.toString()), TextCellValue(value['salaire'].toString()), TextCellValue((value['salaire']*tot).toString())]);
-              sheetObject.appendRow(head);
-            }
-          });
-          sheetObject.appendRow([null]);
-        });
-        PdfApi.openFile(await PdfApi.saveDocumentexcel(name: "a.xlsx", excel: excel));
+        sheetObject.appendRow([null]);
+      });
+      PdfApi.openFile(
+          await PdfApi.saveDocumentexcel(name: "a.xlsx", excel: excel));
     }
   }
 
@@ -321,7 +340,7 @@ class _TerreHomeState extends State<TerreHome> {
                     controller: controller,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      labelText: 'nom de la terre',
+                      labelText: 'nom de la Parcelle',
                     ),
                   ),
                 ],
@@ -336,10 +355,9 @@ class _TerreHomeState extends State<TerreHome> {
                       if (newName.isNotEmpty) {
                         final db = FirebaseFirestore.instance;
                         final ouvrier = db.collection("terre");
-                        ouvrier.add({'nom': newName}).then(
-                            (value) {
-                          Ouvriername2 newOuvrier = Ouvriername2(
-                              name: newName, id: value.id);
+                        ouvrier.add({'nom': newName}).then((value) {
+                          Ouvriername2 newOuvrier =
+                              Ouvriername2(name: newName, id: value.id);
                           setState(() {
                             displayList.add(newOuvrier);
                           });

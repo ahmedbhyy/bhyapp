@@ -574,7 +574,7 @@ class PdfApi {
     required String name,
     required Excel excel,
   }) async {
-    final bytes = await excel.save();
+    final bytes = excel.save();
 
     final dir = await getApplicationDocumentsDirectory();
     final file = File('${dir.path}/$name');
@@ -586,7 +586,6 @@ class PdfApi {
 
   static Future openFile(File file) async {
     final url = file.path;
-    print(url);
     await OpenFilex.open(url);
   }
 }

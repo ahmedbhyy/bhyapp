@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage> {
               Visibility(
                   visible: isVisible(),
                   child: const CustomCard(
-                    source: 'images/pic.png',
+                    source: 'images/quinz.jpg',
                     title: 'Quinzz',
                     child: TerreHome(),
                   )),

@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 class QuinzMoney extends StatefulWidget {
   final Ouvrier ouvrier;
   final void Function(Ouvrier) onsalchanged;
-  const QuinzMoney({super.key, required this.ouvrier, required this.onsalchanged});
+  const QuinzMoney(
+      {super.key, required this.ouvrier, required this.onsalchanged});
 
   @override
   State<QuinzMoney> createState() => _QuinzMoneyState();
@@ -25,11 +26,17 @@ class _QuinzMoneyState extends State<QuinzMoney> {
   void initState() {
     final db = FirebaseFirestore.instance;
     saljour.text = widget.ouvrier.salaire.toString();
-    db.collection("quinz_money").where("ouvrier", isEqualTo: widget.ouvrier.id).get().then((doc) async {
+    db
+        .collection("quinz_money")
+        .where("ouvrier", isEqualTo: widget.ouvrier.id)
+        .get()
+        .then((doc) async {
       setState(() {
         primes = doc.docs
-            .map((e) =>
-                Prime(montant: e['montant'], date: (e['date'] as Timestamp).toDate(), id: e.id))
+            .map((e) => Prime(
+                montant: e['montant'],
+                date: (e['date'] as Timestamp).toDate(),
+                id: e.id))
             .toList();
       });
     });
@@ -56,9 +63,14 @@ class _QuinzMoneyState extends State<QuinzMoney> {
           );
           if (res != null) {
             final db = FirebaseFirestore.instance;
-            final ouvrier = await  db.collection("quinz_money").add({"montant": res.montant,  "date": res.date, "ouvrier": widget.ouvrier.id});
+            final ouvrier = await db.collection("quinz_money").add({
+              "montant": res.montant,
+              "date": res.date,
+              "ouvrier": widget.ouvrier.id
+            });
             setState(() {
-              primes.add(Prime(montant: res.montant, date: res.date, id: ouvrier.id));
+              primes.add(
+                  Prime(montant: res.montant, date: res.date, id: ouvrier.id));
             });
           }
         },
@@ -67,7 +79,7 @@ class _QuinzMoneyState extends State<QuinzMoney> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
         title: const Text(
-          "Money",
+          "Les Transports",
           style: TextStyle(
             fontSize: 20,
             fontFamily: 'Michroma',
@@ -81,36 +93,46 @@ class _QuinzMoneyState extends State<QuinzMoney> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
-            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-              Expanded(
-                child: TextField(
-                  controller: saljour,
-                  style: const TextStyle(fontSize: 17.0),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 20.0),
-                      labelText: "Salaire /Jr",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide:
-                        const BorderSide(width: 1, color: Color(0xFFC2BCBC)),
-                      )
+                Expanded(
+                  child: TextField(
+                    controller: saljour,
+                    style: const TextStyle(fontSize: 17.0),
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20.0),
+                        labelText: "Salaire /Jr",
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                          borderSide: const BorderSide(
+                              width: 1, color: Color(0xFFC2BCBC)),
+                        )),
                   ),
                 ),
-              ),
-              SizedBox(width: 20,),
-              FilledButton(child: const Text("enregistrer"), onPressed: () {
-                final db = FirebaseFirestore.instance;
-                db.collection("quinz_ouvrier").doc(widget.ouvrier.id).update({
-                  "salaire": double.parse(saljour.text)
-                });
-                widget.onsalchanged(Ouvrier(name: widget.ouvrier.name, id: widget.ouvrier.name, salaire: double.parse(saljour.text)));
-              },)
-            ],),
+                const SizedBox(
+                  width: 20,
+                ),
+                FilledButton(
+                  child: const Text("enregistrer"),
+                  onPressed: () {
+                    final db = FirebaseFirestore.instance;
+                    db
+                        .collection("quinz_ouvrier")
+                        .doc(widget.ouvrier.id)
+                        .update({"salaire": double.parse(saljour.text)});
+                    widget.onsalchanged(Ouvrier(
+                        name: widget.ouvrier.name,
+                        id: widget.ouvrier.name,
+                        salaire: double.parse(saljour.text)));
+                  },
+                )
+              ],
+            ),
           ),
           const SizedBox(height: 5.0),
           Expanded(
@@ -121,7 +143,7 @@ class _QuinzMoneyState extends State<QuinzMoney> {
                 final prime = primes[index];
                 return ListTile(
                   leading: Icon(
-                    Icons.payments,
+                    Icons.person_outlined,
                     color: Colors.green.shade600,
                   ),
                   contentPadding: const EdgeInsets.all(8.0),
@@ -130,7 +152,7 @@ class _QuinzMoneyState extends State<QuinzMoney> {
                     DateFormat('yyyy-MM-dd').format(prime.date),
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  title: Text('${prime.montant.toString()}',
+                  title: Text(prime.montant.toString(),
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
                   onTap: () {},
@@ -246,8 +268,10 @@ class _QuinzMoneyState extends State<QuinzMoney> {
             ),
             FilledButton(
                 onPressed: () {
-                  final tmp =
-                      Prime(montant: double.parse(controller.text), date: date, id: "");
+                  final tmp = Prime(
+                      montant: double.parse(controller.text),
+                      date: date,
+                      id: "");
                   Navigator.pop(context, tmp);
                 },
                 child: const Center(child: Text("Ajouter")))
