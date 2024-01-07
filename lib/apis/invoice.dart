@@ -12,7 +12,7 @@ class Utils {
   static formatPrice(double price) => '${price.toStringAsFixed(3)} DT';
   static formatDate(DateTime date) => DateFormat.yMMMMd('fr_FR').format(date);
   static formatmy(DateTime date) => DateFormat.Md('fr_FR').format(date);
-  static formatMoney(double money) => money.toStringAsFixed(2);
+  static formatMoney(double money) => money.toStringAsFixed(3);
 }
 
 class InvoicApi {
@@ -189,17 +189,21 @@ class InvoicApi {
     final totalTTC = items.fold(
         0.0,
         (previousValue, element) =>
-            previousValue + element['quantite'] * element['montant']);
+            previousValue +
+            element['quantite'] * element['montant'] * (1 - element['remise']));
     final totalhc = items.fold(
         0.0,
         (prev, next) =>
             prev +
-            next['quantite'] * (next['montant'] / (1 + next['tva'] / 100)));
+            next['quantite'] *
+                (next['montant'] / (1 + next['tva'] / 100)) *
+                (1 - next['remise']));
     final totaltva = items.fold(
         0.0,
         (prev, next) =>
             prev +
             next['quantite'] *
+                (1 - next['remise']) *
                 (next['montant'] /
                     (1 + next['tva'] / 100) *
                     next['tva'] /
@@ -220,11 +224,13 @@ class InvoicApi {
                   value: Utils.formatPrice(totalhc),
                   unite: true,
                 ),
+                SizedBox(height: 5),
                 buildText(
                   title: 'total TVA',
                   value: Utils.formatPrice(totaltva),
                   unite: true,
                 ),
+                SizedBox(height: 5),
                 buildText(
                   title: 'timbre fiscale',
                   value: "1.000 DT",
@@ -244,6 +250,23 @@ class InvoicApi {
                 Container(height: 1, color: pw.PdfColors.grey400),
                 SizedBox(height: 0.5 * pw.PdfPageFormat.mm),
                 Container(height: 1, color: pw.PdfColors.grey400),
+                SizedBox(height: 20 * pw.PdfPageFormat.mm),
+                Center(
+                  child: Text('Signature',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                    color: pw.PdfColors.grey100,
+                  ),
+                  width: double.infinity,
+                  height: 80,
+                ),
               ],
             ),
           ),
@@ -452,6 +475,7 @@ class InvoicApi {
       'Unité',
       'P.U.H.T',
       '%TVA',
+      'Remise %',
       'Prix Total'
     ];
 
@@ -462,10 +486,12 @@ class InvoicApi {
                 "",
                 e["des"],
                 e["quantite"],
-                e["montant"],
+                Utils.formatMoney(e["montant"].toDouble()),
                 Utils.formatMoney(e['montant'] / (1 + e['tva'] / 100)),
                 e['tva'],
-                e["montant"] * e["quantite"],
+                e['remise'] * 100,
+                Utils.formatMoney(
+                    (e["montant"] * e["quantite"]) * (1 - e['remise'])),
               ])
           .toList(),
       border: null,
@@ -475,12 +501,13 @@ class InvoicApi {
       columnWidths: {0: const FixedColumnWidth(1.8 * pw.PdfPageFormat.cm)},
       cellAlignments: {
         0: Alignment.centerLeft,
-        1: Alignment.centerRight,
-        2: Alignment.centerRight,
-        3: Alignment.centerRight,
-        4: Alignment.centerRight,
-        5: Alignment.centerRight,
-        6: Alignment.centerRight,
+        1: Alignment.centerLeft,
+        2: Alignment.center,
+        3: Alignment.center,
+        4: Alignment.center,
+        5: Alignment.center,
+        6: Alignment.center,
+        7: Alignment.centerRight,
       },
     );
   }

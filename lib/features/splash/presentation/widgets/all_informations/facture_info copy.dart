@@ -467,6 +467,7 @@ class _ItemAdderState extends State<ItemAdder> {
   final _designation = TextEditingController();
   final _quantite = TextEditingController();
   final _montant = TextEditingController();
+  final _remise = TextEditingController();
   final _tvafacture = TextEditingController(text: '19');
 
   @override
@@ -476,6 +477,7 @@ class _ItemAdderState extends State<ItemAdder> {
       _quantite.text = widget.item!["quantite"].toString();
       _montant.text = widget.item!["montant"].toString();
       _tvafacture.text = widget.item!["tva"].toString();
+      _remise.text = widget.item!["remise"].toString() * 100;
     }
     super.initState();
   }
@@ -540,8 +542,22 @@ class _ItemAdderState extends State<ItemAdder> {
                     suffixText: 'DT',
                   ),
                 ),
+                 const SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  onSubmitted: (a) => onclick(),
+                  controller: _remise,
+                  maxLines: null,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    label: Text("Remise %"),
+                    suffixText: '%',
+                  ),
+                ),
                 const SizedBox(
-                  height: 50,
+                  height: 20,
                 ),
               ],
             ),
@@ -561,6 +577,7 @@ class _ItemAdderState extends State<ItemAdder> {
       "quantite": int.parse(_quantite.text),
       "tva": int.parse(_tvafacture.text),
       "montant": double.parse(_montant.text),
+      "remise": double.parse(_remise.text) / 100,
     });
     Navigator.pop(context, tmp);
   }
