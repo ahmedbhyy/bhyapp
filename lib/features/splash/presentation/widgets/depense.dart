@@ -4,18 +4,18 @@ import 'package:bhyapp/features/splash/presentation/widgets/quinz_money.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class QuinzOuvrier extends StatefulWidget {
-  final Parcelle parcelle;
-  const QuinzOuvrier({super.key, required this.parcelle});
+import 'depense_plus.dart';
+
+class DepenseHome extends StatefulWidget {
+  const DepenseHome({super.key});
 
   @override
-  State<QuinzOuvrier> createState() => _QuinzOuvrierState();
+  State<DepenseHome> createState() => _DepenseHomeState();
 }
 
-class _QuinzOuvrierState extends State<QuinzOuvrier> {
+class _DepenseHomeState extends State<DepenseHome> {
   bool _isLoading = true;
   final nom = TextEditingController();
-  final salairecontroller = TextEditingController();
   final search = TextEditingController();
   TextEditingController get controller => nom;
 
@@ -26,17 +26,17 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
     super.dispose();
   }
 
-  List<Ouvrier> ouvriers = [];
+  List<Depense> depenses = [];
+
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-    db.collection("quinz_ouvrier").where("terre", isEqualTo: widget.parcelle.id).get().then((qsnap) {
+    db.collection("depense").get().then((qsnap) {
       setState(() {
-        ouvriers = qsnap.docs
-            .map((ouvier) => Ouvrier(
-                name: ouvier.data()["nom"],
-                salaire: ouvier.data()["salaire"],
-                id: ouvier.id))
+        depenses = qsnap.docs
+            .map((dep) => Depense(
+                name: dep.id
+            ))
             .toList();
         _isLoading = false;
       });
@@ -46,7 +46,7 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
 
   @override
   Widget build(BuildContext context) {
-    final souvriers = ouvriers
+    final sdep = depenses
         .where((element) =>
         element.name.toLowerCase().contains(search.text.toLowerCase()))
         .toList();
@@ -56,7 +56,7 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
         backgroundColor: const Color(0xffffffff),
         elevation: 0.0,
         title: const Text(
-          "Les ouvriers",
+          "Les Depenses",
           style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
@@ -70,7 +70,7 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
               size: Platform.isAndroid ? 24 : 45,
             ),
             onPressed: () {
-              String hintText = "Ajouter un Ouvrier";
+              String hintText = "Ajouter une Depense";
               showEditDialog(context, hintText, controller);
             },
           ),
@@ -90,7 +90,7 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
                 decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 20.0),
-                    labelText: "chercher un ouvrier (${souvriers.length})",
+                    labelText: "chercher une depense (${sdep.length})",
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: Colors.white,
@@ -110,12 +110,12 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
                   : Container(),
               Expanded(
                 child: ListView.separated(
-                  itemCount: souvriers.length,
+                  itemCount: sdep.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) => ListTile(
                     contentPadding: const EdgeInsets.all(8.0),
                     title: Text(
-                      souvriers[index].name,
+                      sdep[index].name,
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -153,9 +153,9 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
                               TextButton(
                                 onPressed: () async {
                                   Navigator.pop(context);
-                                  await deleteOuvrier(souvriers[index].id);
+                                  await deleteDep(sdep[index].name);
                                   setState(() {
-                                    ouvriers.removeAt(index);
+                                    depenses.removeAt(index);
                                   });
                                 },
                                 child: const Text('Supprimer'),
@@ -169,13 +169,8 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => QuinzMoney(
-                            ouvrier: souvriers[index],
-                            onsalchanged: (val) {
-                              setState(() {
-                                ouvriers[ouvriers.indexOf(souvriers[index])] = val;
-                              });
-                            },
+                          builder: (context) => DepenseViewer(
+                            depense: sdep[index],
                           ),
                         ),
                       );
@@ -188,11 +183,12 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
     );
   }
 
-  Future<void> deleteOuvrier(String ouvrierId) async {
+  Future<void> deleteDep(String ouvrierId) async {
     try {
       final db = FirebaseFirestore.instance;
-      final ouvrierRef = db.collection('quinz_ouvrier').doc(ouvrierId);
+      final ouvrierRef = db.collection('depense').doc(ouvrierId);
 
+      ouvrierRef.collection("items").;
       await ouvrierRef.delete();
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -226,15 +222,7 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
                     controller: controller,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      labelText: 'Nom et Prénom',
-                    ),
-                  ),
-                  TextField(
-                    controller: salairecontroller,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'salaire/Jr',
+                      labelText: 'designation',
                     ),
                   ),
                 ],
@@ -244,18 +232,17 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
               TextButton(
                 onPressed: () {
                   String newName = controller.text;
-                  final salaire = double.parse(salairecontroller.text);
                   if (newName.isNotEmpty) {
                     setState(() {
                       if (newName.isNotEmpty) {
                         final db = FirebaseFirestore.instance;
-                        final ouvrier = db.collection("quinz_ouvrier");
-                        ouvrier.add({'nom': newName, 'terre': widget.parcelle.id, "salaire": salaire}).then(
+                        final deps = db.collection("depense").doc(newName);
+                        deps.set({}, SetOptions(merge: true)).then(
                             (value) {
-                          final newOuvrier = Ouvrier(
-                              name: newName, id: value.id, salaire: salaire);
+                          final newOuvrier = Depense(
+                              name: newName);
                           setState(() {
-                            ouvriers.add(newOuvrier);
+                            depenses.add(newOuvrier);
                           });
                         });
                         controller.clear();
@@ -274,10 +261,8 @@ class _QuinzOuvrierState extends State<QuinzOuvrier> {
   }
 }
 
-class Ouvrier {
+class Depense {
   final String name;
-  final String id;
-  final double salaire;
 
-  Ouvrier({required this.name, required this.id,required this.salaire});
+  Depense({required this.name});
 }
