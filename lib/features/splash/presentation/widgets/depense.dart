@@ -188,7 +188,6 @@ class _DepenseHomeState extends State<DepenseHome> {
       final db = FirebaseFirestore.instance;
       final ouvrierRef = db.collection('depense').doc(ouvrierId);
 
-      ouvrierRef.collection("items").;
       await ouvrierRef.delete();
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
