@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bhyapp/apis/invoice.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/depense.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/quinz_ouvrier.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart' as ex;
@@ -63,6 +64,15 @@ class _ParcelleHomeState extends State<ParcelleHome> {
               fontFamily: 'Michroma'),
         ),
         actions: [
+          IconButton(
+            icon: Icon(
+              Icons.savings_outlined,
+              size: Platform.isAndroid ? 24 : 45,
+            ),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const DepenseHome()));
+            },
+          ),
           IconButton(
             icon: Icon(
               Icons.calculate_outlined,
