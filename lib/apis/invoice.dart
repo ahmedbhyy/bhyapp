@@ -330,6 +330,23 @@ class InvoicApi {
                 Container(height: 1, color: pw.PdfColors.grey400),
                 SizedBox(height: 0.5 * pw.PdfPageFormat.mm),
                 Container(height: 1, color: pw.PdfColors.grey400),
+                SizedBox(height: 20 * pw.PdfPageFormat.mm),
+                Center(
+                  child: Text('Signature',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                    color: pw.PdfColors.grey100,
+                  ),
+                  width: double.infinity,
+                  height: 80,
+                ),
               ],
             ),
           ),

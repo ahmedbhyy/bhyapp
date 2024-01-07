@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart' as ex;
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
+
 
 class ParcelleHome extends StatefulWidget {
   const ParcelleHome({super.key});
@@ -226,7 +226,7 @@ class _ParcelleHomeState extends State<ParcelleHome> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, ss) => AlertDialog(
-            title: Text("la ferme"),
+            title: const Text("la ferme"),
             content: SizedBox(
               height: 150,
               child: Column(
@@ -336,7 +336,7 @@ class _ParcelleHomeState extends State<ParcelleHome> {
             }
             y=dayslist.length + 1;
             final lastcell = ex.CellIndex.indexByColumnRow(columnIndex: y-1, rowIndex: x).cellId;
-            writeFormulaCell(sheet: sheetObject, value: "=SUM(B${x+1}:${lastcell})", x: x, y: y);
+            writeFormulaCell(sheet: sheetObject, value: "=SUM(B${x+1}:$lastcell)", x: x, y: y);
             for(int i = 1; i<= uppercaseLetters.indexOf(lastcell[0]);i++) {
               final cell = sheetObject.cell(ex.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: x));
               cell.cellStyle = ex.CellStyle(
@@ -441,14 +441,14 @@ class _ParcelleHomeState extends State<ParcelleHome> {
                     controller: controller,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      labelText: 'nom de la Parcelle',
+                      labelText: 'Nom de la Parcelle',
                     ),
                   ),
                   TextField(
                     controller: ferme,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      labelText: 'nom de la ferme',
+                      labelText: 'Nom de la ferme',
                     ),
                   ),
                 ],

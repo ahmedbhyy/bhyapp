@@ -1,6 +1,5 @@
 import 'dart:io';
-import 'package:bhyapp/features/splash/presentation/widgets/quinz.dart';
-import 'package:bhyapp/features/splash/presentation/widgets/quinz_money.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +18,6 @@ class _DepenseHomeState extends State<DepenseHome> {
   final search = TextEditingController();
   TextEditingController get controller => nom;
 
-
   @override
   void dispose() {
     nom.dispose();
@@ -33,11 +31,7 @@ class _DepenseHomeState extends State<DepenseHome> {
     final db = FirebaseFirestore.instance;
     db.collection("depense").get().then((qsnap) {
       setState(() {
-        depenses = qsnap.docs
-            .map((dep) => Depense(
-                name: dep.id
-            ))
-            .toList();
+        depenses = qsnap.docs.map((dep) => Depense(name: dep.id)).toList();
         _isLoading = false;
       });
     });
@@ -48,7 +42,7 @@ class _DepenseHomeState extends State<DepenseHome> {
   Widget build(BuildContext context) {
     final sdep = depenses
         .where((element) =>
-        element.name.toLowerCase().contains(search.text.toLowerCase()))
+            element.name.toLowerCase().contains(search.text.toLowerCase()))
         .toList();
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
@@ -56,7 +50,7 @@ class _DepenseHomeState extends State<DepenseHome> {
         backgroundColor: const Color(0xffffffff),
         elevation: 0.0,
         title: const Text(
-          "Les Depenses",
+          "Les Dépenses",
           style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
@@ -66,11 +60,11 @@ class _DepenseHomeState extends State<DepenseHome> {
         actions: [
           IconButton(
             icon: Icon(
-              Icons.person_add,
+              Icons.add,
               size: Platform.isAndroid ? 24 : 45,
             ),
             onPressed: () {
-              String hintText = "Ajouter une Depense";
+              String hintText = "Ajouter une Dépense";
               showEditDialog(context, hintText, controller);
             },
           ),
@@ -90,7 +84,7 @@ class _DepenseHomeState extends State<DepenseHome> {
                 decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 20.0),
-                    labelText: "chercher une depense (${sdep.length})",
+                    labelText: "chercher une dépense (${sdep.length})",
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: Colors.white,
@@ -221,7 +215,7 @@ class _DepenseHomeState extends State<DepenseHome> {
                     controller: controller,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      labelText: 'designation',
+                      labelText: 'déscription',
                     ),
                   ),
                 ],
@@ -236,10 +230,8 @@ class _DepenseHomeState extends State<DepenseHome> {
                       if (newName.isNotEmpty) {
                         final db = FirebaseFirestore.instance;
                         final deps = db.collection("depense").doc(newName);
-                        deps.set({}, SetOptions(merge: true)).then(
-                            (value) {
-                          final newOuvrier = Depense(
-                              name: newName);
+                        deps.set({}, SetOptions(merge: true)).then((value) {
+                          final newOuvrier = Depense(name: newName);
                           setState(() {
                             depenses.add(newOuvrier);
                           });

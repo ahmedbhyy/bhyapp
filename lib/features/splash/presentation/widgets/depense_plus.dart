@@ -5,8 +5,7 @@ import 'package:intl/intl.dart';
 
 class DepenseViewer extends StatefulWidget {
   final Depense depense;
-  const DepenseViewer(
-      {super.key, required this.depense});
+  const DepenseViewer({super.key, required this.depense});
 
   @override
   State<DepenseViewer> createState() => _DepenseViewerState();
@@ -25,7 +24,9 @@ class _DepenseViewerState extends State<DepenseViewer> {
   void initState() {
     final db = FirebaseFirestore.instance;
     db
-        .collection("depense").doc(widget.depense.name).collection("items")
+        .collection("depense")
+        .doc(widget.depense.name)
+        .collection("items")
         .get()
         .then((doc) async {
       setState(() {
@@ -61,14 +62,21 @@ class _DepenseViewerState extends State<DepenseViewer> {
           );
           if (res != null) {
             final db = FirebaseFirestore.instance;
-            final ouvrier = await db.collection("depense").doc(widget.depense.name).collection('items').add({
+            final ouvrier = await db
+                .collection("depense")
+                .doc(widget.depense.name)
+                .collection('items')
+                .add({
               "montant": res.quantity,
               "date": res.date,
               "firme": res.firme,
             });
             setState(() {
-              depenses.add(
-                  DepItem(quantity: res.quantity, date: res.date, id: ouvrier.id, firme: res.firme));
+              depenses.add(DepItem(
+                  quantity: res.quantity,
+                  date: res.date,
+                  id: ouvrier.id,
+                  firme: res.firme));
             });
           }
         },
@@ -77,9 +85,9 @@ class _DepenseViewerState extends State<DepenseViewer> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
         title: Text(
-          "Les Depenses: ${widget.depense.name}",
+          "Les Dépenses de :  ${widget.depense.name}",
           style: const TextStyle(
-            fontSize: 15,
+            fontSize: 18,
             fontFamily: 'Michroma',
             fontWeight: FontWeight.bold,
             color: Colors.green,
@@ -162,7 +170,11 @@ class _DepenseViewerState extends State<DepenseViewer> {
   Future<void> deleteitem(int index) async {
     try {
       final db = FirebaseFirestore.instance;
-      final ref = db.collection('depense').doc(widget.depense.name).collection("items").doc(depenses[index].id);
+      final ref = db
+          .collection('depense')
+          .doc(widget.depense.name)
+          .collection("items")
+          .doc(depenses[index].id);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("element Deleted"),
@@ -198,6 +210,7 @@ class _DepenseViewerState extends State<DepenseViewer> {
                   maxLines: null,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
+                    suffixText: 'DT',
                     border: OutlineInputBorder(),
                     //prefixIcon: Icon(Icons.),
                     label: Text("montant"),
@@ -227,9 +240,6 @@ class _DepenseViewerState extends State<DepenseViewer> {
                   },
                   currentDate: DateTime.now(),
                 ),
-                const SizedBox(
-                  height: 70,
-                )
               ],
             ),
             FilledButton(
@@ -255,5 +265,9 @@ class DepItem {
   final String firme;
   final String id;
 
-  DepItem({required this.quantity, required this.date, required this.id, required this.firme});
+  DepItem(
+      {required this.quantity,
+      required this.date,
+      required this.id,
+      required this.firme});
 }
