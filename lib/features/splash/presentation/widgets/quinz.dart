@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:bhyapp/apis/invoice.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/quinz_ouvrier.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:excel/excel.dart';
+import 'package:excel/excel.dart' as ex;
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 class ParcelleHome extends StatefulWidget {
   const ParcelleHome({super.key});
@@ -16,6 +18,7 @@ class _ParcelleHomeState extends State<ParcelleHome> {
   bool _isLoading = true;
   final controller = TextEditingController();
   final search = TextEditingController();
+  final ferme = TextEditingController();
 
   @override
   void dispose() {
@@ -31,8 +34,8 @@ class _ParcelleHomeState extends State<ParcelleHome> {
     db.collection("terre").get().then((qsnap) {
       setState(() {
         parcelles = qsnap.docs
-            .map((ouvier) =>
-                Parcelle(name: ouvier.data()["nom"], id: ouvier.id))
+            .map((parcelle) =>
+                Parcelle(name: parcelle.data()["nom"], id: parcelle.id, firme: parcelle.data()['firme']))
             .toList();
         _isLoading = false;
       });
@@ -126,7 +129,7 @@ class _ParcelleHomeState extends State<ParcelleHome> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    subtitle: const Text('voir plus'),
+                    subtitle: Text('${sparcelles[index].firme} | voir plus'),
                     trailing: IconButton(
                       icon: const Icon(
                         Icons.delete,
@@ -207,9 +210,45 @@ class _ParcelleHomeState extends State<ParcelleHome> {
     );
 
     if (picked != null) {
+      if(!context.mounted) return;
+      final firma = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, ss) => AlertDialog(
+            title: Text("la ferme"),
+            content: SizedBox(
+              height: 150,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: ferme,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      labelText: 'nom de la ferme',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  final ff = ferme.text;
+                  Navigator.pop(context, ff);
+                },
+                child: const Text('Enregistrer'),
+              ),
+            ],
+          ),
+        );
+      },
+      );
+    if(firma == null) return;
+      final sauce =  picked.day > 15 ? 1 : 0;
       final idate =
-          picked.day > 15 ? picked.copyWith(day: 16) : picked.copyWith(day: 1);
-      final fdate = picked.day > 15
+          sauce==1 ? picked.copyWith(day: 16) : picked.copyWith(day: 1);
+      final fdate = sauce==1
           ? picked
               .copyWith(month: picked.month + 1, day: 1)
               .subtract(const Duration(days: 1))
@@ -254,42 +293,106 @@ class _ParcelleHomeState extends State<ParcelleHome> {
       }
 
 
-      var excel = Excel.createExcel();
-      Sheet sheetObject = excel["Sheet1"];
+      var excel = ex.Excel.createExcel();
+      ex.Sheet sheetObject = excel["Sheet1"];
+      for(int i = 2; i< 23;i++) {
+        sheetObject.setColumnWidth(i, 3);
+      }
+      int x=0;
+      List<String> ids = [];
+      int lasty=0;
+      List<List<String>> last = [];
       for (var parcelle in parcelles) {
-        sheetObject.appendRow([TextCellValue(parcelle.name)]);
-        List<String> headers = ["Transp"];
+        if(parcelle.firme != firma) continue;
+        final titleCell = sheetObject.cell(ex.CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: x++));
+        titleCell.value = ex.TextCellValue(parcelle.name);
+        writeTextCell(sheet: sheetObject, value: "Transp", x: x, y:0);
         final dayslist = getDaysInBetween(idate, fdate);
-        headers.addAll(dayslist.map((e) => e.toString()));
-        headers.addAll(["Tot", "Sal/Jr", "Montant"]);
-        sheetObject.appendRow(headers.map((e) => TextCellValue(e)).toList());
+        int y = 1;
+        for (var day in dayslist) {
+          writeIntCell(x: x, y: y++, sheet: sheetObject, value: day);
+        }
+        writeTextCell(sheet: sheetObject, value: "Tot", x: x, y: y++);
+        writeTextCell(sheet: sheetObject, value: "Sal/Jr", x: x, y: y++);
+        writeTextCell(sheet: sheetObject, value: "Montant", x: x, y: y++);
+        x++;
+        y=0;
+        int firstx=x;
         ouvbyid.forEach((key, value) {
           if (value["terre"] == parcelle.id && databyouvrier.containsKey(key)) {
-            List<CellValue?> head = [TextCellValue(value["nom"])];
-            for (int i = 0; i < dayslist.length; i++) {
-              head.add(const TextCellValue(
-                  "0")); // Assuming generateElement is a function that generates an element based on i
-            }
-            int tot = 0;
+            writeTextCell(sheet: sheetObject, value: value["nom"], x: x, y: y++);
             for (var element in (databyouvrier[key] as List)) {
-              head[dayslist.indexOf(element["day"]) + 1] =
-                  TextCellValue(element["people"].toString());
-              tot = tot + element['people'] as int;
+              writeIntCell(x: x, y: element["day"] + 1, sheet: sheetObject, value: element['people']);
             }
-            head.addAll([
-              TextCellValue(tot.toString()),
-              TextCellValue(value['salaire'].toString()),
-              TextCellValue((value['salaire'] * tot).toString())
-            ]);
-            sheetObject.appendRow(head);
+            y=dayslist.length + 1;
+            final lastcell = ex.CellIndex.indexByColumnRow(columnIndex: y-1, rowIndex: x).cellId;
+            writeFormulaCell(sheet: sheetObject, value: "=SUM(B${x+1}:${lastcell})", x: x, y: y);
+            for(int i = 1; i<= uppercaseLetters.indexOf(lastcell[0]);i++) {
+              final cell = sheetObject.cell(ex.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: x));
+              cell.cellStyle = ex.CellStyle(
+                numberFormat: ex.NumFormat.standard_0,
+                leftBorder: ex.Border(borderStyle: ex.BorderStyle.Thin),
+                rightBorder: ex.Border(borderStyle: ex.BorderStyle.Thin),
+                topBorder: ex.Border(borderStyle: ex.BorderStyle.Thin),
+                bottomBorder: ex.Border(borderStyle: ex.BorderStyle.Thin),
+              );
+            }
+            final total = ex.CellIndex.indexByColumnRow(columnIndex: y++, rowIndex: x).cellId;
+            final salaire = ex.CellIndex.indexByColumnRow(columnIndex: y, rowIndex: x).cellId;
+            writeDoubleCell(x: x, y: y++, sheet: sheetObject, value: value['salaire']);
+            writeFormulaCell(sheet: sheetObject, value: "=$total*$salaire", x: x, y: y);
+            x++;
+            lasty = y;
+            y=0;
           }
         });
-        sheetObject.appendRow([null]);
+          final fr = ex.CellIndex.indexByColumnRow(columnIndex: lasty, rowIndex: firstx).cellId;
+          final lr = ex.CellIndex.indexByColumnRow(columnIndex: lasty, rowIndex: x-1).cellId;
+          final me = ex.CellIndex.indexByColumnRow(columnIndex: lasty, rowIndex: x);
+          ids.add(me.cellId);
+          last.add([parcelle.name,me.cellId]);
+          writeFormulaCell(sheet: sheetObject, value: "=SUM($fr:$lr)", x: x, y: lasty);
+          x++;
+      }
+      x++;
+      await initializeDateFormatting();
+      writeTextCell(sheet: sheetObject, value: "Total", x: x, y: lasty-1);
+      writeFormulaCell(sheet: sheetObject, value: "=${ids.join("+")}", x: x++, y: lasty);
+      writeTextCell(sheet: sheetObject, value: "RECAP  CHARGES ${sauce == 1 ? '1 ère' : '2éme'} QUINZ ${Utils.formatmy(idate)}", x: x++, y: 1);
+      writeTextCell(sheet: sheetObject, value: "Parcelle", x: x, y: 1);
+      writeTextCell(sheet: sheetObject, value: "Montant", x: x++, y: 2);
+      for(var recap in last) {
+        writeTextCell(sheet: sheetObject, value: recap[0], x: x, y: 1);
+        writeFormulaCell(sheet: sheetObject, value: "=${recap[1]}", x: x++, y: 2);
       }
       PdfApi.openFile(
           await PdfApi.saveDocumentexcel(name: "a.xlsx", excel: excel));
     }
   }
+
+  writeIntCell({required int x, required int y, required ex.Sheet sheet, int? value, ex.CellStyle? style}) {
+    final cell = sheet.cell(ex.CellIndex.indexByColumnRow(columnIndex: y, rowIndex: x));
+        cell.value = value != null ? ex.IntCellValue(value) : null;
+        cell.cellStyle = style ?? ex.CellStyle(
+          leftBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+          rightBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+          topBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+          bottomBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+        );
+        cell.cellStyle?.numberFormat = ex.NumFormat.standard_0;
+  }
+
+    writeDoubleCell({required int x, required int y, required ex.Sheet sheet, double? value, ex.CellStyle? style}) {
+    final cell = sheet.cell(ex.CellIndex.indexByColumnRow(columnIndex: y, rowIndex: x));
+        cell.value = value != null ? ex.TextCellValue(value.toStringAsFixed(3).replaceAll(".", ",")) : null;
+        cell.cellStyle = style ?? ex.CellStyle(
+          leftBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+          rightBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+          topBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+          bottomBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+        );
+        //cell.cellStyle?.numberFormat = ex.NumFormat.standard_2;
+      }
 
   Future<void> deleteOuvrier(String ouvrierId) async {
     try {
@@ -331,6 +434,13 @@ class _ParcelleHomeState extends State<ParcelleHome> {
                       labelText: 'nom de la Parcelle',
                     ),
                   ),
+                  TextField(
+                    controller: ferme,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      labelText: 'nom de la ferme',
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -343,9 +453,9 @@ class _ParcelleHomeState extends State<ParcelleHome> {
                       if (newName.isNotEmpty) {
                         final db = FirebaseFirestore.instance;
                         final ouvrier = db.collection("terre");
-                        ouvrier.add({'nom': newName}).then((value) {
+                        ouvrier.add({'nom': newName, 'firme': ferme.text}).then((value) {
                           Parcelle newOuvrier =
-                              Parcelle(name: newName, id: value.id);
+                              Parcelle(name: newName, id: value.id, firme: ferme.text );
                           setState(() {
                             parcelles.add(newOuvrier);
                           });
@@ -364,12 +474,33 @@ class _ParcelleHomeState extends State<ParcelleHome> {
       },
     );
   }
+  
+  void writeTextCell({required ex.Sheet sheet, required String value, required int x, required int y, ex.CellStyle? style}) {
+    final cell = sheet.cell(ex.CellIndex.indexByColumnRow(columnIndex: y, rowIndex: x));
+    cell.value = ex.TextCellValue(value);
+    cell.cellStyle = style ?? ex.CellStyle(
+    leftBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+    rightBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+    topBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+    bottomBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+  );
+  }
+  void writeFormulaCell({required ex.Sheet sheet, required String value, required int x, required int y, ex.CellStyle? style}) {
+    final cell = sheet.cell(ex.CellIndex.indexByColumnRow(columnIndex: y, rowIndex: x));
+    cell.value = ex.FormulaCellValue(value);
+    cell.cellStyle = style ?? ex.CellStyle(
+    leftBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+    rightBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+    topBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+    bottomBorder: ex.Border(borderStyle: ex.BorderStyle.Thick),
+  );
+  }
 }
 
 
 class Parcelle {
   final String name;
   final String id;
-  Parcelle({required this.name, required this.id});
+  final String firme;
+  Parcelle({required this.name, required this.id, required this.firme});
 }
-
