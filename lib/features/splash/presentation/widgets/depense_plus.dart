@@ -105,13 +105,13 @@ class _DepenseViewerState extends State<DepenseViewer> {
                 final prime = depenses[index];
                 return ListTile(
                   leading: Icon(
-                    Icons.person_outlined,
+                    Icons.attach_money_outlined,
                     color: Colors.green.shade600,
                   ),
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
                   subtitle: Text(
-                    DateFormat('yyyy-MM-dd').format(prime.date),
+                    '${prime.firme} | ${DateFormat('yyyy-MM-dd').format(prime.date)}',
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(prime.quantity.toString(),
