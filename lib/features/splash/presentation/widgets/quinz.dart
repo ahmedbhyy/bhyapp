@@ -381,10 +381,11 @@ class _ParcelleHomeState extends State<ParcelleHome> {
       final deps = await db.collection("depense").get();
       double totalfinal = 0;
       for(var doc in deps.docs) {
-        final ref = await db.collection("depense").doc(doc.id).collection("items").where('firme', isEqualTo: firma).where('date', isGreaterThanOrEqualTo: idate).where('date', isLessThanOrEqualTo: fdate).get();
+        final ref = await db.collection("depense").doc(doc.id).collection("items").where('date', isGreaterThanOrEqualTo: idate).where('date', isLessThanOrEqualTo: fdate).get();
         double total = 0;
         for(var dd in ref.docs) {
           final data = dd.data();
+          if(data['firme'] != firma) continue;
           total += data['montant'];
         }
 
