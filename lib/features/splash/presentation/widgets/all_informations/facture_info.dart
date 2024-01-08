@@ -492,7 +492,7 @@ class _ItemAdderState extends State<ItemAdder> {
       _quantite.text = widget.item!["quantite"].toString();
       _montant.text = widget.item!["montant"].toString();
       _tvafacture.text = widget.item!["tva"].toString();
-      _remise.text = widget.item!["remise"].toString() * 100;
+      _remise.text = (widget.item!["remise"]*100).toString();
     }
     super.initState();
   }
