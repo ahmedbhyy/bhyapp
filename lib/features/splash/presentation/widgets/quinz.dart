@@ -385,12 +385,10 @@ class _ParcelleHomeState extends State<ParcelleHome> {
         double total = 0;
         for(var dd in ref.docs) {
           final data = dd.data();
-          final day = (data['date'] as Timestamp).toDate().day;
           total += data['montant'];
         }
 
         totalfinal += total;
-        final fxx = x;
         writeDoubleCell(x: x, y: 5, sheet: sheetObject, value: total);
         writeTextCell(x: x++, y: 1, sheet: sheetObject, value: doc.id);
       }
@@ -398,7 +396,7 @@ class _ParcelleHomeState extends State<ParcelleHome> {
       writeDoubleCell(x: x++, y: 5, sheet: sheetObject, value: totalfinal);
       writeTextCell(sheet: sheetObject, value: "Total Dépenses ${sauce != 1 ? '1 ère' : '2éme'} Quinz ${Utils.formatmy(idate)}", x: x, y: 1);
       PdfApi.openFile(
-          await PdfApi.saveDocumentexcel(name: "${firma} ${Random().nextInt(20000)}.xlsx", excel: excel));
+          await PdfApi.saveDocumentexcel(name: "$firma ${Random().nextInt(20000)}.xlsx", excel: excel));
     }
   }
 
