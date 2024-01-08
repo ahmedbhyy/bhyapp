@@ -11,7 +11,7 @@ import 'dart:io';
 class Utils {
   static formatPrice(double price) => '${price.toStringAsFixed(3)} DT';
   static formatDate(DateTime date) => DateFormat.yMMMMd('fr_FR').format(date);
-  static formatmy(DateTime date) => DateFormat.Md('fr_FR').format(date);
+  static formatmy(DateTime date) => DateFormat('MMMM yyyy', 'fr_FR').format(date);
   static formatMoney(double money) => money.toStringAsFixed(3);
 }
 

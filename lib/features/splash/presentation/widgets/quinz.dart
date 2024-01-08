@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:bhyapp/apis/invoice.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/depense.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/quinz_ouvrier.dart';
@@ -368,15 +369,36 @@ class _ParcelleHomeState extends State<ParcelleHome> {
       await initializeDateFormatting();
       writeTextCell(sheet: sheetObject, value: "Total", x: x, y: lasty-1);
       writeFormulaCell(sheet: sheetObject, value: "=${ids.join("+")}", x: x++, y: lasty);
-      writeTextCell(sheet: sheetObject, value: "RECAP  CHARGES ${sauce == 1 ? '1 ère' : '2éme'} QUINZ ${Utils.formatmy(idate)}", x: x++, y: 1);
+      writeTextCell(sheet: sheetObject, value: "RECAP  CHARGES ${sauce != 1 ? '1 ère' : '2éme'} QUINZ ${Utils.formatmy(idate)}", x: x++, y: 1);
       writeTextCell(sheet: sheetObject, value: "Parcelle", x: x, y: 1);
       writeTextCell(sheet: sheetObject, value: "Montant", x: x++, y: 2);
       for(var recap in last) {
         writeTextCell(sheet: sheetObject, value: recap[0], x: x, y: 1);
         writeFormulaCell(sheet: sheetObject, value: "=${recap[1]}", x: x++, y: 2);
       }
+      x++;
+      writeTextCell(sheet: sheetObject, value: "Dépenses Divers", x: x++, y: 1);
+      final deps = await db.collection("depense").get();
+      double totalfinal = 0;
+      for(var doc in deps.docs) {
+        final ref = await db.collection("depense").doc(doc.id).collection("items").where('firme', isEqualTo: firma).where('date', isGreaterThanOrEqualTo: idate).where('date', isLessThanOrEqualTo: fdate).get();
+        double total = 0;
+        for(var dd in ref.docs) {
+          final data = dd.data();
+          final day = (data['date'] as Timestamp).toDate().day;
+          total += data['montant'];
+        }
+
+        totalfinal += total;
+        final fxx = x;
+        writeDoubleCell(x: x, y: 5, sheet: sheetObject, value: total);
+        writeTextCell(x: x++, y: 1, sheet: sheetObject, value: doc.id);
+      }
+      writeTextCell(x: x, y: 1, sheet: sheetObject, value: "Total");
+      writeDoubleCell(x: x++, y: 5, sheet: sheetObject, value: totalfinal);
+      writeTextCell(sheet: sheetObject, value: "Total Dépenses ${sauce != 1 ? '1 ère' : '2éme'} Quinz ${Utils.formatmy(idate)}", x: x, y: 1);
       PdfApi.openFile(
-          await PdfApi.saveDocumentexcel(name: "a.xlsx", excel: excel));
+          await PdfApi.saveDocumentexcel(name: "${firma} ${Random().nextInt(20000)}.xlsx", excel: excel));
     }
   }
 
