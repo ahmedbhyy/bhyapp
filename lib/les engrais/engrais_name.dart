@@ -6,6 +6,8 @@ class Engrai {
   final String id;
   final double priv;
   final double pria;
+  final double tva;
+  final double remise;
   final int quantity;
   Engrai(
       {required this.quantity,
@@ -13,7 +15,9 @@ class Engrai {
       required this.pria,
       required this.name,
       required this.url,
-      required this.id});
+      required this.id,
+      required this.tva,
+      required this.remise});
 
   Map<String, dynamic> toMap() {
     return {
@@ -22,6 +26,8 @@ class Engrai {
       "priv": priv,
       "pria": pria,
       "quantity": quantity,
+      "remise": remise,
+      "tva": tva
     };
   }
 
@@ -32,6 +38,8 @@ class Engrai {
       name: e["name"],
       url: e["image"],
       quantity: e["quantity"] as int,
+      tva: e["tva"] as double,
+      remise: e["remise"] as double,
       id: e.id,
     );
   }
@@ -43,6 +51,8 @@ class Engrai {
       name: e["name"],
       url: e["image"],
       quantity: e["quantity"] as int,
+      tva: e["tva"] as double,
+      remise: e["remise"] as double,
       id: "2",
     );
   }

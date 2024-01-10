@@ -126,6 +126,8 @@ class _EngraisHomeState extends State<EngraisHome> {
                       priv: element.priv,
                       pria: element.pria,
                       name: element.name,
+                      tva: element.tva,
+                      remise: element.remise,
                       quantity:
                           max(displayList[i].quantity - element.quantity, 0));
                   db.collection("engrais").doc(element.id).set({
@@ -372,6 +374,8 @@ class _EngraisHomeState extends State<EngraisHome> {
           quantity: 0,
           priv: .0,
           pria: .0,
+          tva: .0,
+          remise: .0,
           name: newEngraisname,
           url: path,
           id: "");
@@ -380,6 +384,8 @@ class _EngraisHomeState extends State<EngraisHome> {
           quantity: 0,
           priv: .0,
           pria: .0,
+          tva: .0,
+          remise: .0,
           name: newEngraisname,
           url: path,
           id: doc.id);

@@ -16,6 +16,9 @@ class EngraisDetailsState extends State<EngraisDetails> {
   final TextEditingController _achatController = TextEditingController();
   final TextEditingController _venteController = TextEditingController();
   final TextEditingController _quantiteController = TextEditingController();
+  final TextEditingController _tvaController = TextEditingController();
+  final TextEditingController _remiseController = TextEditingController();
+  
   bool _isLoading = true;
 
   @override
@@ -23,6 +26,8 @@ class EngraisDetailsState extends State<EngraisDetails> {
     _achatController.dispose();
     _venteController.dispose();
     _quantiteController.dispose();
+    _tvaController.dispose();
+    _remiseController.dispose();
     super.dispose();
   }
 
@@ -33,6 +38,8 @@ class EngraisDetailsState extends State<EngraisDetails> {
       _venteController.text = eng.priv.toString();
       _achatController.text = eng.pria.toString();
       _quantiteController.text = eng.quantity.toString();
+      _tvaController.text = eng.tva.toString();
+      _remiseController.text = (eng.remise*100).toString();
       _isLoading = false;
     });
     super.initState();
@@ -72,18 +79,30 @@ class EngraisDetailsState extends State<EngraisDetails> {
                 hintText: "Quantités",
                 controller: _quantiteController,
                 suffixText: ''),
+            const SizedBox(height: 20),
+            buildTextFieldWithEditIcon(
+                hintText: "TVA %",
+                controller: _tvaController,
+                suffixText: ''),
+            const SizedBox(height: 20),
+            buildTextFieldWithEditIcon(
+                hintText: "remise %",
+                controller: _remiseController,
+                suffixText: ''),
             const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
                 final prixa = double.parse(_achatController.value.text);
                 final prixv = double.parse(_venteController.value.text);
                 final quantite = int.parse(_quantiteController.value.text);
+                final tva = double.parse(_tvaController.value.text);
+                final remise = double.parse(_remiseController.value.text)/100;
 
                 final db = FirebaseFirestore.instance;
                 final details = db.collection("engrais").doc(widget.engrai.id);
 
                 details.update(
-                    {'priv': prixv, 'pria': prixa, 'quantity': quantite});
+                    {'priv': prixv, 'pria': prixa, 'quantity': quantite, remise: 'remise', tva: 'tva'});
                 Navigator.pop(context, {
                   "panier": false,
                   "engrai": Engrai(
@@ -92,6 +111,8 @@ class EngraisDetailsState extends State<EngraisDetails> {
                     pria: prixa,
                     name: widget.engrai.name,
                     url: widget.engrai.url,
+                    remise: remise,
+                    tva: tva,
                     id: widget.engrai.id,
                   )
                 });
@@ -103,6 +124,8 @@ class EngraisDetailsState extends State<EngraisDetails> {
               onPressed: widget.panier.any((e) => e.id == widget.engrai.id)
                   ? null
                   : () {
+                      final tva = double.parse(_tvaController.value.text);
+                      final remise = double.parse(_remiseController.value.text)/100;
                       final prixa = double.parse(_achatController.value.text);
                       final prixv = double.parse(_venteController.value.text);
                       final quantite =
@@ -116,6 +139,8 @@ class EngraisDetailsState extends State<EngraisDetails> {
                           name: widget.engrai.name,
                           url: widget.engrai.url,
                           id: widget.engrai.id,
+                          remise: remise,
+                          tva: tva
                         )
                       });
                     },
