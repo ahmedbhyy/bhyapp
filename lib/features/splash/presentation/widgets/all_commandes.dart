@@ -1,3 +1,4 @@
+import 'package:bhyapp/apis/invoice.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/engrais_commandes2.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:bhyapp/les%20engrais/engrais_name.dart';
@@ -28,6 +29,8 @@ class _AllCommandesState extends State<AllCommandes> {
       setState(() {
         commandes = dd.docs
             .map((e) => {
+                  "nom": e["nom"],
+                  "num": e["num"],
                   "id": e.id,
                   "date": DateTime.parse(e["date"]),
                   "panier": List<Map<String, dynamic>>.from(e["panier"])
@@ -83,53 +86,85 @@ class _AllCommandesState extends State<AllCommandes> {
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
                   subtitle: Text(
-                    "total de la commande: ${panier.fold(.0, (previousValue, element) => previousValue + element.priv * element.quantity)} DT\nferme: ${com["firm"]}",
+                    "total de la commande: ${panier.fold(.0, (previousValue, element) => previousValue + element.priv * element.quantity * (1 - element.remise))} DT\nNom de la Société: ${com["nom"]}",
                     style: TextStyle(color: Colors.green.shade500),
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text(
-                            'Confirmer la Suppression',
-                            style: TextStyle(
-                              color: Colors.red,
-                            ),
-                          ),
-                          content: const Text(
-                            'Vous êtes sûr ?',
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                await deletecommandeeng(com['id']);
-                                setState(() {
-                                  commandes.removeAt(index);
-                                });
-                              },
-                              child: const Text('Supprimer'),
-                            ),
-                          ],
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.picture_as_pdf,
+                          color: Colors.green,
                         ),
-                      );
-                    },
+                        onPressed: () async {
+                          PdfApi.openFile(await InvoicApi.generateFacture(
+                              riadh: true,
+                              items: panier
+                                  .map((e) => {
+                                        "quantite": e.quantity,
+                                        "tva": e.tva,
+                                        "remise": e.remise,
+                                        "des": e.name,
+                                        "montant": e.priv,
+                                      })
+                                  .toList(),
+                              address: com["nom"],
+                              client: com["nom"],
+                              date: com["date"],
+                              num: com["num"],
+                              title: "Facture"));
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text(
+                                'Confirmer la Suppression',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                              content: const Text(
+                                'Vous êtes sûr ?',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await deletecommandeeng(com['id']);
+                                    setState(() {
+                                      commandes.removeAt(index);
+                                    });
+                                  },
+                                  child: const Text('Supprimer'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                  title: Text(DateFormat('yyyy-MM-dd').format(com["date"]),
+                  title: Text(
+                      com["num"] +
+                          " \n " +
+                          DateFormat('yyyy-MM-dd').format(com["date"]),
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold)),
                 );

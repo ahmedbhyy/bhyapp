@@ -11,7 +11,8 @@ import 'dart:io';
 class Utils {
   static formatPrice(double price) => '${price.toStringAsFixed(3)} DT';
   static formatDate(DateTime date) => DateFormat.yMMMMd('fr_FR').format(date);
-  static formatmy(DateTime date) => DateFormat('MMMM yyyy', 'fr_FR').format(date);
+  static formatmy(DateTime date) =>
+      DateFormat('MMMM yyyy', 'fr_FR').format(date);
   static formatMoney(double money) => money.toStringAsFixed(3);
 }
 
@@ -89,6 +90,7 @@ class InvoicApi {
   static Future<File> generateFacture(
       {required List<Map<String, dynamic>> items,
       required DateTime date,
+      bool? riadh,
       required String num,
       required String title,
       required String client,
@@ -96,7 +98,8 @@ class InvoicApi {
     await initializeDateFormatting();
 
     final pdf = Document();
-    final header = await buildHeader(title: title, num: num, date: date);
+    final header =
+        await buildHeader(title: title, num: num, date: date, riadh: riadh);
     pdf.addPage(MultiPage(
       pageFormat: pw.PdfPageFormat.a4,
       build: (context) => [
@@ -379,9 +382,14 @@ class InvoicApi {
       {required String title,
       required String num,
       double size = 13,
+      bool? riadh,
       required DateTime date}) async {
-    final memoryImage = MemoryImage(
-        (await rootBundle.load("images/print.png")).buffer.asUint8List());
+    final memoryImage = riadh == null
+        ? MemoryImage((await rootBundle.load("images/logo baraka.png"))
+            .buffer
+            .asUint8List())
+        : MemoryImage(
+            (await rootBundle.load("images/riadh.png")).buffer.asUint8List());
 
     return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -392,6 +400,7 @@ class InvoicApi {
               height: 2.5 * pw.PdfPageFormat.cm,
               child: Image(memoryImage),
             ),
+            SizedBox(height: 10),
             Text(
                 "Adresse: 020, Ibn Battouta, Rades 2040\nTel: (+216) 79 490 323\nMF: 0987104/Q",
                 style: const TextStyle(lineSpacing: 1.6 * pw.PdfPageFormat.mm)),
@@ -486,7 +495,6 @@ class InvoicApi {
 
   static Widget buildFacture(List<Map<String, dynamic>> items) {
     final headers = [
-      'Code',
       'Description',
       'Qté',
       'Unité',
@@ -500,7 +508,6 @@ class InvoicApi {
       headers: headers,
       data: items
           .map((e) => [
-                "",
                 e["des"],
                 e["quantite"],
                 Utils.formatMoney(e["montant"].toDouble()),
@@ -515,7 +522,6 @@ class InvoicApi {
       headerStyle: TextStyle(fontWeight: FontWeight.bold),
       headerDecoration: const BoxDecoration(color: pw.PdfColors.grey300),
       cellHeight: 30,
-      columnWidths: {0: const FixedColumnWidth(1.8 * pw.PdfPageFormat.cm)},
       cellAlignments: {
         0: Alignment.centerLeft,
         1: Alignment.centerLeft,

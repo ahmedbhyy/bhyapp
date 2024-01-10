@@ -19,6 +19,8 @@ class EngraisHome extends StatefulWidget {
 }
 
 class _EngraisHomeState extends State<EngraisHome> {
+  final _nomsocietefac = TextEditingController();
+  final _numfac = TextEditingController();
   bool _isLoading = true;
   @override
   void dispose() {
@@ -47,6 +49,69 @@ class _EngraisHomeState extends State<EngraisHome> {
       });
     });
     super.initState();
+  }
+
+  Future<Map<String, String>?> showEditDialog2(
+    BuildContext context,
+  ) async {
+    return showDialog<Map<String, String>>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("ajouter une commande"),
+          content: SingleChildScrollView(
+            child: SizedBox(
+              width: 350,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _nomsocietefac,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      labelText: 'Nom de la Société',
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.work),
+                    ),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _numfac,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      labelText: 'N° Facture',
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.numbers),
+                    ),
+                    maxLines: null,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                String nomsociete = _nomsocietefac.text;
+                String numfacture = _numfac.text;
+                if (nomsociete.isEmpty || numfacture.isEmpty) return;
+                Navigator.pop(context, {
+                  'nom': nomsociete,
+                  'num': numfacture,
+                });
+              },
+              child: const Text('Enregistrer'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -109,11 +174,15 @@ class _EngraisHomeState extends State<EngraisHome> {
                 ),
               );
               if (res != null && res) {
+                final data = await showEditDialog2(context);
+                if (data == null) return;
                 final db = FirebaseFirestore.instance;
                 final comms = db.collection('commandes');
                 final firm = widget.user!.firm;
                 comms.add({
                   "firm": firm,
+                  "nom": data["nom"],
+                  "num": data["num"],
                   "panier": panier.map((e) => e.toMap()),
                   "date": DateTime.now().toString(),
                 });

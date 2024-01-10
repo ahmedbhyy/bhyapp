@@ -18,7 +18,7 @@ class EngraisDetailsState extends State<EngraisDetails> {
   final TextEditingController _quantiteController = TextEditingController();
   final TextEditingController _tvaController = TextEditingController();
   final TextEditingController _remiseController = TextEditingController();
-  
+
   bool _isLoading = true;
 
   @override
@@ -39,7 +39,7 @@ class EngraisDetailsState extends State<EngraisDetails> {
       _achatController.text = eng.pria.toString();
       _quantiteController.text = eng.quantity.toString();
       _tvaController.text = eng.tva.toString();
-      _remiseController.text = (eng.remise*100).toString();
+      _remiseController.text = (eng.remise * 100).toString();
       _isLoading = false;
     });
     super.initState();
@@ -81,9 +81,7 @@ class EngraisDetailsState extends State<EngraisDetails> {
                 suffixText: ''),
             const SizedBox(height: 20),
             buildTextFieldWithEditIcon(
-                hintText: "TVA %",
-                controller: _tvaController,
-                suffixText: ''),
+                hintText: "TVA %", controller: _tvaController, suffixText: ''),
             const SizedBox(height: 20),
             buildTextFieldWithEditIcon(
                 hintText: "remise %",
@@ -96,13 +94,18 @@ class EngraisDetailsState extends State<EngraisDetails> {
                 final prixv = double.parse(_venteController.value.text);
                 final quantite = int.parse(_quantiteController.value.text);
                 final tva = double.parse(_tvaController.value.text);
-                final remise = double.parse(_remiseController.value.text)/100;
+                final remise = double.parse(_remiseController.value.text) / 100;
 
                 final db = FirebaseFirestore.instance;
                 final details = db.collection("engrais").doc(widget.engrai.id);
 
-                details.update(
-                    {'priv': prixv, 'pria': prixa, 'quantity': quantite, remise: 'remise', tva: 'tva'});
+                details.update({
+                  'priv': prixv,
+                  'pria': prixa,
+                  'quantity': quantite,
+                  'remise': remise,
+                  'tva': tva
+                });
                 Navigator.pop(context, {
                   "panier": false,
                   "engrai": Engrai(
@@ -125,7 +128,8 @@ class EngraisDetailsState extends State<EngraisDetails> {
                   ? null
                   : () {
                       final tva = double.parse(_tvaController.value.text);
-                      final remise = double.parse(_remiseController.value.text)/100;
+                      final remise =
+                          double.parse(_remiseController.value.text) / 100;
                       final prixa = double.parse(_achatController.value.text);
                       final prixv = double.parse(_venteController.value.text);
                       final quantite =
@@ -133,20 +137,19 @@ class EngraisDetailsState extends State<EngraisDetails> {
                       Navigator.pop(context, {
                         "panier": true,
                         "engrai": Engrai(
-                          quantity: quantite,
-                          priv: prixv,
-                          pria: prixa,
-                          name: widget.engrai.name,
-                          url: widget.engrai.url,
-                          id: widget.engrai.id,
-                          remise: remise,
-                          tva: tva
-                        )
+                            quantity: quantite,
+                            priv: prixv,
+                            pria: prixa,
+                            name: widget.engrai.name,
+                            url: widget.engrai.url,
+                            id: widget.engrai.id,
+                            remise: remise,
+                            tva: tva)
                       });
                     },
               child: Text(widget.panier.any((e) => e.id == widget.engrai.id)
-                  ? 'dans le panier'
-                  : 'ajouter au panier'),
+                  ? 'Dans le panier'
+                  : 'Ajouter au panier'),
             ),
             const SizedBox(height: 10),
             _isLoading

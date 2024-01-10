@@ -61,13 +61,13 @@ class _ToutsCommandesState extends State<ToutsCommandes> {
                 final engrai = widget.panier[index];
                 return ListTile(
                   leading: Icon(
-                    Icons.payments,
+                    Icons.grass,
                     color: Colors.green.shade600,
                   ),
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
                   subtitle: Text(
-                    "prix de vente: ${engrai.priv}\nprix d'achat: ${engrai.pria}\nquantité: ${engrai.quantity}",
+                    "prix de vente : ${engrai.priv} DT \nquantité : ${engrai.quantity}",
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(engrai.name,
