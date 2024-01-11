@@ -12,6 +12,7 @@ import 'package:bhyapp/features/splash/presentation/widgets/all_informations/not
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/rapport_adminn.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/all_informations/requete_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/lesengraishome.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/ouvriershome%20copy.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/quinz.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/rapport.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/ouvriershome.dart';
@@ -93,6 +94,11 @@ class _HomePageState extends State<HomePage> {
                 child: BonSortieInfo(user: user),
               ),
               CustomCard(
+                source: 'images/gajouet.jpg',
+                title: 'Gestion des Lames',
+                child: HabataHome(user: user),
+              ),
+              CustomCard(
                 source: 'images/factureuser.jpg',
                 title: 'Factures',
                 child: FactureInfo(user: user),
@@ -117,10 +123,10 @@ class _HomePageState extends State<HomePage> {
               ),
               Visibility(
                 visible: isVisible(),
-                child: const CustomCard(
+                child: CustomCard(
                   source: 'images/boncommande.jpg',
                   title: 'Bon de Commande',
-                  child: BonCommandeInfo(),
+                  child: BonCommandeInfo(user: user),
                 ),
               ),
               Visibility(
@@ -152,18 +158,18 @@ class _HomePageState extends State<HomePage> {
               ),
               Visibility(
                 visible: isVisible(),
-                child: const CustomCard(
+                child: CustomCard(
                   source: 'images/bourse.png',
                   title: "Demande d'offre de Prix",
-                  child: DemandePrix2(),
+                  child: DemandePrix2(user: user),
                 ),
               ),
               Visibility(
                   visible: isVisible(),
-                  child: const CustomCard(
+                  child: CustomCard(
                     source: 'images/pic.png',
                     title: 'Note de Règlement',
-                    child: NoteReglementInfo(),
+                    child: NoteReglementInfo(user: user),
                   )),
               Visibility(
                   visible: isVisible(),

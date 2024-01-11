@@ -60,7 +60,7 @@ class _FactureInfoState extends State<FactureInfo> {
           IconButton(
             icon: Icon(
               Icons.add,
-              size: Platform.isAndroid ? 24 : 45,
+              size: Platform.isAndroid ? 24 : 55,
             ),
             onPressed: () async {
               final res = await Navigator.push<Facture>(
@@ -74,7 +74,7 @@ class _FactureInfoState extends State<FactureInfo> {
                 final factures = widget.admin == null
                     ? db.collection("factures")
                     : db.collection("adminfacture");
-                factures.doc(res.num).set(res.toMap(), SetOptions(merge: true));
+                factures.doc(res.id).set(res.toMap(), SetOptions(merge: true));
                 setState(() {
                   displayList.add(res);
                 });
@@ -129,7 +129,7 @@ class _FactureInfoState extends State<FactureInfo> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFerme: ${facture.firm}",
+                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFerme: ${facture.firm}\n ${facture.modifierpar.isEmpty ? '' : 'Modifier Par : ${facture.modifierpar}'}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -140,9 +140,10 @@ class _FactureInfoState extends State<FactureInfo> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.picture_as_pdf,
                               color: Colors.green,
+                              size: Platform.isAndroid ? 24 : 50,
                             ),
                             onPressed: () async {
                               PdfApi.openFile(await InvoicApi.generateFacture(
@@ -152,50 +153,6 @@ class _FactureInfoState extends State<FactureInfo> {
                                   date: facture.date,
                                   num: facture.num,
                                   title: "Facture"));
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text(
-                                    'Confirmer la Suppression',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  content: const Text(
-                                    'Vous êtes sûr ?',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        Navigator.pop(context);
-                                        await deletefacture(
-                                            displayList[index].num);
-                                        setState(() {
-                                          displayList.removeAt(index);
-                                        });
-                                      },
-                                      child: const Text('Supprimer'),
-                                    ),
-                                  ],
-                                ),
-                              );
                             },
                           ),
                         ],
@@ -213,7 +170,7 @@ class _FactureInfoState extends State<FactureInfo> {
                         (widget.admin == null
                                 ? db.collection("factures")
                                 : db.collection("adminfacture"))
-                            .doc(facture.num)
+                            .doc(facture.id)
                             .set(facttmp.toMap(), SetOptions(merge: true));
                         setState(() {
                           displayList[displayList.indexOf(facture)] = facttmp;
@@ -226,30 +183,6 @@ class _FactureInfoState extends State<FactureInfo> {
         ],
       ),
     );
-  }
-
-  Future<void> deletefacture(String facId) async {
-    try {
-      final db = FirebaseFirestore.instance;
-      final facRef = (widget.admin == null
-              ? db.collection('factures')
-              : db.collection("adminfacture"))
-          .doc(facId);
-
-      await facRef.delete();
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("element Deleted"),
-        backgroundColor: Colors.green,
-      ));
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-            Text("une erreur est survenue veuillez réessayer ultérieurement"),
-        backgroundColor: Colors.red,
-      ));
-    }
   }
 }
 
@@ -426,6 +359,8 @@ class _AjoutFactureState extends State<AjoutFacture> {
                     }
                     final firm = widget.user.firm;
                     final bon = Facture(
+                      modifierpar: widget.user.name,
+                      id: _numerodufact.text.replaceAll("/", "-"),
                       items: items,
                       total: double.parse(_totalfact.text),
                       nomsoc: _nomsoc.text,
@@ -492,7 +427,7 @@ class _ItemAdderState extends State<ItemAdder> {
       _quantite.text = widget.item!["quantite"].toString();
       _montant.text = widget.item!["montant"].toString();
       _tvafacture.text = widget.item!["tva"].toString();
-      _remise.text = (widget.item!["remise"]*100).toString();
+      _remise.text = (widget.item!["remise"] * 100).toString();
     }
     super.initState();
   }
@@ -599,6 +534,8 @@ class _ItemAdderState extends State<ItemAdder> {
 }
 
 class Facture {
+  final String modifierpar;
+  final String id;
   final String num;
   final String nomsoc;
   final double total;
@@ -607,6 +544,8 @@ class Facture {
   final List<Map<String, dynamic>> items;
   Facture(
       {required this.nomsoc,
+      this.modifierpar = "",
+      required this.id,
       required this.total,
       required this.date,
       required this.num,
@@ -615,6 +554,8 @@ class Facture {
 
   Map<String, dynamic> toMap() {
     return {
+      "modifierpar": modifierpar,
+      "num": num,
       "nom_soc": nomsoc,
       "firm": firm,
       "total": total,
@@ -625,7 +566,9 @@ class Facture {
 
   static Facture fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Facture(
-      num: e.id,
+      modifierpar: e["modifierpar"],
+      num: e["num"],
+      id: e.id,
       firm: e['firm'],
       nomsoc: e['nom_soc'],
       total: e['total'],

@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:bhyapp/apis/invoice.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DemandePrix2 extends StatefulWidget {
-  const DemandePrix2({super.key});
+  final UserLocal? user;
+  const DemandePrix2({super.key, this.user});
 
   @override
   State<DemandePrix2> createState() => _DemandePrix2State();
@@ -51,11 +53,13 @@ class _DemandePrix2State extends State<DemandePrix2> {
           IconButton(
             icon: Icon(
               Icons.add,
-              size: Platform.isAndroid ? 24 : 45,
+              size: Platform.isAndroid ? 24 : 55,
             ),
             onPressed: () async {
-              final res = await Navigator.push<Bon>(context,
-                  MaterialPageRoute(builder: (context) => const AjoutBon()));
+              final res = await Navigator.push<Bon>(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AjoutBon(user: widget.user!)));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final bons = db.collection("demandeprix");
@@ -115,7 +119,7 @@ class _DemandePrix2State extends State<DemandePrix2> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        DateFormat('yyyy-MM-dd').format(bon.date),
+                        "${DateFormat('yyyy-MM-dd').format(bon.date)}\n${bon.num}\nModifier Par : ${bon.modifierpar}",
                         style: TextStyle(color: Colors.green.shade500),
                       ),
                       title: Text('Société: ${bon.beneficiaire.toString()}',
@@ -125,9 +129,10 @@ class _DemandePrix2State extends State<DemandePrix2> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.picture_as_pdf,
                               color: Colors.green,
+                              size: Platform.isAndroid ? 24 : 50,
                             ),
                             onPressed: () async {
                               PdfApi.openFile(await InvoicApi.generateFacture3(
@@ -139,55 +144,12 @@ class _DemandePrix2State extends State<DemandePrix2> {
                                   title: "Demande de Prix"));
                             },
                           ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text(
-                                    'Confirmer la Suppression',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  content: const Text(
-                                    'Vous êtes sûr ?',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        Navigator.pop(context);
-                                        await deletebon(displayList[index].num);
-                                        setState(() {
-                                          displayList.removeAt(index);
-                                        });
-                                      },
-                                      child: const Text('Supprimer'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
                         ],
                       ),
                       onTap: () async {
                         final bn = await Navigator.push<Bon>(context,
                             MaterialPageRoute(builder: (context) {
-                          return AjoutBon(bon: bon);
+                          return AjoutBon(bon: bon, user: widget.user!);
                         }));
                         final db = FirebaseFirestore.instance;
                         if (bn == null) return;
@@ -207,32 +169,12 @@ class _DemandePrix2State extends State<DemandePrix2> {
       ),
     );
   }
-
-  Future<void> deletebon(String bonId) async {
-    try {
-      final db = FirebaseFirestore.instance;
-      final bonRef = db.collection('demandeprix').doc(bonId);
-
-      await bonRef.delete();
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("element Deleted"),
-        backgroundColor: Colors.green,
-      ));
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-            Text("une erreur est survenue veuillez réessayer ultérieurement"),
-        backgroundColor: Colors.red,
-      ));
-    }
-  }
 }
 
 class AjoutBon extends StatefulWidget {
   final Bon? bon;
-  const AjoutBon({super.key, this.bon});
+  final UserLocal user;
+  const AjoutBon({super.key, this.bon, required this.user});
 
   @override
   State<AjoutBon> createState() => _AjoutBonState();
@@ -375,9 +317,10 @@ class _AjoutBonState extends State<AjoutBon> {
                       return;
                     }
                     final bon = Bon(
+                      modifierpar: widget.user.name,
                       items: items,
                       beneficiaire: _beneficiaire.text,
-                      num: _numerodubon.text,
+                      num: _numerodubon.text.replaceAll("/", "-"),
                       date: _datebon,
                     );
                     Navigator.pop(context, bon);
@@ -487,12 +430,14 @@ class _ItemAdderState extends State<ItemAdder> {
 }
 
 class Bon {
+  final String modifierpar;
   final String num;
   final String beneficiaire;
   final DateTime date;
   final List<Map<String, dynamic>> items;
   Bon({
     required this.date,
+    this.modifierpar = "",
     required this.num,
     required this.beneficiaire,
     required this.items,
@@ -501,6 +446,7 @@ class Bon {
   Map<String, dynamic> toMap() {
     return {
       "beneficiaire": beneficiaire,
+      "modifierpar": modifierpar,
       "items": items,
       "date": date.toString(),
     };
@@ -508,6 +454,7 @@ class Bon {
 
   static Bon fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Bon(
+      modifierpar: e["modifierpar"],
       num: e.id,
       beneficiaire: e["beneficiaire"],
       items: List<Map<String, dynamic>>.from(e["items"]! as List),

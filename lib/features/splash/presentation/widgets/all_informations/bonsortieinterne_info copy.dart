@@ -56,7 +56,7 @@ class _BonLivraisonInfo2State extends State<BonLivraisonInfo2> {
           IconButton(
             icon: Icon(
               Icons.add,
-              size: Platform.isAndroid ? 24 : 45,
+              size: Platform.isAndroid ? 24 : 55,
             ),
             onPressed: () async {
               final res = await Navigator.push<Bon>(
@@ -124,7 +124,7 @@ class _BonLivraisonInfo2State extends State<BonLivraisonInfo2> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        DateFormat('yyyy-MM-dd').format(bon.date),
+                        '${DateFormat('yyyy-MM-dd').format(bon.date)}\nModifier Par : ${bon.modifierpar}',
                         style: TextStyle(color: Colors.green.shade500),
                       ),
                       title: Text(
@@ -135,9 +135,10 @@ class _BonLivraisonInfo2State extends State<BonLivraisonInfo2> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.picture_as_pdf,
                               color: Colors.green,
+                              size: Platform.isAndroid ? 24 : 50,
                             ),
                             onPressed: () async {
                               PdfApi.openFile(await InvoicApi.generateFacture2(
@@ -147,50 +148,6 @@ class _BonLivraisonInfo2State extends State<BonLivraisonInfo2> {
                                   date: bon.date,
                                   num: bon.num,
                                   title: "Bon de Livraison"));
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text(
-                                    'Confirmer la Suppression',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  content: const Text(
-                                    'Vous êtes sûr ?',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        Navigator.pop(context);
-                                        await deletebonliv(
-                                            displayList[index].id);
-                                        setState(() {
-                                          displayList.removeAt(index);
-                                        });
-                                      },
-                                      child: const Text('Supprimer'),
-                                    ),
-                                  ],
-                                ),
-                              );
                             },
                           ),
                         ],
@@ -220,28 +177,6 @@ class _BonLivraisonInfo2State extends State<BonLivraisonInfo2> {
         ],
       ),
     );
-  }
-
-  Future<void> deletebonliv(String livId) async {
-    try {
-      final db = FirebaseFirestore.instance;
-      final livRef = db.collection('bonlivraison').doc(livId);
-
-      await livRef.delete();
-
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("element Deleted"),
-        backgroundColor: Colors.green,
-      ));
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-            Text("une erreur est survenue veuillez réessayer ultérieurement"),
-        backgroundColor: Colors.red,
-      ));
-    }
   }
 }
 
@@ -407,7 +342,8 @@ class _AjoutBonLivState extends State<AjoutBonLiv> {
                     }
                     final firm = widget.user.firm;
                     final bon = Bon(
-                      id: _numerodubon.text +
+                      modifierpar: widget.user.name,
+                      id: _numerodubon.text.replaceAll("/", "-") +
                           Random().nextInt(10000000).toString(),
                       items: items,
                       beneficiaire: _nomdesociete.text,
@@ -418,7 +354,7 @@ class _AjoutBonLivState extends State<AjoutBonLiv> {
                     );
                     Navigator.pop(context, bon);
                   },
-                  child: const Text("enregistrer"),
+                  child: const Text("Enregistrer"),
                 )),
             Positioned(
                 bottom: 0,
@@ -438,7 +374,7 @@ class _AjoutBonLivState extends State<AjoutBonLiv> {
                       }
                     },
                     icon: const Icon(Icons.add_outlined),
-                    label: const Text("ajouter")))
+                    label: const Text("Ajouter")))
           ],
         ),
       ),
@@ -489,7 +425,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   maxLines: null,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    label: Text("désignation"),
+                    label: Text("Désignation"),
                   ),
                 ),
                 const SizedBox(
@@ -517,7 +453,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   maxLines: null,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    label: Text("unité"),
+                    label: Text("Unité"),
                   ),
                 ),
                 const SizedBox(
@@ -530,7 +466,7 @@ class _ItemAdderState extends State<ItemAdder> {
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    label: Text("quantité"),
+                    label: Text("Quantité"),
                   ),
                 ),
                 const SizedBox(
@@ -541,7 +477,7 @@ class _ItemAdderState extends State<ItemAdder> {
             FilledButton(
                 onPressed: onclick,
                 child: Center(
-                    child: Text(widget.item == null ? "ajouter" : "modifier")))
+                    child: Text(widget.item == null ? "Ajouter" : "Modifier")))
           ],
         ),
       ),
@@ -560,6 +496,7 @@ class _ItemAdderState extends State<ItemAdder> {
 }
 
 class Bon {
+  final String modifierpar;
   final String id;
   final String num;
   final String beneficiaire;
@@ -569,6 +506,7 @@ class Bon {
   final List<Map<String, dynamic>> items;
   Bon(
       {required this.date,
+      this.modifierpar = "",
       required this.num,
       required this.id,
       required this.beneficiaire,
@@ -578,6 +516,7 @@ class Bon {
 
   Map<String, dynamic> toMap() {
     return {
+      "modifierpar": modifierpar,
       "beneficiaire": beneficiaire,
       "destination": destination,
       "firm": firm,
@@ -589,6 +528,7 @@ class Bon {
 
   static Bon fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Bon(
+      modifierpar: e["modifierpar"],
       id: e.id,
       num: e['num'],
       firm: e['firm'],

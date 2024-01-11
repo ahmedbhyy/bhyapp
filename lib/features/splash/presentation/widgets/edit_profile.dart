@@ -62,6 +62,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               hintText: "Nom et Prénom",
               iconData: Icons.person,
               controller: _nomuser,
+              enabled: false,
             ),
             const SizedBox(height: 30),
             buildTextFieldWithEditIcon(

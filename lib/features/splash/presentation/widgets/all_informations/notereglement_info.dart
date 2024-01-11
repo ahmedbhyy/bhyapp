@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class NoteReglementInfo extends StatefulWidget {
-  const NoteReglementInfo({super.key});
+  final UserLocal? user;
+  const NoteReglementInfo({super.key, this.user});
 
   @override
   State<NoteReglementInfo> createState() => _NoteReglementInfoState();
@@ -73,7 +75,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
             icon: Icon(
               Icons.add,
               color: Colors.green,
-              size: Platform.isAndroid ? 32 : 45,
+              size: Platform.isAndroid ? 32 : 55,
             ),
           ),
         ],
@@ -115,57 +117,13 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
                   subtitle: Text(
-                    DateFormat('yyyy-MM-dd').format(note.date),
+                    '${DateFormat('yyyy-MM-dd').format(note.date)}\nModifier Par : ${note.modifierpar}',
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(
                       "Nom de Fournisseur : ${note.nomfournisseur.toString()}\nN° Facture : ${note.numfacture}",
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold)),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text(
-                            'Confirmer la Suppression',
-                            style: TextStyle(
-                              color: Colors.red,
-                            ),
-                          ),
-                          content: const Text(
-                            'Vous êtes sûr ?',
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                await deletenoteregle(notes[index].numfacture);
-                                setState(() {
-                                  notes.removeAt(index);
-                                  updateList('');
-                                });
-                              },
-                              child: const Text('Supprimer'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
                   onTap: () async {
                     _nomfournisseur.text = note.nomfournisseur;
                     _numfacture.text = note.numfacture;
@@ -192,34 +150,13 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
     );
   }
 
-  Future<void> deletenoteregle(String noteId) async {
-    try {
-      final db = FirebaseFirestore.instance;
-      final noteRef = db.collection('noteregle').doc(noteId);
-
-      await noteRef.delete();
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("element Deleted"),
-        backgroundColor: Colors.green,
-      ));
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-            Text("une erreur est survenue veuillez réessayer ultérieurement"),
-        backgroundColor: Colors.red,
-      ));
-    }
-  }
-
   Future<Note?> showEditDialog(BuildContext context,
       {bool modify = false}) async {
     return showDialog<Note>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(modify ? "modifier une note" : "ajouter une Note"),
+          title: Text(modify ? "Modifier une note" : "Ajouter une Note"),
           content: SingleChildScrollView(
             child: SizedBox(
               width: 350,
@@ -297,7 +234,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
             TextButton(
               onPressed: () {
                 String nomfournisseur = _nomfournisseur.text;
-                String numfacture = _numfacture.text;
+                String numfacture = _numfacture.text.replaceAll('/', '-');
                 String montantfac = _montantfac.text;
                 String modepaiment = _modepaiment.text;
 
@@ -307,6 +244,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     modepaiment.isEmpty) return;
 
                 final tmp = Note(
+                    modifierpar: widget.user!.name,
                     date: _datedenote,
                     modepaiment: modepaiment,
                     montantfacture: double.parse(montantfac),
@@ -315,7 +253,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
 
                 Navigator.pop(context, tmp);
               },
-              child: Text(modify ? "modifier" : 'Enregistrer'),
+              child: Text(modify ? "Modifier" : 'Enregistrer'),
             ),
           ],
         );
@@ -357,6 +295,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
 }
 
 class Note {
+  final String modifierpar;
   final String nomfournisseur;
   final String numfacture;
   final double montantfacture;
@@ -365,6 +304,7 @@ class Note {
 
   Note(
       {required this.date,
+      this.modifierpar = "",
       required this.modepaiment,
       required this.montantfacture,
       required this.nomfournisseur,
@@ -374,6 +314,7 @@ class Note {
     return {
       'nomfournisseur': nomfournisseur,
       'numfacture': numfacture,
+      "modifierpar": modifierpar,
       'montantfacture': montantfacture,
       'modepaiment': modepaiment,
       'date': date.toString(),
@@ -382,6 +323,7 @@ class Note {
 
   static fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Note(
+      modifierpar: e["modifierpar"],
       date: DateTime.parse(e["date"]),
       modepaiment: e["modepaiment"],
       montantfacture: e["montantfacture"],
