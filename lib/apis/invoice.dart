@@ -1,3 +1,4 @@
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -10,6 +11,8 @@ import 'dart:io';
 
 class Utils {
   static formatPrice(double price) => '${price.toStringAsFixed(3)} DT';
+  static intFixed(int n) => n.toString().padLeft(6, "0");
+  static factNum(Facture facture) => Utils.intFixed(facture.num) + '/' + facture.date.year.toString();
   static formatDate(DateTime date) => DateFormat.yMMMMd('fr_FR').format(date);
   static formatmy(DateTime date) =>
       DateFormat('MMMM yyyy', 'fr_FR').format(date);

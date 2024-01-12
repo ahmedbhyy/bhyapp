@@ -4,6 +4,7 @@ import 'package:bhyapp/apis/invoice.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class FactureInfo extends StatefulWidget {
   final UserLocal? user;
@@ -68,13 +69,16 @@ class _FactureInfoState extends State<FactureInfo> {
                   MaterialPageRoute(
                       builder: (context) => AjoutFacture(
                             user: widget.user!,
+                            admin: widget.admin,
                           )));
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final factures = widget.admin == null
                     ? db.collection("factures")
                     : db.collection("adminfacture");
-                factures.doc(res.id).set(res.toMap(), SetOptions(merge: true));
+                await factures.doc(res.num.toString()+res.date.year.toString()).set(res.toMap(), SetOptions(merge: true));
+                final field = widget.admin != null && widget.admin! ? 'nextadmin' : 'next';
+                db.collection('metadata').doc('facture').update({field: res.num+1});
                 setState(() {
                   displayList.add(res);
                 });
@@ -129,7 +133,7 @@ class _FactureInfoState extends State<FactureInfo> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFerme: ${facture.firm}\n ${facture.modifierpar.isEmpty ? '' : 'Modifier Par : ${facture.modifierpar}'}",
+                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFerme: ${facture.firm}\nCreer Par : ${facture.creerpar} le ${Utils.formatDate(facture.date)}\n${facture.modifierpar.isEmpty ? '' : 'Modifier Par : ${facture.modifierpar}'}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -151,7 +155,7 @@ class _FactureInfoState extends State<FactureInfo> {
                                   address: facture.nomsoc,
                                   client: facture.nomsoc,
                                   date: facture.date,
-                                  num: facture.num,
+                                  num: Utils.factNum(facture),
                                   title: "Facture"));
                             },
                           ),
@@ -162,6 +166,7 @@ class _FactureInfoState extends State<FactureInfo> {
                             MaterialPageRoute(builder: (context) {
                           return AjoutFacture(
                             facture: facture,
+                            admin: widget.admin,
                             user: widget.user!,
                           );
                         }));
@@ -170,7 +175,7 @@ class _FactureInfoState extends State<FactureInfo> {
                         (widget.admin == null
                                 ? db.collection("factures")
                                 : db.collection("adminfacture"))
-                            .doc(facture.id)
+                            .doc(facture.num.toString()+facture.date.year.toString())
                             .set(facttmp.toMap(), SetOptions(merge: true));
                         setState(() {
                           displayList[displayList.indexOf(facture)] = facttmp;
@@ -188,8 +193,9 @@ class _FactureInfoState extends State<FactureInfo> {
 
 class AjoutFacture extends StatefulWidget {
   final Facture? facture;
+  final bool? admin;
   final UserLocal user;
-  const AjoutFacture({super.key, this.facture, required this.user});
+  const AjoutFacture({super.key, this.facture, required this.user, this.admin});
 
   @override
   State<AjoutFacture> createState() => _AjoutFactureState();
@@ -202,17 +208,27 @@ class _AjoutFactureState extends State<AjoutFacture> {
   List<Map<String, dynamic>> items = [];
   String _title = "Ajouter une facture";
   DateTime _datefact = DateTime.now();
+  int num = 0;
 
   @override
   void initState() {
+    final field = widget.admin != null && widget.admin! ? 'nextadmin' : 'next';
     if (widget.facture != null) {
       final facture = widget.facture!;
-      _numerodufact.text = facture.num.toString();
+      _numerodufact.text = Utils.factNum(facture);
       _totalfact.text = facture.total.toString();
       _nomsoc.text = facture.nomsoc;
       items = facture.items;
       _datefact = facture.date;
       _title = "Modifier la facture";
+    } else {
+      final db =FirebaseFirestore.instance;
+      db.collection('metadata').doc('facture').get().then((factureMeta) {
+        setState(() {
+          _numerodufact.text = Utils.intFixed(factureMeta.data()![field]) + '/' + DateTime.now().year.toString();
+          num = factureMeta.data()![field];
+        });
+      });
     }
     super.initState();
   }
@@ -263,11 +279,11 @@ class _AjoutFactureState extends State<AjoutFacture> {
                     controller: _numerodufact,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
+                    enabled: false,
+                    decoration: const InputDecoration(
                       labelText: 'N° de la facture',
-                      enabled: widget.facture == null,
-                      labelStyle: const TextStyle(fontSize: 20),
-                      icon: const Icon(Icons.numbers),
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.numbers),
                     ),
                     maxLines: null,
                   ),
@@ -286,6 +302,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                   TextField(
                     controller: _totalfact,
                     keyboardType: TextInputType.number,
+                    enabled: false,
                     decoration: const InputDecoration(
                       labelText: 'Total de la facture ',
                       labelStyle: TextStyle(fontSize: 20),
@@ -358,15 +375,20 @@ class _AjoutFactureState extends State<AjoutFacture> {
                       return;
                     }
                     final firm = widget.user.firm;
+                    final creerpar = widget.facture != null ? widget.facture!.creerpar : widget.user.name;
+                    final modifierpar = widget.facture != null ? widget.user.name : '';
+                    final date = widget.facture != null ? widget.facture!.date : _datefact;
+                    final _num = widget.facture != null ? widget.facture!.num : num;
                     final bon = Facture(
-                      modifierpar: widget.user.name,
-                      id: _numerodufact.text.replaceAll("/", "-"),
+                      modifierpar: modifierpar,
+                      creerpar: creerpar,
                       items: items,
                       total: double.parse(_totalfact.text),
                       nomsoc: _nomsoc.text,
                       firm: firm,
-                      num: _numerodufact.text,
-                      date: _datefact,
+                      num: _num,
+                      date: date,
+                      datemodif: DateTime.now(),
                     );
                     Navigator.pop(context, bon);
                   },
@@ -535,19 +557,21 @@ class _ItemAdderState extends State<ItemAdder> {
 
 class Facture {
   final String modifierpar;
-  final String id;
-  final String num;
+  final String creerpar;
+  final int num;
   final String nomsoc;
   final double total;
   final String firm;
   final DateTime date;
+  final DateTime datemodif;
   final List<Map<String, dynamic>> items;
   Facture(
       {required this.nomsoc,
       this.modifierpar = "",
-      required this.id,
       required this.total,
       required this.date,
+      required this.datemodif,
+      required this.creerpar,
       required this.num,
       required this.items,
       required this.firm});
@@ -556,6 +580,8 @@ class Facture {
     return {
       "modifierpar": modifierpar,
       "num": num,
+      "datemodif": datemodif.toString(),
+      "creerpar": creerpar,
       "nom_soc": nomsoc,
       "firm": firm,
       "total": total,
@@ -568,8 +594,9 @@ class Facture {
     return Facture(
       modifierpar: e["modifierpar"],
       num: e["num"],
-      id: e.id,
       firm: e['firm'],
+      datemodif: DateTime.parse(e["datemodif"]),
+      creerpar: e['creerpar'],
       nomsoc: e['nom_soc'],
       total: e['total'],
       items: List<Map<String, dynamic>>.from(e["items"]! as List),
