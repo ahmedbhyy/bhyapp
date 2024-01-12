@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bhyapp/apis/invoice.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,8 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final bons = db.collection("bons_commandes");
-                bons.doc(res.num).set(res.toMap(), SetOptions(merge: true));
+                await bons.doc(res.id).set(res.toMap(), SetOptions(merge: true));
+                db.collection('metadata').doc('bon_commandes').update({'next': res.num+1});
                 setState(() {
                   displayList.add(res);
                 });
@@ -118,7 +120,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Sociétè: ${bon.beneficiaire}\nModifier Par : ${bon.modifierpar}",
+                        "Sociétè: ${bon.beneficiaire}\nCreer Par : ${bon.creerpar} le ${Utils.formatDate(bon.date)}\n${bon.modifierpar.isEmpty ? '' : 'Modifier Par : ${bon.modifierpar}'}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -140,7 +142,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                                   address: bon.beneficiaire,
                                   client: bon.beneficiaire,
                                   date: bon.date,
-                                  num: bon.num,
+                                  num: Utils.factNum(bon.toFacture()),
                                   title: "Bon de commande",
                                   size: 10));
                             },
@@ -156,7 +158,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                         if (bn == null) return;
                         db
                             .collection("bons_commandes")
-                            .doc(bon.num)
+                            .doc(bon.id)
                             .set(bn.toMap(), SetOptions(merge: true));
                         setState(() {
                           displayList[displayList.indexOf(bon)] = bn;
@@ -187,16 +189,26 @@ class _AjoutBonState extends State<AjoutBon> {
   List<Map<String, dynamic>> items = [];
   String _title = "Ajouter un bon de commandes";
   DateTime _datebon = DateTime.now();
+  int num = 0;
 
   @override
   void initState() {
     if (widget.bon != null) {
       final bon = widget.bon!;
-      _numerodubon.text = bon.num.toString();
+      _numerodubon.text = Utils.factNum(bon.toFacture());
       _beneficiaire.text = bon.beneficiaire;
       items = bon.items;
       _datebon = bon.date;
       _title = "Modifier le bon de commandes";
+    } else {
+      final db =FirebaseFirestore.instance;
+      db.collection('metadata').doc('bon_commandes').get().then((bonMeta) {
+        setState(() {
+          const field = 'next';
+          _numerodubon.text = Utils.intFixed(bonMeta.data()![field]) + '/' + DateTime.now().year.toString();
+          num = bonMeta.data()![field];
+        });
+      });
     }
     super.initState();
   }
@@ -246,11 +258,11 @@ class _AjoutBonState extends State<AjoutBon> {
                     controller: _numerodubon,
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
+                    enabled: false,
+                    decoration: const InputDecoration(
                       labelText: 'N° du bon',
-                      enabled: widget.bon == null,
-                      labelStyle: const TextStyle(fontSize: 20),
-                      icon: const Icon(Icons.numbers),
+                      labelStyle: TextStyle(fontSize: 20),
+                      icon: Icon(Icons.numbers),
                     ),
                     maxLines: null,
                   ),
@@ -319,11 +331,13 @@ class _AjoutBonState extends State<AjoutBon> {
                       return;
                     }
                     final bon = Bon(
-                      modifierpar: widget.user.name,
+                      creerpar: widget.bon != null ? widget.bon!.creerpar : widget.user.name,
+                      datemodif: DateTime.now(),
+                      modifierpar: widget.bon != null ? widget.user.name : '',
                       items: items,
                       beneficiaire: _beneficiaire.text,
-                      num: _numerodubon.text.replaceAll("/", "-"),
-                      date: _datebon,
+                      num: widget.bon != null ? widget.bon!.num : num,
+                      date: widget.bon != null ? widget.bon!.date : _datebon,
                     );
                     Navigator.pop(context, bon);
                   },
@@ -433,12 +447,17 @@ class _ItemAdderState extends State<ItemAdder> {
 
 class Bon {
   final String modifierpar;
-  final String num;
+  final String creerpar;
+  final int num;
   final String beneficiaire;
   final DateTime date;
+  final DateTime datemodif;
   final List<Map<String, dynamic>> items;
+  String get id => "$num${date.year}";
   Bon({
     required this.date,
+    required this.creerpar,
+    required this.datemodif,
     this.modifierpar = "",
     required this.num,
     required this.beneficiaire,
@@ -449,18 +468,25 @@ class Bon {
     return {
       "beneficiaire": beneficiaire,
       "modifierpar": modifierpar,
+      "creerpar": creerpar,
       "items": items,
       "date": date.toString(),
+      "datemodif": datemodif.toString(),
+      "num": num,
     };
   }
 
   static Bon fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Bon(
+      creerpar: e["creerpar"],
       modifierpar: e["modifierpar"],
-      num: e.id,
+      num: e['num'],
       beneficiaire: e["beneficiaire"],
       items: List<Map<String, dynamic>>.from(e["items"]! as List),
       date: DateTime.parse(e["date"]),
+      datemodif: DateTime.parse(e["datemodif"]),
     );
   }
+
+  Facture toFacture() => Facture(nomsoc: "", total: 0, date: date, datemodif: datemodif, creerpar: creerpar, num: num, items: items, firm: beneficiaire);
 }
