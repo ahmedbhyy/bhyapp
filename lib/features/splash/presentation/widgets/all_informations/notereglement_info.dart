@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:bhyapp/apis/invoice.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
   DateTime _datedenote = DateTime.now();
   List<Note> notes = [];
   List<Note> displaynoteslList = [];
+  int num = 0;
 
   @override
   void initState() {
@@ -35,7 +38,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
         displaynoteslList = List.from(notes);
       } else {
         displaynoteslList = notes
-            .where((element) => element.numfacture.contains(value))
+            .where((element) => Utils.factNum(element.toFacture()).contains(value))
             .toList();
       }
     });
@@ -67,6 +70,13 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
+              final db = FirebaseFirestore.instance;
+              final doc = await db.collection('metadata').doc("note").get();
+              setState(() {
+                num = doc.data()!['next'];
+                _numfacture.text = Utils.intFixed(num) + '/' + DateTime.now().year.toString();
+              });
+              if(!context.mounted) return;
               final data = await showEditDialog(context);
               if (data != null) {
                 saveData(data);
@@ -117,20 +127,20 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                   contentPadding: const EdgeInsets.all(8.0),
                   isThreeLine: true,
                   subtitle: Text(
-                    '${DateFormat('yyyy-MM-dd').format(note.date)}\nModifier Par : ${note.modifierpar}',
+                    '${DateFormat('yyyy-MM-dd').format(note.date)}\nCreer Par : ${note.creerpar} le ${Utils.formatDate(note.date)}\n${note.modifierpar.isEmpty ? '' : 'Modifier Par : ${note.modifierpar} le ${Utils.formatDate(note.datemodif)}'}',
                     style: TextStyle(color: Colors.green.shade500),
                   ),
                   title: Text(
-                      "Nom de Fournisseur : ${note.nomfournisseur.toString()}\nN° Facture : ${note.numfacture}",
+                      "Nom de Fournisseur : ${note.fournisseur.toString()}\nN° Facture : ${note.num}",
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold)),
                   onTap: () async {
-                    _nomfournisseur.text = note.nomfournisseur;
-                    _numfacture.text = note.numfacture;
-                    _montantfac.text = note.montantfacture.toString();
+                    _nomfournisseur.text = note.fournisseur;
+                    _numfacture.text = Utils.factNum(note.toFacture());
+                    _montantfac.text = note.montant.toString();
                     _modepaiment.text = note.modepaiment;
                     _datedenote = note.date;
-                    final res = await showEditDialog(context, modify: true);
+                    final res = await showEditDialog(context, modify: true, note:note);
                     _nomfournisseur.clear();
                     _numfacture.clear();
                     _montantfac.clear();
@@ -151,7 +161,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
   }
 
   Future<Note?> showEditDialog(BuildContext context,
-      {bool modify = false}) async {
+      {bool modify = false, Note? note}) async {
     return showDialog<Note>(
       context: context,
       builder: (BuildContext context) {
@@ -177,7 +187,7 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     controller: _numfacture,
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
-                    enabled: !modify,
+                    enabled: false,
                     decoration: const InputDecoration(
                       labelText: 'N° Facture',
                       labelStyle: TextStyle(fontSize: 20),
@@ -244,12 +254,14 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
                     modepaiment.isEmpty) return;
 
                 final tmp = Note(
-                    modifierpar: widget.user!.name,
-                    date: _datedenote,
+                    modifierpar: modify ? widget.user!.name : '',
+                    creerpar: modify ? note!.creerpar : widget.user!.name,
+                    date: modify ? note!.date : _datedenote,
+                    datemodif: DateTime.now(),
                     modepaiment: modepaiment,
-                    montantfacture: double.parse(montantfac),
-                    nomfournisseur: nomfournisseur,
-                    numfacture: numfacture);
+                    montant: double.parse(montantfac),
+                    fournisseur: nomfournisseur,
+                    num: modify ? note!.num : num);
 
                 Navigator.pop(context, tmp);
               },
@@ -265,11 +277,13 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
     try {
       await db
           .collection('noteregle')
-          .doc(tmp.numfacture)
+          .doc(tmp.id)
           .set(tmp.toMap(), SetOptions(merge: true));
       setState(() {
         if (!modify) {
           notes.add(tmp);
+          db.collection('metadata').doc('note').update({'next': tmp.num+1});
+
         } else {
           if (index >= 0) {
             notes[index] = tmp;
@@ -296,39 +310,48 @@ class _NoteReglementInfoState extends State<NoteReglementInfo> {
 
 class Note {
   final String modifierpar;
-  final String nomfournisseur;
-  final String numfacture;
-  final double montantfacture;
+  final String creerpar;
+  final String fournisseur;
+  final int num;
+  final double montant;
   final String modepaiment;
   final DateTime date;
+  final DateTime datemodif;
+  String get id => num.toString()+date.year.toString();
 
   Note(
       {required this.date,
+      required this.datemodif,
       this.modifierpar = "",
+      required this.creerpar,
       required this.modepaiment,
-      required this.montantfacture,
-      required this.nomfournisseur,
-      required this.numfacture});
+      required this.montant,
+      required this.fournisseur,
+      required this.num});
 
   Map<String, dynamic> toMap() {
     return {
-      'nomfournisseur': nomfournisseur,
-      'numfacture': numfacture,
+      'nomfournisseur': fournisseur,
+      'numfacture': num,
       "modifierpar": modifierpar,
-      'montantfacture': montantfacture,
+      "creerpar": creerpar,
+      'montantfacture': montant,
       'modepaiment': modepaiment,
       'date': date.toString(),
+      'datemodif': datemodif.toString(),
     };
   }
 
   static fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
     return Note(
       modifierpar: e["modifierpar"],
+      creerpar: e["creerpar"],
       date: DateTime.parse(e["date"]),
+      datemodif: DateTime.parse(e["datemodif"]),
       modepaiment: e["modepaiment"],
-      montantfacture: e["montantfacture"],
-      nomfournisseur: e["nomfournisseur"],
-      numfacture: e["numfacture"],
+      montant: e["montantfacture"],
+      fournisseur: e["nomfournisseur"],
+      num: e["numfacture"],
     );
   }
 
@@ -336,4 +359,5 @@ class Note {
   String toString() {
     return toMap().toString();
   }
+  Facture toFacture() => Facture(nomsoc: "", total: 0, date: date, datemodif: datemodif, creerpar: creerpar, num: num, items: [], firm: '');
 }
