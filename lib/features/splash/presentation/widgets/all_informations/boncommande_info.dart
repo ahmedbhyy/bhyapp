@@ -120,7 +120,7 @@ class _BonCommandeInfoState extends State<BonCommandeInfo> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Sociétè: ${bon.beneficiaire}\nCreer Par : ${bon.creerpar} le ${Utils.formatDate(bon.date)}\n${bon.modifierpar.isEmpty ? '' : 'Modifier Par : ${bon.modifierpar}'}",
+                        "Sociétè: ${bon.beneficiaire}\nCreer Par : ${bon.creerpar} le ${Utils.formatDate(bon.date)}\n${bon.modifierpar.isEmpty ? '' : 'Modifier Par : ${bon.modifierpar} le ${Utils.formatDate(bon.datemodif)}'}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,

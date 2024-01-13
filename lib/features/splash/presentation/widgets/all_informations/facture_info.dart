@@ -76,7 +76,7 @@ class _FactureInfoState extends State<FactureInfo> {
                 final factures = widget.admin == null
                     ? db.collection("factures")
                     : db.collection("adminfacture");
-                await factures.doc(res.num.toString()+res.date.year.toString()).set(res.toMap(), SetOptions(merge: true));
+                await factures.doc(res.id).set(res.toMap(), SetOptions(merge: true));
                 final field = widget.admin != null && widget.admin! ? 'nextadmin' : 'next';
                 db.collection('metadata').doc('facture').update({field: res.num+1});
                 setState(() {
@@ -133,7 +133,7 @@ class _FactureInfoState extends State<FactureInfo> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFerme: ${facture.firm}\nCreer Par : ${facture.creerpar} le ${Utils.formatDate(facture.date)}\n${facture.modifierpar.isEmpty ? '' : 'Modifier Par : ${facture.modifierpar}'}",
+                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nFerme: ${facture.firm}\nCreer Par : ${facture.creerpar} le ${Utils.formatDate(facture.date)}\n${facture.modifierpar.isEmpty ? '' : 'Modifier Par : ${facture.modifierpar} le ${Utils.formatDate(facture.datemodif)}'}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -175,7 +175,7 @@ class _FactureInfoState extends State<FactureInfo> {
                         (widget.admin == null
                                 ? db.collection("factures")
                                 : db.collection("adminfacture"))
-                            .doc(facture.num.toString()+facture.date.year.toString())
+                            .doc(facture.id)
                             .set(facttmp.toMap(), SetOptions(merge: true));
                         setState(() {
                           displayList[displayList.indexOf(facture)] = facttmp;
@@ -565,6 +565,7 @@ class Facture {
   final DateTime date;
   final DateTime datemodif;
   final List<Map<String, dynamic>> items;
+  String get id => num.toString()+date.year.toString();
   Facture(
       {required this.nomsoc,
       this.modifierpar = "",

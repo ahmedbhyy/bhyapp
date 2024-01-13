@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bhyapp/apis/invoice.dart';
+import 'package:bhyapp/features/splash/presentation/widgets/all_informations/facture_info.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +64,8 @@ class _Devisinfo2State extends State<Devisinfo2> {
               if (res != null) {
                 final db = FirebaseFirestore.instance;
                 final factures = db.collection("devis");
-                factures.doc(res.id).set(res.toMap(), SetOptions(merge: true));
+                await factures.doc(res.id).set(res.toMap(), SetOptions(merge: true));
+                db.collection('metadata').doc('devis').update({'next': res.num+1});
                 setState(() {
                   displayList.add(res);
                 });
@@ -118,7 +120,7 @@ class _Devisinfo2State extends State<Devisinfo2> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nModifier Par : ${facture.modifierpar}",
+                        "Nom de la Societé : ${facture.nomsoc} \nTotal : ${facture.total} DT\nCreer Par : ${facture.creerpar} le ${Utils.formatDate(facture.date)}\n${facture.modifierpar.isEmpty ? '' : 'Modifier Par : ${facture.modifierpar} le ${Utils.formatDate(facture.datemodif)}'}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -140,7 +142,7 @@ class _Devisinfo2State extends State<Devisinfo2> {
                                   address: facture.nomsoc,
                                   client: facture.nomsoc,
                                   date: facture.date,
-                                  num: facture.num,
+                                  num: Utils.factNum(facture),
                                   title: "Devis"));
                             },
                           ),
@@ -190,6 +192,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
   List<Map<String, dynamic>> items = [];
   String _title = "Ajouter un Devis";
   DateTime _datefact = DateTime.now();
+  int num = 0;
 
   @override
   void initState() {
@@ -201,6 +204,15 @@ class _AjoutFactureState extends State<AjoutFacture> {
       items = facture.items;
       _datefact = facture.date;
       _title = "Modifier le Devis";
+    }  else {
+      final db =FirebaseFirestore.instance;
+      db.collection('metadata').doc('devis').get().then((factureMeta) {
+        setState(() {
+          const field = "next";
+          _numerodufact.text = Utils.intFixed(factureMeta.data()![field]) + '/' + DateTime.now().year.toString();
+          num = factureMeta.data()![field];
+        });
+      });
     }
     super.initState();
   }
@@ -251,6 +263,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                     controller: _numerodufact,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
+                    enabled: false,
                     decoration: InputDecoration(
                       labelText: 'N° de Devis',
                       enabled: widget.facture == null,
@@ -274,6 +287,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
                   TextField(
                     controller: _totalfact,
                     keyboardType: TextInputType.number,
+                    enabled: false,
                     decoration: const InputDecoration(
                       labelText: 'Total de Devis',
                       labelStyle: TextStyle(fontSize: 20),
@@ -347,14 +361,15 @@ class _AjoutFactureState extends State<AjoutFacture> {
                     }
                     final firm = widget.user.firm;
                     final bon = Facture(
-                      modifierpar: widget.user.name,
-                      id: _numerodufact.text.replaceAll("/", "-"),
+                      modifierpar: widget.facture != null ? widget.user.name : '',
+                      creerpar: widget.facture != null ? widget.facture!.creerpar : widget.user.name,
+                      datemodif: DateTime.now(),
                       items: items,
                       total: double.parse(_totalfact.text),
                       nomsoc: _nomsoc.text,
                       firm: firm,
-                      num: _numerodufact.text,
-                      date: _datefact,
+                      num: widget.facture != null ? widget.facture!.num : num,
+                      date: widget.facture != null ? widget.facture!.date : _datefact,
                     );
                     Navigator.pop(context, bon);
                   },
@@ -518,50 +533,5 @@ class _ItemAdderState extends State<ItemAdder> {
       "remise": double.parse(_remise.text) / 100,
     });
     Navigator.pop(context, tmp);
-  }
-}
-
-class Facture {
-  final String modifierpar;
-  final String id;
-  final String num;
-  final String nomsoc;
-  final double total;
-  final String firm;
-  final DateTime date;
-  final List<Map<String, dynamic>> items;
-  Facture(
-      {required this.nomsoc,
-      this.modifierpar = "",
-      required this.id,
-      required this.total,
-      required this.date,
-      required this.num,
-      required this.items,
-      required this.firm});
-
-  Map<String, dynamic> toMap() {
-    return {
-      "modifierpar": modifierpar,
-      "num": num,
-      "nom_soc": nomsoc,
-      "firm": firm,
-      "total": total,
-      "items": items,
-      "date": date.toString(),
-    };
-  }
-
-  static Facture fromMap(QueryDocumentSnapshot<Map<String, dynamic>> e) {
-    return Facture(
-      modifierpar: e["modifierpar"],
-      id: e.id,
-      num: e["num"],
-      firm: e['firm'],
-      nomsoc: e['nom_soc'],
-      total: e['total'],
-      items: List<Map<String, dynamic>>.from(e["items"]! as List),
-      date: DateTime.parse(e["date"]),
-    );
   }
 }

@@ -125,7 +125,7 @@ class _BonLivraisonInfo2State extends State<BonLivraisonInfo2> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        '${DateFormat('yyyy-MM-dd').format(bon.date)}\nCreer Par : ${bon.creerpar} le ${Utils.formatDate(bon.date)}\n${bon.modifierpar.isEmpty ? '' : 'Modifier Par : ${bon.modifierpar}'}',
+                        '${DateFormat('yyyy-MM-dd').format(bon.date)}\nCreer Par : ${bon.creerpar} le ${Utils.formatDate(bon.date)}\n${bon.modifierpar.isEmpty ? '' : 'Modifier Par : ${bon.modifierpar} le ${Utils.formatDate(bon.datemodif)}'}',
                         style: TextStyle(color: Colors.green.shade500),
                       ),
                       title: Text(
