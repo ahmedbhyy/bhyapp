@@ -124,7 +124,7 @@ class _BonSortieInfoState extends State<BonSortieInfo> {
                       ),
                       contentPadding: const EdgeInsets.all(8.0),
                       subtitle: Text(
-                        "Destination: ${bon.destination} \nBénéficiaire : ${bon.beneficiaire}\nCreer Par : ${bon.creerpar} le ${Utils.formatDate(bon.date)}\n${bon.modifierpar.isEmpty ? '' : 'Modifier Par : ${bon.modifierpar}'}",
+                        "Destination: ${bon.destination} \nBénéficiaire : ${bon.beneficiaire}\nCreer Par : ${bon.creerpar} le ${Utils.formatDate(bon.date)}\n${bon.modifierpar.isEmpty ? '' : 'Modifier Par : ${bon.modifierpar} le ${Utils.formatDate(bon.datemodif)}'}",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
