@@ -4,7 +4,6 @@ import 'package:bhyapp/apis/invoice.dart';
 import 'package:bhyapp/features/splash/presentation/widgets/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 class FactureInfo extends StatefulWidget {
   final UserLocal? user;
@@ -76,9 +75,16 @@ class _FactureInfoState extends State<FactureInfo> {
                 final factures = widget.admin == null
                     ? db.collection("factures")
                     : db.collection("adminfacture");
-                await factures.doc(res.id).set(res.toMap(), SetOptions(merge: true));
-                final field = widget.admin != null && widget.admin! ? 'nextadmin' : 'next';
-                db.collection('metadata').doc('facture').update({field: res.num+1});
+                await factures
+                    .doc(res.id)
+                    .set(res.toMap(), SetOptions(merge: true));
+                final field = widget.admin != null && widget.admin!
+                    ? 'nextadmin'
+                    : 'next';
+                db
+                    .collection('metadata')
+                    .doc('facture')
+                    .update({field: res.num + 1});
                 setState(() {
                   displayList.add(res);
                 });
@@ -222,10 +228,12 @@ class _AjoutFactureState extends State<AjoutFacture> {
       _datefact = facture.date;
       _title = "Modifier la facture";
     } else {
-      final db =FirebaseFirestore.instance;
+      final db = FirebaseFirestore.instance;
       db.collection('metadata').doc('facture').get().then((factureMeta) {
         setState(() {
-          _numerodufact.text = Utils.intFixed(factureMeta.data()![field]) + '/' + DateTime.now().year.toString();
+          _numerodufact.text = Utils.intFixed(factureMeta.data()![field]) +
+              '/' +
+              DateTime.now().year.toString();
           num = factureMeta.data()![field];
         });
       });
@@ -375,10 +383,16 @@ class _AjoutFactureState extends State<AjoutFacture> {
                       return;
                     }
                     final firm = widget.user.firm;
-                    final creerpar = widget.facture != null ? widget.facture!.creerpar : widget.user.name;
-                    final modifierpar = widget.facture != null ? widget.user.name : '';
-                    final date = widget.facture != null ? widget.facture!.date : _datefact;
-                    final _num = widget.facture != null ? widget.facture!.num : num;
+                    final creerpar = widget.facture != null
+                        ? widget.facture!.creerpar
+                        : widget.user.name;
+                    final modifierpar =
+                        widget.facture != null ? widget.user.name : '';
+                    final date = widget.facture != null
+                        ? widget.facture!.date
+                        : _datefact;
+                    final _num =
+                        widget.facture != null ? widget.facture!.num : num;
                     final bon = Facture(
                       modifierpar: modifierpar,
                       creerpar: creerpar,
@@ -565,7 +579,7 @@ class Facture {
   final DateTime date;
   final DateTime datemodif;
   final List<Map<String, dynamic>> items;
-  String get id => num.toString()+date.year.toString();
+  String get id => num.toString() + date.year.toString();
   Facture(
       {required this.nomsoc,
       this.modifierpar = "",
