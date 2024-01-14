@@ -50,7 +50,7 @@ class _Habatadetails2State extends State<Habatadetails2> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "${widget.Ouvriername} \n",
+          widget.Ouvriername,
           style: const TextStyle(
             fontSize: 16,
             fontFamily: 'Michroma',
