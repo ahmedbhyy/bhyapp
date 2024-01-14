@@ -50,7 +50,7 @@ class _Habatadetails2State extends State<Habatadetails2> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "${widget.Ouvriername} \n (${habata.fold(0, (previousValue, element) => previousValue + element.quantite)} Lames)",
+          "${widget.Ouvriername} \n",
           style: const TextStyle(
             fontSize: 16,
             fontFamily: 'Michroma',
@@ -124,6 +124,17 @@ class _Habatadetails2State extends State<Habatadetails2> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text("(${habata.fold(0, (previousValue, element) => previousValue + element.quantite)} Lames)",
+            style: const TextStyle(
+                fontSize: 16,
+                fontFamily: 'Michroma',
+                fontWeight: FontWeight.bold,
+                //color: Colors.green,
+              ),
+            ),
+          ),
           const SizedBox(height: 5.0),
           Expanded(
             child: ListView.separated(
