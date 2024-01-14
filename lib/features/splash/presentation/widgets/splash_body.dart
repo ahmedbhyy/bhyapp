@@ -22,7 +22,7 @@ class SplashBody extends StatelessWidget {
               width: 200,
               decoration: ShapeDecoration(
                 image: const DecorationImage(
-                  image: AssetImage("images/logo baraka.PNG"),
+                  image: AssetImage("images/logo.png"),
                   fit: BoxFit.fill,
                 ),
                 shape: RoundedRectangleBorder(
