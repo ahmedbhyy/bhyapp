@@ -44,7 +44,7 @@ class _StartPageState extends State<StartPage> {
                   ),
                   ClipOval(
                     child: Image.asset(
-                      'images/logo baraka.PNG',
+                      'images/logo.png',
                       fit: BoxFit.cover,
                       width: 45,
                       height: 45,

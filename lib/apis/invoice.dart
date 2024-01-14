@@ -388,7 +388,7 @@ class InvoicApi {
       bool? riadh,
       required DateTime date}) async {
     final memoryImage = riadh == null
-        ? MemoryImage((await rootBundle.load("images/logo baraka.png"))
+        ? MemoryImage((await rootBundle.load("images/logo.png"))
             .buffer
             .asUint8List())
         : MemoryImage(
